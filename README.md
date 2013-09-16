@@ -1,4 +1,6 @@
-JARVICE
+J.A.R.V.I.C.E.
 =======
-Matt
-Compiler Group Project
+Just A Really Very Intelligent Comiler Experiment
+Rob Close
+Matt Thorne
+Jeremy Muckel
