@@ -1,6 +1,6 @@
 J.A.R.V.I.C.E.
 =======
-Just A Really Very Intelligent Comiler Experiment
+Just. A. Really. Very. Intelligent. Compiler. Experiment.
 
 Rob Close
 
