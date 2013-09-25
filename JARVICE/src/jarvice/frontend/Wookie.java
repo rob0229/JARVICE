@@ -1,4 +1,4 @@
-package compiler.frontend;
+package jarvice.frontend;
 
 //Main executable for JARVICE compiler
 //Programmer Rob Close
