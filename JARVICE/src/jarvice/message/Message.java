@@ -1,6 +1,6 @@
 package jarvice.message;
 
-import wci.message.MessageType;
+import jarvice.message.MessageType;
 
 
 /**
