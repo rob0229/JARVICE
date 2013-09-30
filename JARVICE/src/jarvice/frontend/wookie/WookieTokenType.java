@@ -64,22 +64,13 @@ public enum WookieTokenType implements TokenType {
     }
 	
 	public static void print (HashSet<String> ht) { 
-       // Enumeration<String> e = ht.contains(); 
-        
-		/*while (e.hasMoreElements ()) { 
-            String key = (String) e.nextElement (); 
-            WookieTokenType value = (WookieTokenType) ht.get (key); 
-            System.out.println ("{ " + key + ", " + value + " }"); 
-        }*/
-		Iterator<String> iter = ht.iterator();
+     	Iterator<String> iter = ht.iterator();
 		while(iter.hasNext()){
 			System.out.println(iter.next());
 		}
-		
-        
-    }
+	}
 
-	// Set of lower-cased Pascal reserved word text strings.
+	// Set of lower-cased C reserved word text strings.
 	public static HashSet<String> RESERVED_WORDS = new HashSet<String>();
 	static {
 		WookieTokenType values[] = WookieTokenType.values();
@@ -87,8 +78,8 @@ public enum WookieTokenType implements TokenType {
 			RESERVED_WORDS.add(values[i].getText().toLowerCase());
 		}
 	}
-	// Hash table of Pascal special symbols. Each special symbol's text
-	// is the key to its Pascal token type.
+	// Hash table of C special symbols. Each special symbol's text
+	// is the key to its C token type.
 	public static Hashtable<String, WookieTokenType> SPECIAL_SYMBOLS = new Hashtable<String, WookieTokenType>();
 	static {
 		WookieTokenType values[] = WookieTokenType.values();
@@ -99,15 +90,5 @@ public enum WookieTokenType implements TokenType {
 		print(SPECIAL_SYMBOLS);
 		print(RESERVED_WORDS);
 	}
-	
-	
-	  
-	 
-	 
-	 
-
-	
-	
-	
-	
+		
 }
