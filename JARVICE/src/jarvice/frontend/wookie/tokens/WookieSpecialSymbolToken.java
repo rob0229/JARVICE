@@ -43,7 +43,7 @@ public class WookieSpecialSymbolToken extends WookieToken
         switch (currentChar) {
 
             // Single-character special symbols.
-            case '+':  case '-':  case '*':  case '/':  case ',':
+            case '+':  case '-': case '#': case '*':  case '/':  case ',':
             case ';':  case '\'': case '=':  case '(':  case ')':
             case '[':  case ']':  case '{':  case '}':  case '^': {
                 nextChar();  // consume character

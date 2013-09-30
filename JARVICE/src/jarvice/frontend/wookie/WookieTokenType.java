@@ -1,8 +1,10 @@
 package jarvice.frontend.wookie;
 
 
+import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.HashSet;
+
 import jarvice.frontend.TokenType;
 
 /**
@@ -16,7 +18,7 @@ public enum WookieTokenType implements TokenType {
 	// Reserved words.
 	AND, CASE, DO, ELSE, FOR, IF, NOT, OR, REPEAT, THEN, VAR, WHILE,
 	// Special symbols.
-	PLUS("+"), MINUS("-"), STAR("*"), SLASH("/"), COMMA(","), SEMICOLON(";"), COLON(":"), QUOTE("'"), EQUALS("="), NOT_EQUALS("!="), DOT("."), LESS_THAN("<"), LESS_EQUALS("<="), GREATER_EQUALS(">="), GREATER_THAN(
+	PLUS("+"), MINUS("-"), POUND_SIGN("#"), STAR("*"), SLASH("/"), COMMA(","), SEMICOLON(";"), COLON(":"), QUOTE("'"), EQUALS("="), NOT_EQUALS("!="), DOT("."), LESS_THAN("<"), LESS_EQUALS("<="), GREATER_EQUALS(">="), GREATER_THAN(
 			">"), LEFT_PAREN("("), RIGHT_PAREN(")"), LEFT_BRACKET("["), RIGHT_BRACKET("]"), LEFT_BRACE("{"), RIGHT_BRACE("}"), IDENTIFIER, INTEGER, REAL, STRING, ERROR, END_OF_FILE;
 	private static final int FIRST_RESERVED_INDEX = AND.ordinal();
 	private static final int LAST_RESERVED_INDEX = WHILE.ordinal();
@@ -49,6 +51,16 @@ public enum WookieTokenType implements TokenType {
 	public String getText() {
 		return text;
 	}
+	
+	public static void print (Hashtable<String, WookieTokenType> ht) { 
+        Enumeration<String> e = ht.keys (); 
+        while (e.hasMoreElements ()) { 
+            String key = (String) e.nextElement (); 
+            WookieTokenType value = (WookieTokenType) ht.get (key); 
+            System.out.println ("{ " + key + ", " + value + " }"); 
+        }
+        
+    }
 
 	// Set of lower-cased Pascal reserved word text strings.
 	public static HashSet<String> RESERVED_WORDS = new HashSet<String>();
@@ -66,5 +78,18 @@ public enum WookieTokenType implements TokenType {
 		for (int i = FIRST_SPECIAL_INDEX; i <= LAST_SPECIAL_INDEX; ++i) {
 			SPECIAL_SYMBOLS.put(values[i].getText(), values[i]);
 		}
+		
+		print(SPECIAL_SYMBOLS);
 	}
+	
+	
+	  
+	 
+	 
+	 
+
+	
+	
+	
+	
 }
