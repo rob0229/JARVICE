@@ -27,18 +27,18 @@ public class FrontendFactory
                                       Source source)
         throws Exception
     {
-        if (language.equalsIgnoreCase("Pascal") &&
+        if (language.equalsIgnoreCase("Wookie") &&
             type.equalsIgnoreCase("top-down"))
     	{
             Scanner scanner = new WookieScanner(source);
             return new WookieParserTD(scanner);
         }
-        else if (!language.equalsIgnoreCase("Pascal")) {
-            throw new Exception("Parser factory: Invalid language '" +
+        else if (!language.equalsIgnoreCase("Wookie")) {
+            throw new Exception("Wookie factory: Invalid language '" +
                                 language + "'");
         }
         else {
-            throw new Exception("Parser factory: Invalid type '" +
+            throw new Exception("Wookie factory: Invalid type '" +
                                 type + "'");
         }
     }
