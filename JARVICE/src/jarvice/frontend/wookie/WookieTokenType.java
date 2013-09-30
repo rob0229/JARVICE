@@ -4,6 +4,7 @@ package jarvice.frontend.wookie;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.HashSet;
+import java.util.Iterator;
 
 import jarvice.frontend.TokenType;
 
@@ -61,6 +62,22 @@ public enum WookieTokenType implements TokenType {
         }
         
     }
+	
+	public static void print (HashSet<String> ht) { 
+       // Enumeration<String> e = ht.contains(); 
+        
+		/*while (e.hasMoreElements ()) { 
+            String key = (String) e.nextElement (); 
+            WookieTokenType value = (WookieTokenType) ht.get (key); 
+            System.out.println ("{ " + key + ", " + value + " }"); 
+        }*/
+		Iterator<String> iter = ht.iterator();
+		while(iter.hasNext()){
+			System.out.println(iter.next());
+		}
+		
+        
+    }
 
 	// Set of lower-cased Pascal reserved word text strings.
 	public static HashSet<String> RESERVED_WORDS = new HashSet<String>();
@@ -80,6 +97,7 @@ public enum WookieTokenType implements TokenType {
 		}
 		
 		print(SPECIAL_SYMBOLS);
+		print(RESERVED_WORDS);
 	}
 	
 	
