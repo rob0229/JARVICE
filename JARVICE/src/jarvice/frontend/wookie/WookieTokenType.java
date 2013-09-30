@@ -17,7 +17,7 @@ public enum WookieTokenType implements TokenType {
 	AND, CASE, DO, ELSE, FOR, IF, NOT, OR, REPEAT, THEN, VAR, WHILE,
 	// Special symbols.
 	PLUS("+"), MINUS("-"), STAR("*"), SLASH("/"), COMMA(","), SEMICOLON(";"), COLON(":"), QUOTE("'"), EQUALS("="), NOT_EQUALS("!="), DOT("."), LESS_THAN("<"), LESS_EQUALS("<="), GREATER_EQUALS(">="), GREATER_THAN(
-			">"), LEFT_PAREN("("), RIGHT_PAREN(")"), LEFT_BRACKET("["), RIGHT_BRACKET("]"), LEFT_BRACE("{"), RIGHT_BRACE("}"), IDENTIFIER, INTEGER, STRING, ERROR, END_OF_FILE;
+			">"), LEFT_PAREN("("), RIGHT_PAREN(")"), LEFT_BRACKET("["), RIGHT_BRACKET("]"), LEFT_BRACE("{"), RIGHT_BRACE("}"), IDENTIFIER, INTEGER, REAL, STRING, ERROR, END_OF_FILE;
 	private static final int FIRST_RESERVED_INDEX = AND.ordinal();
 	private static final int LAST_RESERVED_INDEX = WHILE.ordinal();
 	private static final int FIRST_SPECIAL_INDEX = PLUS.ordinal();
