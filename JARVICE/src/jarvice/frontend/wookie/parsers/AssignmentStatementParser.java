@@ -8,7 +8,7 @@ import static jarvice.frontend.wookie.WookieTokenType.*;
 import static jarvice.frontend.wookie.WookieErrorCode.*;
 import static jarvice.intermediate.icodeimpl.ICodeNodeTypeImpl.*;
 import static jarvice.intermediate.icodeimpl.ICodeKeyImpl.*;
-
+import static jarvice.intermediate.symtabimpl.SymTabEntryImpl.*;
 /**
  * <h1>AssignmentStatementParser</h1>
  *

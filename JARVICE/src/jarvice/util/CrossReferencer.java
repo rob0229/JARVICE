@@ -65,7 +65,7 @@ public class CrossReferencer
         // Loop over the sorted list of symbol table entries.
         ArrayList<SymTabEntry> sorted = symTab.sortedEntries();
         for (SymTabEntry entry : sorted) {
-            ArrayList<Integer> lineNumbers = entry.getLineNumbers();
+            ArrayList<Integer> lineNumbers = entry.getLineNumber();
 
             // For each entry, print the identifier name
             // followed by the line numbers.

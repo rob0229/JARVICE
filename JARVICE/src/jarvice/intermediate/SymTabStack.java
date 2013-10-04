@@ -1,7 +1,8 @@
 package jarvice.intermediate;
 
-import jarvice.intermediate.SymTab;
-import jarvice.intermediate.SymTabEntry;
+
+
+import java.util.ArrayList;
 
 /**
  * <h1>SymTabStack</h1>
@@ -46,4 +47,3 @@ public interface SymTabStack
      */
     public SymTabEntry lookup(String name);
 }
-
