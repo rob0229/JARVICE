@@ -63,12 +63,12 @@ public class Wookie {
 				iCode = parser.getICode();
 				symTabStack = parser.getSymTabStack();
 
-				if (xref) {
+				if (true) {
 					CrossReferencer crossReferencer = new CrossReferencer();
 					crossReferencer.print(symTabStack);
 				}
 
-				if (intermediate) {
+				if (true) {
 					ParseTreePrinter treePrinter = new ParseTreePrinter(
 							System.out);
 					treePrinter.print(iCode);
