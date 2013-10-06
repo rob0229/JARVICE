@@ -7,8 +7,8 @@ import jarvice.frontend.*;
 import jarvice.intermediate.*;
 import jarvice.backend.*;
 import jarvice.message.*;
+import jarvice.util.*;
 
-import static jarvice.frontend.wookie.WookieTokenType.STRING;
 import static jarvice.message.MessageType.*;
 
 /**
@@ -29,7 +29,7 @@ public class Wookie {
 	private Parser parser; // language-independent parser
 	private Source source; // language-independent scanner
 	private ICode iCode; // generated intermediate code
-	private SymTab symTab; // generated symbol table
+	private SymTabStack symTabStack; // symbol table stack
 	private Backend backend; // backend
 
 	/**
@@ -59,10 +59,23 @@ public class Wookie {
 			parser.parse();
 			source.close();
 
-			iCode = parser.getICode();
-			symTab = parser.getSymTab();
+			if (parser.getErrorCount() == 0) {
+				iCode = parser.getICode();
+				symTabStack = parser.getSymTabStack();
 
-			backend.process(iCode, symTab);
+				if (true) {
+					CrossReferencer crossReferencer = new CrossReferencer();
+					crossReferencer.print(symTabStack);
+				}
+
+				if (true) {
+					ParseTreePrinter treePrinter = new ParseTreePrinter(
+							System.out);
+					treePrinter.print(iCode);
+				}
+
+				backend.process(iCode, symTabStack);
+			}
 		} catch (Exception ex) {
 			System.out.println("***** Internal translator error. *****");
 			ex.printStackTrace();
@@ -100,7 +113,7 @@ public class Wookie {
 
 			// Source path.
 			if (true) {
-				String path ="C:\\Users\\Matt\\Desktop\\hello.c";
+				String path = "C://Users//Rob//Desktop//hello.c";
 				new Wookie(operation, path, flags);
 			} else {
 				throw new Exception();
@@ -140,9 +153,6 @@ public class Wookie {
 		}
 	}
 
-	private static final String TOKEN_FORMAT = ">>> %-15s line=%03d, pos=%2d, text=\"%s\"";
-	private static final String VALUE_FORMAT = ">>>                 value=%s";
-
 	private static final String PARSER_SUMMARY_FORMAT = "\n%,20d source lines."
 			+ "\n%,20d syntax errors."
 			+ "\n%,20.2f seconds total parsing time.\n";
@@ -164,24 +174,14 @@ public class Wookie {
 
 			switch (type) {
 
-			case TOKEN: {
-				Object body[] = (Object[]) message.getBody();
-				int line = (Integer) body[0];
-				int position = (Integer) body[1];
-				TokenType tokenType = (TokenType) body[2];
-				String tokenText = (String) body[3];
-				Object tokenValue = body[4];
+			case PARSER_SUMMARY: {
+				Number body[] = (Number[]) message.getBody();
+				int statementCount = (Integer) body[0];
+				int syntaxErrors = (Integer) body[1];
+				float elapsedTime = (Float) body[2];
 
-				System.out.println(String.format(TOKEN_FORMAT, tokenType, line,
-						position, tokenText));
-				if (tokenValue != null) {
-					if (tokenType == STRING) {
-						tokenValue = "\"" + tokenValue + "\"";
-					}
-
-					System.out.println(String.format(VALUE_FORMAT, tokenValue));
-				}
-
+				System.out.printf(PARSER_SUMMARY_FORMAT, statementCount,
+						syntaxErrors, elapsedTime);
 				break;
 			}
 
@@ -210,17 +210,6 @@ public class Wookie {
 				}
 
 				System.out.println(flagBuffer.toString());
-				break;
-			}
-
-			case PARSER_SUMMARY: {
-				Number body[] = (Number[]) message.getBody();
-				int statementCount = (Integer) body[0];
-				int syntaxErrors = (Integer) body[1];
-				float elapsedTime = (Float) body[2];
-
-				System.out.printf(PARSER_SUMMARY_FORMAT, statementCount,
-						syntaxErrors, elapsedTime);
 				break;
 			}
 			}

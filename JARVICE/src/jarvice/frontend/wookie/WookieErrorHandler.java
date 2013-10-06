@@ -8,10 +8,10 @@ import static jarvice.frontend.wookie.WookieErrorCode.*;
 import static jarvice.message.MessageType.SYNTAX_ERROR;
 
 /**
- * <h1>PascalErrorHandler</h1>
+ * <h1>WookieErrorHandler</h1>
  * 
  * <p>
- * Error handler Pascal syntax errors.
+ * Error handler Wookie syntax errors.
  * </p>
  */
 public class WookieErrorHandler {

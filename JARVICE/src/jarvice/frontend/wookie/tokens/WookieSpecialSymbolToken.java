@@ -1,6 +1,5 @@
 package jarvice.frontend.wookie.tokens;
 
-
 import jarvice.frontend.*;
 import jarvice.frontend.wookie.*;
 
@@ -9,109 +8,127 @@ import static jarvice.frontend.wookie.WookieErrorCode.*;
 
 /**
  * <h1>PascalSpecialSymbolToken</h1>
- *
- * <p> Pascal special symbol tokens.</p>
- *
- * <p>Copyright (c) 2009 by Ronald Mak</p>
- * <p>For instructional purposes only.  No warranties.</p>
+ * 
+ * <p>
+ * Pascal special symbol tokens.
+ * </p>
+ * 
+ * <p>
+ * Copyright (c) 2009 by Ronald Mak
+ * </p>
+ * <p>
+ * For instructional purposes only. No warranties.
+ * </p>
  */
-public class WookieSpecialSymbolToken extends WookieToken
-{
-    /**
-     * Constructor.
-     * @param source the source from where to fetch the token's characters.
-     * @throws Exception if an error occurred.
-     */
-    public WookieSpecialSymbolToken(Source source)
-        throws Exception
-    {
-        super(source);
-    }
+public class WookieSpecialSymbolToken extends WookieToken {
+	/**
+	 * Constructor.
+	 * 
+	 * @param source
+	 *            the source from where to fetch the token's characters.
+	 * @throws Exception
+	 *             if an error occurred.
+	 */
+	public WookieSpecialSymbolToken(Source source) throws Exception {
+		super(source);
+	}
 
-    /**
-     * Extract a Pascal special symbol token from the source.
-     * @throws Exception if an error occurred.
-     */
-    protected void extract()
-        throws Exception
-    {
-        char currentChar = currentChar();
+	/**
+	 * Extract a Pascal special symbol token from the source.
+	 * 
+	 * @throws Exception
+	 *             if an error occurred.
+	 */
+	protected void extract() throws Exception {
+		char currentChar = currentChar();
 
-        text = Character.toString(currentChar);
-        type = null;
+		text = Character.toString(currentChar);
+		type = null;
 
-        switch (currentChar) {
+		switch (currentChar) {
 
-            // Single-character special symbols.
-            case '+':  case '-': case '#': case '*':  case '/':  case ',':
-            case ';':  case '\'': case '=':  case '(':  case ')':
-            case '[':  case ']':  case '{':  case '}':  case '^': {
-                nextChar();  // consume character
-                break;
-            }
+		// Single-character special symbols.
+		case '+':
+		case '-':
+		case '#':
+		case ',':
+		case '*':
+		case ';':
+		case '\'':
+		case '/':
+		case '=':
+		case '(':
+		case ')':
+		case '[':
+		case ']':
+		case '{':
+		case '}':
+		case '^': {
+			nextChar(); // consume character
+			break;
+		}
 
-            // : or :=
-            case ':': {
-                currentChar = nextChar();  // consume ':';
+		// : or :=
+		case ':': {
+			currentChar = nextChar(); // consume ':';
 
-                if (currentChar == '=') {
-                    text += currentChar;
-                    nextChar();  // consume '='
-                }
+			if (currentChar == '=') {
+				text += currentChar;
+				nextChar(); // consume '='
+			}
 
-                break;
-            }
+			break;
+		}
 
-            // < or <= or <>
-            case '<': {
-                currentChar = nextChar();  // consume '<';
+		// < or <= or <>
+		case '<': {
+			currentChar = nextChar(); // consume '<';
 
-                if (currentChar == '=') {
-                    text += currentChar;
-                    nextChar();  // consume '='
-                }
-                else if (currentChar == '>') {
-                    text += currentChar;
-                    nextChar();  // consume '>'
-                }
+			if (currentChar == '=') {
+				text += currentChar;
+				nextChar(); // consume '='
+			} else if (currentChar == '>') {
+				text += currentChar;
+				nextChar(); // consume '>'
+			}
 
-                break;
-            }
+			break;
+		}
 
-            // > or >=
-            case '>': {
-                currentChar = nextChar();  // consume '>';
+		// > or >=
+		case '>': {
+			currentChar = nextChar(); // consume '>';
 
-                if (currentChar == '=') {
-                    text += currentChar;
-                    nextChar();  // consume '='
-                }
+			if (currentChar == '=') {
+				text += currentChar;
+				nextChar(); // consume '='
+			}
 
-                break;
-            }
+			break;
+		}
 
-            // . or ..
-            case '.': {
-                currentChar = nextChar();  // consume '.';
+		// . or ..
+		case '.': {
+			currentChar = nextChar(); // consume '.';
 
-                if (currentChar == '.') {
-                    text += currentChar;
-                    nextChar();  // consume '.'
-                }
+			if (currentChar == '.') {
+				text += currentChar;
+				nextChar(); // consume '.'
+			}
 
-                break;
-            }
+			break;
+		}
 
-            default: {
-                nextChar();  // consume bad character
-                type = ERROR;
-                value = INVALID_CHARACTER;
-            }
-        }
+		default: {
+			nextChar(); // consume bad character
+			type = ERROR;
+			value = INVALID_CHARACTER;
+		}
+		}
 
-        // Set the type if it wasn't an error.
-        if (type == null) {
-            type = SPECIAL_SYMBOLS.get(text);
-        }
-    }
+		// Set the type if it wasn't an error.
+		if (type == null) {
+			type = SPECIAL_SYMBOLS.get(text);
+		}
+	}
 }

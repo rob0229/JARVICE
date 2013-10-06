@@ -2,7 +2,7 @@ package jarvice.backend.compiler;
 
 import jarvice.backend.*;
 import jarvice.intermediate.ICode;
-import jarvice.intermediate.SymTab;
+import jarvice.intermediate.SymTabStack;
 import jarvice.message.*;
 
 import static jarvice.message.MessageType.COMPILER_SUMMARY;
@@ -24,16 +24,16 @@ public class CodeGenerator extends Backend
      * @param symTab the symbol table.
      * @throws Exception if an error occurred.
      */
-    public void process(ICode iCode, SymTab symTab)
-        throws Exception
-    {
-        long startTime = System.currentTimeMillis();
-        float elapsedTime = (System.currentTimeMillis() - startTime)/1000f;
-        int instructionCount = 0;
+	public void process(ICode iCode, SymTabStack symTabStack)
+	        throws Exception
+	    {
+	        long startTime = System.currentTimeMillis();
+	        float elapsedTime = (System.currentTimeMillis() - startTime)/1000f;
+	        int instructionCount = 0;
 
-        // Send the compiler summary message.
-        sendMessage(new Message(COMPILER_SUMMARY,
-                                new Number[] {instructionCount,
-                                              elapsedTime}));
-    }
-}
+	        // Send the compiler summary message.
+	        sendMessage(new Message(COMPILER_SUMMARY,
+	                                new Number[] {instructionCount,
+	                                              elapsedTime}));
+	    }
+	}

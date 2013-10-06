@@ -1,6 +1,7 @@
 package jarvice.intermediate.symtabimpl;
 
 
+
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -90,3 +91,4 @@ public class SymTabEntryImpl
         return get(key);
     }
 }
+
