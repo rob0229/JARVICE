@@ -2,11 +2,17 @@ package jarvice.frontend.wookie;
 
 //WookieScanner Class
 
-import jarvice.frontend.*;
-import jarvice.frontend.wookie.tokens.*;
 import static jarvice.frontend.Source.EOF;
-import static jarvice.frontend.wookie.WookieTokenType.*;
-import static jarvice.frontend.wookie.WookieErrorCode.*;
+import static jarvice.frontend.wookie.WookieErrorCode.INVALID_CHARACTER;
+import jarvice.frontend.EofToken;
+import jarvice.frontend.Scanner;
+import jarvice.frontend.Source;
+import jarvice.frontend.Token;
+import jarvice.frontend.wookie.tokens.WookieErrorToken;
+import jarvice.frontend.wookie.tokens.WookieNumberToken;
+import jarvice.frontend.wookie.tokens.WookieSpecialSymbolToken;
+import jarvice.frontend.wookie.tokens.WookieStringToken;
+import jarvice.frontend.wookie.tokens.WookieWordToken;
 
 public class WookieScanner extends Scanner {
 	// Constructor
@@ -35,9 +41,16 @@ public class WookieScanner extends Scanner {
 			token = new WookieWordToken(source);
 		} else if (Character.isDigit(currentChar)) {
 			token = new WookieNumberToken(source);
-		} else if (currentChar == '\"') {
+		} 
+		
+//**************CHANGE THIS FOR C CHAR[]		
+		
+		else if (currentChar == '\"') {
 			token = new WookieStringToken(source);
 		}
+		
+		
+		
 
 		else if (WookieTokenType.SPECIAL_SYMBOLS.containsKey(Character
 				.toString(currentChar))) {
@@ -58,6 +71,7 @@ public class WookieScanner extends Scanner {
 	 *             if an error occurred.
 	 */
 	private void skipWhiteSpace() throws Exception {
+
 		String s = " ";
 		char currentChar = currentChar();
 
@@ -74,35 +88,37 @@ public class WookieScanner extends Scanner {
 					currentChar = nextChar(); // consume the '}'
 				}
 			}
-
-			// Start of a comment?
-			if (currentChar == '{') {
-				do {
-					currentChar = nextChar(); // consume comment characters
-				} while ((currentChar != '}') && (currentChar != EOF));
-				// Found closing '}'?
-				if (currentChar == '}') {
-					currentChar = nextChar(); // consume the '}'
-				}
-			}
-
+			
 			// comment line
-			else if (currentChar == '/') {
-				currentChar = nextChar();
+			
+			
+			else if ((currentChar == '/') && (source.peekChar() == '*')) {
 
-				// found closing */ ?
+
+				currentChar = nextChar(); //consumes '/'				
 				if (currentChar == '*') {
 					do {
 						currentChar = nextChar(); // consume comment characters
-					} while (currentChar != '*');
-
-					if (currentChar == '*' && nextChar() == '/') {
+					} while (!((currentChar == '*') && (source.peekChar() == '/')));
+					// found closing */ ?
+					if ((currentChar == '*') && (source.peekChar() == '/')) {
 						currentChar = nextChar(); // consume the '*'
 						currentChar = nextChar(); // consume the '/'
 					}
 				}
 			}
 
+			else if ((currentChar == '/') && (source.peekChar() == '/')) {
+
+					currentChar = nextChar(); //consumes '/'				
+					if (currentChar == '/') {
+						do {
+							
+							currentChar = nextChar(); // consume comment characters
+							} while (!(currentChar == source.EOL)); 	
+					}
+			}			
+			
 			// Not a comment.
 			else {
 				currentChar = nextChar(); // consume whitespace character
