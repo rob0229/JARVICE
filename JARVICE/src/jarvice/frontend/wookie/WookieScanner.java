@@ -43,7 +43,7 @@ public class WookieScanner extends Scanner {
 			token = new WookieNumberToken(source);
 		} 
 		
-//**************CHANGE THIS FOR C CHAR[]		
+//**************CHANGE THIS FOR CHAR[] in c		
 		
 		else if (currentChar == '\"') {
 			token = new WookieStringToken(source);

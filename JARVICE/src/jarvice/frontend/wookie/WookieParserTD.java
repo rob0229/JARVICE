@@ -48,7 +48,7 @@ public class WookieParserTD extends Parser
     }
 
     /**
-     * Parse a Pascal source program and generate the symbol table
+     * Parse a Wookie source program and generate the symbol table
      * and the intermediate code.
      * @throws Exception if an error occurred.
      */
@@ -62,7 +62,7 @@ public class WookieParserTD extends Parser
             Token token = nextToken();
             ICodeNode rootNode = null;
 
-            // Look for the BEGIN token to parse a compound statement.
+            // Look for the ( token to parse a compound statement.
             if (token.getType() == LEFT_PAREN) {
                 StatementParser statementParser = new StatementParser(this);
                 rootNode = statementParser.parse(token);
@@ -72,10 +72,7 @@ public class WookieParserTD extends Parser
                 errorHandler.flag(token, UNEXPECTED_TOKEN, this);
             }
 
-            // Look for the final period.
-           // if (token.getType() != DOT) {
-            //    errorHandler.flag(token, MISSING_PERIOD, this);
-           // }
+           
             token = currentToken();
 
             // Set the parse tree root node.
