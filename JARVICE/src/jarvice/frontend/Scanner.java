@@ -5,13 +5,9 @@ import jarvice.frontend.Source;
 import jarvice.frontend.Token;
 
 /**
- * <h1>Scanner</h1>
+ * Scanner
  *
- * <p>A language-independent framework class.  This abstract scanner class
- * will be implemented by language-specific subclasses.</p>
- *
- * <p>Copyright (c) 2009 by Ronald Mak</p>
- * <p>For instructional purposes only.  No warranties.</p>
+ * 
  */
 public abstract class Scanner
 {

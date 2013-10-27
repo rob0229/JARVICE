@@ -12,12 +12,9 @@ import static jarvice.frontend.wookie.WookieErrorCode.*;
 import static jarvice.message.MessageType.PARSER_SUMMARY;
 
 /**
- * <h1>PascalParserTD</h1>
+ * PascalParserTD
  *
- * <p>The top-down Pascal parser.</p>
- *
- * <p>Copyright (c) 2009 by Ronald Mak</p>
- * <p>For instructional purposes only.  No warranties.</p>
+ * 
  */
 public class WookieParserTD extends Parser
 {
@@ -51,7 +48,7 @@ public class WookieParserTD extends Parser
     }
 
     /**
-     * Parse a Pascal source program and generate the symbol table
+     * Parse a Wookie source program and generate the symbol table
      * and the intermediate code.
      * @throws Exception if an error occurred.
      */
@@ -65,8 +62,8 @@ public class WookieParserTD extends Parser
             Token token = nextToken();
             ICodeNode rootNode = null;
 
-            // Look for the BEGIN token to parse a compound statement.
-            if (token.getType() == BEGIN) {
+            // Look for the ( token to parse a compound statement.
+            if (token.getType() == LEFT_PAREN) {
                 StatementParser statementParser = new StatementParser(this);
                 rootNode = statementParser.parse(token);
                 token = currentToken();
@@ -75,10 +72,7 @@ public class WookieParserTD extends Parser
                 errorHandler.flag(token, UNEXPECTED_TOKEN, this);
             }
 
-            // Look for the final period.
-            if (token.getType() != DOT) {
-                errorHandler.flag(token, MISSING_PERIOD, this);
-            }
+           
             token = currentToken();
 
             // Set the parse tree root node.

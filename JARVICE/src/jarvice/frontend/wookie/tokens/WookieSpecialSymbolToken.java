@@ -52,10 +52,10 @@ public class WookieSpecialSymbolToken extends WookieToken {
 		case '-':
 		case '#':
 		case ',':
-		case '*':
+		//case '*':
 		case ';':
 		case '\'':
-		case '/':
+		//case '/':
 		case '=':
 		case '(':
 		case ')':
@@ -68,7 +68,30 @@ public class WookieSpecialSymbolToken extends WookieToken {
 			break;
 		}
 
-		// : or :=
+		// : or := /* or */
+		
+		case '/': {
+			currentChar = nextChar(); // consume ':';
+
+			if (currentChar == '*') {
+				text += currentChar;
+				nextChar(); // consume '*'
+			}
+
+			break;
+		}
+
+		case '*': {
+			currentChar = nextChar(); // consume ':';
+
+			if (currentChar == '/') {
+				text += currentChar;
+				nextChar(); // consume '/'
+			}
+
+			break;
+		}
+
 		case ':': {
 			currentChar = nextChar(); // consume ':';
 

@@ -6,9 +6,9 @@ import jarvice.frontend.wookie.*;
 import static jarvice.frontend.wookie.WookieTokenType.*;
 
 /**
- * <h1>PascalWordToken</h1>
+ * <h1>WookieWordToken</h1>
  *
- * <p> Pascal word tokens (identifiers and reserved words).</p>
+ * <p> Wookie word tokens (identifiers and reserved words).</p>
  *
  * <p>Copyright (c) 2009 by Ronald Mak</p>
  * <p>For instructional purposes only.  No warranties.</p>
@@ -27,7 +27,7 @@ public class WookieWordToken extends WookieToken
     }
 
     /**
-     * Extract a Pascal word token from the source.
+     * Extract a Wookie word token from the source.
      * @throws Exception if an error occurred.
      */
     protected void extract()

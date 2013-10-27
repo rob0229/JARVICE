@@ -3,12 +3,14 @@ package jarvice.frontend;
 import java.io.BufferedReader;
 import java.io.FileReader;
 
+import jarvice.message.Message;
+import jarvice.message.MessageListener;
+import jarvice.message.MessageType;
 import jarvice.frontend.*;
 import jarvice.intermediate.*;
 import jarvice.backend.*;
 import jarvice.message.*;
 import jarvice.util.*;
-
 import static jarvice.message.MessageType.*;
 
 /**
@@ -162,103 +164,145 @@ public class Wookie {
 	/**
 	 * Listener for parser messages.
 	 */
-	private class ParserMessageListener implements MessageListener {
-		/**
-		 * Called by the parser whenever it produces a message.
-		 * 
-		 * @param message
-		 *            the message.
-		 */
-		public void messageReceived(Message message) {
-			MessageType type = message.getType();
+	 private class ParserMessageListener implements MessageListener
+	    {
+	        /**
+	         * Called by the parser whenever it produces a message.
+	         * @param message the message.
+	         */
+	        public void messageReceived(Message message)
+	        {
+	            MessageType type = message.getType();
 
-			switch (type) {
+	            switch (type) {
 
-			case PARSER_SUMMARY: {
-				Number body[] = (Number[]) message.getBody();
-				int statementCount = (Integer) body[0];
-				int syntaxErrors = (Integer) body[1];
-				float elapsedTime = (Float) body[2];
+	                case PARSER_SUMMARY: {
+	                    Number body[] = (Number[]) message.getBody();
+	                    int statementCount = (Integer) body[0];
+	                    int syntaxErrors = (Integer) body[1];
+	                    float elapsedTime = (Float) body[2];
 
-				System.out.printf(PARSER_SUMMARY_FORMAT, statementCount,
-						syntaxErrors, elapsedTime);
-				break;
-			}
+	                    System.out.printf(PARSER_SUMMARY_FORMAT,
+	                                      statementCount, syntaxErrors,
+	                                      elapsedTime);
+	                    break;
+	                }
 
-			case SYNTAX_ERROR: {
-				Object body[] = (Object[]) message.getBody();
-				int lineNumber = (Integer) body[0];
-				int position = (Integer) body[1];
-				String tokenText = (String) body[2];
-				String errorMessage = (String) body[3];
+	                case SYNTAX_ERROR: {
+	                    Object body[] = (Object []) message.getBody();
+	                    int lineNumber = (Integer) body[0];
+	                    int position = (Integer) body[1];
+	                    String tokenText = (String) body[2];
+	                    String errorMessage = (String) body[3];
 
-				int spaceCount = PREFIX_WIDTH + position;
-				StringBuilder flagBuffer = new StringBuilder();
+	                    int spaceCount = PREFIX_WIDTH + position;
+	                    StringBuilder flagBuffer = new StringBuilder();
 
-				// Spaces up to the error position.
-				for (int i = 1; i < spaceCount; ++i) {
-					flagBuffer.append(' ');
-				}
+	                    // Spaces up to the error position.
+	                    for (int i = 1; i < spaceCount; ++i) {
+	                        flagBuffer.append(' ');
+	                    }
 
-				// A pointer to the error followed by the error message.
-				flagBuffer.append("^\n*** ").append(errorMessage);
+	                    // A pointer to the error followed by the error message.
+	                    flagBuffer.append("^\n*** ").append(errorMessage);
 
-				// Text, if any, of the bad token.
-				if (tokenText != null) {
-					flagBuffer.append(" [at \"").append(tokenText)
-							.append("\"]");
-				}
+	                    // Text, if any, of the bad token.
+	                    if (tokenText != null) {
+	                        flagBuffer.append(" [at \"").append(tokenText)
+	                            .append("\"]");
+	                    }
 
-				System.out.println(flagBuffer.toString());
-				break;
-			}
-			}
-		}
+	                    System.out.println(flagBuffer.toString());
+	                    break;
+	                }
+	            }
+	        }
+	    }
+
+	    private static final String INTERPRETER_SUMMARY_FORMAT =
+	        "\n%,20d statements executed." +
+	        "\n%,20d runtime errors." +
+	        "\n%,20.2f seconds total execution time.\n";
+
+	    private static final String COMPILER_SUMMARY_FORMAT =
+	        "\n%,20d instructions generated." +
+	        "\n%,20.2f seconds total code generation time.\n";
+
+	    private static final String LINE_FORMAT =
+	        ">>> AT LINE %03d\n";
+
+	    private static final String ASSIGN_FORMAT =
+	        ">>> LINE %03d: %s = %s\n";
+
+	    /**
+	     * Listener for back end messages.
+	     */
+	    private class BackendMessageListener implements MessageListener
+	    {
+	        private boolean firstOutputMessage = true;
+
+	        /**
+	         * Called by the back end whenever it produces a message.
+	         * @param message the message.
+	         */
+	        public void messageReceived(Message message)
+	        {
+	            MessageType type = message.getType();
+
+	            switch (type) {
+
+	                case ASSIGN: {
+	                    if (firstOutputMessage) {
+	                        System.out.println("\n===== OUTPUT =====\n");
+	                        firstOutputMessage = false;
+	                    }
+
+	                    Object body[] = (Object[]) message.getBody();
+	                    int lineNumber = (Integer) body[0];
+	                    String variableName = (String) body[1];
+	                    Object value = body[2];
+
+	                    System.out.printf(ASSIGN_FORMAT,
+	                                      lineNumber, variableName, value);
+	                    break;
+	                }
+
+	                case RUNTIME_ERROR: {
+	                    Object body[] = (Object []) message.getBody();
+	                    String errorMessage = (String) body[0];
+	                    Integer lineNumber = (Integer) body[1];
+
+	                    System.out.print("*** RUNTIME ERROR");
+	                    if (lineNumber != null) {
+	                        System.out.print(" AT LINE " +
+	                                         String.format("%03d", lineNumber));
+	                    }
+	                    System.out.println(": " + errorMessage);
+	                    break;
+	                }
+
+	                case INTERPRETER_SUMMARY: {
+	                    Number body[] = (Number[]) message.getBody();
+	                    int executionCount = (Integer) body[0];
+	                    int runtimeErrors = (Integer) body[1];
+	                    float elapsedTime = (Float) body[2];
+
+	                    System.out.printf(INTERPRETER_SUMMARY_FORMAT,
+	                                      executionCount, runtimeErrors,
+	                                      elapsedTime);
+	                    break;
+	                }
+
+	                case COMPILER_SUMMARY: {
+	                    Number body[] = (Number[]) message.getBody();
+	                    int instructionCount = (Integer) body[0];
+	                    float elapsedTime = (Float) body[1];
+
+	                    System.out.printf(COMPILER_SUMMARY_FORMAT,
+	                                      instructionCount, elapsedTime);
+	                    break;
+	                }
+	            }
+	        }
+	    }
 	}
-
-	private static final String INTERPRETER_SUMMARY_FORMAT = "\n%,20d statements executed."
-			+ "\n%,20d runtime errors."
-			+ "\n%,20.2f seconds total execution time.\n";
-
-	private static final String COMPILER_SUMMARY_FORMAT = "\n%,20d instructions generated."
-			+ "\n%,20.2f seconds total code generation time.\n";
-
-	/**
-	 * Listener for back end messages.
-	 */
-	private class BackendMessageListener implements MessageListener {
-		/**
-		 * Called by the back end whenever it produces a message.
-		 * 
-		 * @param message
-		 *            the message.
-		 */
-		public void messageReceived(Message message) {
-			MessageType type = message.getType();
-
-			switch (type) {
-
-			case INTERPRETER_SUMMARY: {
-				Number body[] = (Number[]) message.getBody();
-				int executionCount = (Integer) body[0];
-				int runtimeErrors = (Integer) body[1];
-				float elapsedTime = (Float) body[2];
-
-				System.out.printf(INTERPRETER_SUMMARY_FORMAT, executionCount,
-						runtimeErrors, elapsedTime);
-				break;
-			}
-
-			case COMPILER_SUMMARY: {
-				Number body[] = (Number[]) message.getBody();
-				int instructionCount = (Integer) body[0];
-				float elapsedTime = (Float) body[1];
-
-				System.out.printf(COMPILER_SUMMARY_FORMAT, instructionCount,
-						elapsedTime);
-				break;
-			}
-			}
-		}
-	}
-}
