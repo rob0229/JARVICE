@@ -47,6 +47,7 @@ public enum WookieErrorCode
     MISSING_OF("Missing OF"),
     MISSING_PERIOD("Missing ."),
     MISSING_PROGRAM("Missing PROGRAM"),
+    MISSING_RIGHT_BRACE("Missing Right Brace"),
     MISSING_RIGHT_BRACKET("Missing ]"),
     MISSING_RIGHT_PAREN("Missing )"),
     MISSING_SEMICOLON("Missing ;"),

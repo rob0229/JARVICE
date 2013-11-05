@@ -45,7 +45,7 @@ public class WookieScanner extends Scanner {
 		
 //**************CHANGE THIS FOR CHAR[] in c		
 		
-		else if (currentChar == '\"') {
+		else if (currentChar == '\'') {
 			token = new WookieStringToken(source);
 		}
 		
@@ -72,11 +72,10 @@ public class WookieScanner extends Scanner {
 	 */
 	private void skipWhiteSpace() throws Exception {
 
-		String s = " ";
+		
 		char currentChar = currentChar();
 
-		while (Character.isWhitespace(currentChar) || (currentChar == '{')
-				|| (currentChar == '/') || (currentChar == '#')) {
+		while (Character.isWhitespace(currentChar) || (currentChar == '/') || (currentChar == '#')) {
 
 			// Start of import statement?
 			if (currentChar == '#') {
@@ -118,7 +117,9 @@ public class WookieScanner extends Scanner {
 							} while (!(currentChar == source.EOL)); 	
 					}
 			}			
-			
+			else if (currentChar == '/'){
+				break;
+			}
 			// Not a comment.
 			else {
 				currentChar = nextChar(); // consume whitespace character

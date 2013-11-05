@@ -57,17 +57,22 @@ public class WookieParserTD extends Parser
     {
         long startTime = System.currentTimeMillis();
         iCode = ICodeFactory.createICode();
-
+       
         try {
+        	
             Token token = nextToken();
             ICodeNode rootNode = null;
-
             // Look for the ( token to parse a compound statement.
-            if (token.getType() == LEFT_PAREN) {
+            
+ //ADDED THIS TO CALL COMPOUND PARSER           
+            if (token.getType() == LEFT_BRACE) {
                 StatementParser statementParser = new StatementParser(this);
                 rootNode = statementParser.parse(token);
                 token = currentToken();
             }
+            
+            
+            
             else {
                 errorHandler.flag(token, UNEXPECTED_TOKEN, this);
             }

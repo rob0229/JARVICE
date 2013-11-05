@@ -28,7 +28,7 @@ public abstract class Scanner
      */
     public Token currentToken()
     {	
-    	System.out.println(currentToken);
+    	//System.out.println(currentToken);********************************************************************************************************************
         return currentToken;
     }
 

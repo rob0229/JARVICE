@@ -7,9 +7,7 @@ import jarvice.frontend.*;
 import jarvice.frontend.wookie.*;
 import jarvice.intermediate.*;
 import jarvice.intermediate.icodeimpl.*;
-
 import static jarvice.frontend.wookie.WookieTokenType.*;
-import static jarvice.frontend.wookie.WookieTokenType.NOT;
 import static jarvice.frontend.wookie.WookieErrorCode.*;
 import static jarvice.intermediate.icodeimpl.ICodeNodeTypeImpl.*;
 import static jarvice.intermediate.icodeimpl.ICodeKeyImpl.*;
@@ -42,6 +40,7 @@ public class ExpressionParser extends StatementParser
     public ICodeNode parse(Token token)
         throws Exception
     {
+    	
         return parseExpression(token);
     }
 
@@ -238,7 +237,7 @@ public class ExpressionParser extends StatementParser
     {
         TokenType tokenType = token.getType();
         ICodeNode rootNode = null;
-
+       
         switch ((WookieTokenType) tokenType) {
 
             case IDENTIFIER: {
@@ -258,7 +257,17 @@ public class ExpressionParser extends StatementParser
                 token = nextToken();  // consume the identifier
                 break;
             }
+//ADDED BY ROB **************************************************************
+            case INT: {
+                // Create an INTEGER_CONSTANT node as the root node.
+                rootNode = ICodeFactory.createICodeNode(INTEGER_CONSTANT);
+                rootNode.setAttribute(VALUE, token.getValue());
 
+                token = nextToken();  // consume the number
+                break;
+            }
+            
+           
             case INTEGER: {
                 // Create an INTEGER_CONSTANT node as the root node.
                 rootNode = ICodeFactory.createICodeNode(INTEGER_CONSTANT);
@@ -272,14 +281,12 @@ public class ExpressionParser extends StatementParser
                 // Create an REAL_CONSTANT node as the root node.
                 rootNode = ICodeFactory.createICodeNode(REAL_CONSTANT);
                 rootNode.setAttribute(VALUE, token.getValue());
-
                 token = nextToken();  // consume the number
                 break;
             }
-
-            case STRING: {
+          
+            case STRING: {            	
                 String value = (String) token.getValue();
-
                 // Create a STRING_CONSTANT node as the root node.
                 rootNode = ICodeFactory.createICodeNode(STRING_CONSTANT);
                 rootNode.setAttribute(VALUE, value);

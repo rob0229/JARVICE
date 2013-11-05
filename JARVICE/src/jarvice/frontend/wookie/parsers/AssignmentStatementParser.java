@@ -3,74 +3,84 @@ package jarvice.frontend.wookie.parsers;
 import jarvice.frontend.*;
 import jarvice.frontend.wookie.*;
 import jarvice.intermediate.*;
-
 import static jarvice.frontend.wookie.WookieTokenType.*;
 import static jarvice.frontend.wookie.WookieErrorCode.*;
 import static jarvice.intermediate.icodeimpl.ICodeNodeTypeImpl.*;
 import static jarvice.intermediate.icodeimpl.ICodeKeyImpl.*;
 import static jarvice.intermediate.symtabimpl.SymTabEntryImpl.*;
+
 /**
  * <h1>AssignmentStatementParser</h1>
- *
- * <p>Parse a Pascal assignment statement.</p>
- *
- * <p>Copyright (c) 2009 by Ronald Mak</p>
- * <p>For instructional purposes only.  No warranties.</p>
+ * 
+ * <p>
+ * Parse a Pascal assignment statement.
+ * </p>
+ * 
+ * <p>
+ * Copyright (c) 2009 by Ronald Mak
+ * </p>
+ * <p>
+ * For instructional purposes only. No warranties.
+ * </p>
  */
-public class AssignmentStatementParser extends StatementParser
-{
-    /**
-     * Constructor.
-     * @param parent the parent parser.
-     */
-    public AssignmentStatementParser(WookieParserTD parent)
-    {
-        super(parent);
-    }
+public class AssignmentStatementParser extends StatementParser {
+	/**
+	 * Constructor.
+	 * 
+	 * @param parent
+	 *            the parent parser.
+	 */
+	public AssignmentStatementParser(WookieParserTD parent) {
+		super(parent);
+	}
 
-    /**
-     * Parse an assignment statement.
-     * @param token the initial token.
-     * @return the root node of the generated parse tree.
-     * @throws Exception if an error occurred.
-     */
-    public ICodeNode parse(Token token)
-        throws Exception
-    {
-        // Create the ASSIGN node.
-        ICodeNode assignNode = ICodeFactory.createICodeNode(ASSIGN);
+	/**
+	 * Parse an assignment statement.
+	 * 
+	 * @param token
+	 *            the initial token.
+	 * @return the root node of the generated parse tree.
+	 * @throws Exception
+	 *             if an error occurred.
+	 */
+	public ICodeNode parse(Token token) throws Exception {
+		// Create the ASSIGN node.
+		ICodeNode assignNode = ICodeFactory.createICodeNode(ASSIGN);
 
-        // Look up the target identifer in the symbol table stack.
-        // Enter the identifier into the table if it's not found.
-        String targetName = token.getText().toLowerCase();
-        SymTabEntry targetId = symTabStack.lookup(targetName);
-        if (targetId == null) {
-            targetId = symTabStack.enterLocal(targetName);
-        }
-        targetId.appendLineNumber(token.getLineNumber());
+		// Look up the target identifer in the symbol table stack.
+		// Enter the identifier into the table if it's not found.
+		String targetName = token.getText().toLowerCase();
+		SymTabEntry targetId = symTabStack.lookup(targetName);
+		if (targetId == null) {
+			targetId = symTabStack.enterLocal(targetName);
+		}
+		targetId.appendLineNumber(token.getLineNumber());
 
-        token = nextToken();  // consume the identifier token
+		token = nextToken(); // consume the identifier token
 
-        // Create the variable node and set its name attribute.
-        ICodeNode variableNode = ICodeFactory.createICodeNode(VARIABLE);
-        variableNode.setAttribute(ID, targetId);
+		// Create the variable node and set its name attribute.
+		ICodeNode variableNode = ICodeFactory.createICodeNode(VARIABLE);
+		variableNode.setAttribute(ID, targetId);
 
-        // The ASSIGN node adopts the variable node as its first child.
-        assignNode.addChild(variableNode);
+		// The ASSIGN node adopts the variable node as its first child.
+		assignNode.addChild(variableNode);
+		// CHANGED from := to just = by
+		// ROB**************************************************************************
+		// Look for the = token.
 
-        // Look for the := token.
-        if (token.getType() == COLON_EQUALS) {
-            token = nextToken();  // consume the :=
-        }
-        else {
-            errorHandler.flag(token, MISSING_COLON_EQUALS, this);
-        }
+		if (token.getType() == EQUALS) {
+			token = nextToken(); // consume the =
 
-        // Parse the expression.  The ASSIGN node adopts the expression's
-        // node as its second child.
-        ExpressionParser expressionParser = new ExpressionParser(this);
-        assignNode.addChild(expressionParser.parse(token));
+		} else {
+			errorHandler.flag(token, MISSING_EQUALS, this);
+		}
 
-        return assignNode;
-    }
+		// Parse the expression. The ASSIGN node adopts the expression's
+		// node as its second child.
+		ExpressionParser expressionParser = new ExpressionParser(this);
+
+		assignNode.addChild(expressionParser.parse(token));
+
+		return assignNode;
+	}
 }

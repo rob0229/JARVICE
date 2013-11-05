@@ -21,54 +21,50 @@ import jarvice.frontend.TokenType;
  */
 public enum WookieTokenType implements TokenType {
 
-	/*
-	 * C reserve words
-	 * 
-	 * auto, else, long, switch, break, enum, register, typedef, case, extern,
-	 * return, union, char, float, short, unsigned, const, for, signed, void,
-	 * continue, goto, sizeof, volatile, default, if, static, while, do, int,
-	 * struct, _Packed, double _Bool
-	 * 
-	 * 
-	 * 
-	 * C Special Symbols //Arithmetic operators PLUS("+"), MINUS("-"),
-	 * PRODUCT("*"), DIVIDE("/"), MODULUS("%"),
-	 * 
-	 * //Sequencing COMMA(","), SEMICOLON(";"), COLON(":"),
-	 * 
-	 * //Assignment EQUALS("="), PLUS_EQUALS("+="), MINUS_EQUALS("-="),
-	 * 
-	 * //Subexpression Grouping LEFT_PAREN("("), RIGHT_PAREN(")"),
-	 * 
-	 * //Reference and Dereference LEFT_BRACKET("["), RIGHT_BRACKET("]"),
-	 * AMPERSAND("&"), STAR("*")
-	 * 
-	 * // QUOTE("'"),
-	 * 
-	 * //Equality Testing EQUALS_EQUALS("=="), NOT_EQUALS("!="),
-	 * 
-	 * //Boolean logic AND("&&"), OR("||"), NOT("!")
-	 * 
-	 * //Order relation LESS_THAN("<"), LESS_EQUALS("<="), GREATER_EQUALS(">="),
-	 * GREATER_THAN(">"),
-	 * 
-	 * LEFT_BRACE("{"), RIGHT_BRACE("}"), UP_ARROW("^"),
-	 */
+	 //WOOKIE reserved words	
+    AUTO, BREAK, CHAR, CONST,  DO, DO_WHILE, ELSE, ENUM, REGISTER, TYPEDEF, CASE, EXTERN,
+    RETURN, UNION, FLOAT, SHORT, UNSIGNED, LONG,  FOR, SIGNED, VOID,
+    CONTINUE, GOTO, SIZEOF, VOLATILE, DEFAULT, IF, STATIC, SWITCH, WHILE, INT, INTEGER, ELSE_IF,
+    STRUCT, _PACKED, DOUBLE, _BOOL,
+    
+    // PASCAL reserved words    
+    ARRAY, BEGIN, DIV, DOWNTO, END, MAIN,
+    FILE, FUNCTION, IN, LABEL, MOD, NIL,
+    OF, PACKED, PROCEDURE, PROGRAM, RECORD, REPEAT, SET,
+    THEN, TO, TYPE, UNTIL, VAR, WITH,
+        
+    //WOOKIE Special Symbols     
+    //Arithmetic 
+    PLUS("+"), MINUS("-"), PRODUCT("*"), DIVIDE("/"), MODULUS("%"),
+    
+    //Sequencing 
+    COMMA(","), SEMICOLON(";"), COLON(":"),
+    
+    //Assignment 
+    EQUALS("="), PLUS_EQUALS("+="), MINUS_EQUALS("-="),
+    
+    //Grouping 
+    LEFT_PAREN("("), RIGHT_PAREN(")"),
+    
+    //Reference and Dereference 
+    LEFT_BRACKET("["), RIGHT_BRACKET("]"), AMPERSAND("&"), STAR("*"), QUOTE("'"),
+    
+    //Equality Testing 
+    EQUALS_EQUALS("=="), NOT_EQUALS("!="),
+    
+    //Boolean logic 
+    AND("&&"), OR("||"), NOT("!"),
+    
+    //Order relation 
+    LESS_THAN("<"), LESS_EQUALS("<="), GREATER_EQUALS(">="), GREATER_THAN(">"),
+    LEFT_BRACE("{"), RIGHT_BRACE("}"), UP_ARROW("^"),
+   
+  SLASH("/"), 
+  DOT("."), DOT_DOT(".."),
 
-	// PASCAL Reserved words.
-	AND, ARRAY, BEGIN, CASE, CONST, DIV, DO, DOWNTO, ELSE, END, FILE, FOR, FUNCTION, GOTO, IF, IN, LABEL, MOD, NIL, NOT, OF, OR, PACKED, PROCEDURE, PROGRAM, RECORD, REPEAT, SET, THEN, TO, TYPE, UNTIL, VAR, WHILE, WITH,
-
-	// PASCAL Special symbols.
-	PLUS("+"), MINUS("-"), STAR("*"), SLASH("/"), COLON_EQUALS(":="),  DOT("."), COMMA(
-			","), SEMICOLON(";"), COLON(":"), QUOTE("'"), EQUALS("="), NOT_EQUALS(
-			"<>"), LESS_THAN("<"), LESS_EQUALS("<="), GREATER_EQUALS(">="), GREATER_THAN(
-			">"), LEFT_PAREN("("), RIGHT_PAREN(")"), LEFT_BRACKET("["), RIGHT_BRACKET(
-			"]"), LEFT_BRACE("{"), RIGHT_BRACE("}"), SLASH_STAR("/*"),STAR_SLASH("*/"), UP_ARROW("^"), DOT_DOT(
-			".."),
-
-	IDENTIFIER, INTEGER, REAL, STRING, ERROR, END_OF_FILE;
-
-	private static final int FIRST_RESERVED_INDEX = AND.ordinal();
+  IDENTIFIER, REAL, STRING,
+  ERROR, END_OF_FILE;
+	private static final int FIRST_RESERVED_INDEX = AUTO.ordinal();
 	private static final int LAST_RESERVED_INDEX = WITH.ordinal();
 
 	private static final int FIRST_SPECIAL_INDEX = PLUS.ordinal();
