@@ -3,6 +3,7 @@ package jarvice.frontend.wookie.parsers;
 import java.util.EnumSet;
 import java.util.HashMap;
 
+
 import jarvice.frontend.*;
 import jarvice.frontend.wookie.*;
 import jarvice.intermediate.*;
@@ -11,6 +12,7 @@ import static jarvice.frontend.wookie.WookieTokenType.*;
 import static jarvice.frontend.wookie.WookieErrorCode.*;
 import static jarvice.intermediate.icodeimpl.ICodeNodeTypeImpl.*;
 import static jarvice.intermediate.icodeimpl.ICodeKeyImpl.*;
+
 
 /**
  * <h1>ExpressionParser</h1>
@@ -31,6 +33,11 @@ public class ExpressionParser extends StatementParser
         super(parent);
     }
 
+    // Synchronization set for starting an expression.
+    static final EnumSet<WookieTokenType> EXPR_START_SET =
+        EnumSet.of(PLUS, MINUS, IDENTIFIER, INTEGER, INT, REAL, STRING,
+                   WookieTokenType.NOT, LEFT_PAREN);
+  
     /**
      * Parse an expression.
      * @param token the initial token.

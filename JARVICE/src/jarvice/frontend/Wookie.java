@@ -97,7 +97,7 @@ public class Wookie {
 	 */
 	public static void main(String args[]) {
 		try {
-			String operation = "execute";
+			String operation = "compile";
 
 			// Operation.
 			if (!(operation.equalsIgnoreCase("compile") || operation

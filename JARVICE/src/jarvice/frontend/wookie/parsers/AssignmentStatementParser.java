@@ -1,5 +1,12 @@
 package jarvice.frontend.wookie.parsers;
 
+import java.util.EnumSet;
+
+
+import jarvice.frontend.wookie.WookieTokenType;
+import jarvice.frontend.wookie.parsers.ExpressionParser;
+import jarvice.frontend.wookie.parsers.StatementParser;
+import jarvice.frontend.wookie.WookieTokenType;
 import jarvice.frontend.*;
 import jarvice.frontend.wookie.*;
 import jarvice.intermediate.*;
@@ -8,6 +15,7 @@ import static jarvice.frontend.wookie.WookieErrorCode.*;
 import static jarvice.intermediate.icodeimpl.ICodeNodeTypeImpl.*;
 import static jarvice.intermediate.icodeimpl.ICodeKeyImpl.*;
 import static jarvice.intermediate.symtabimpl.SymTabEntryImpl.*;
+
 
 /**
  * <h1>AssignmentStatementParser</h1>
@@ -33,6 +41,15 @@ public class AssignmentStatementParser extends StatementParser {
 	public AssignmentStatementParser(WookieParserTD parent) {
 		super(parent);
 	}
+
+	 // Synchronization set for the := token.
+    private static final EnumSet<WookieTokenType> EQUALS_SET =
+        ExpressionParser.EXPR_START_SET.clone();
+    static {
+        EQUALS_SET.add(EQUALS);
+        EQUALS_SET.addAll(StatementParser.STMT_FOLLOW_SET);
+    }
+
 
 	/**
 	 * Parse an assignment statement.
@@ -67,7 +84,8 @@ public class AssignmentStatementParser extends StatementParser {
 		// CHANGED from := to just = by
 		// ROB**************************************************************************
 		// Look for the = token.
-
+		  // Synchronize on the := token.
+        token = synchronize(EQUALS_SET);
 		if (token.getType() == EQUALS) {
 			token = nextToken(); // consume the =
 

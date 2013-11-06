@@ -1,13 +1,15 @@
 package jarvice.frontend.wookie;
 
+import java.util.EnumSet;
+
 import jarvice.frontend.*;
 import jarvice.frontend.wookie.parsers.*;
 import jarvice.intermediate.*;
 import jarvice.message.*;
-
 import static jarvice.frontend.wookie.WookieTokenType.*;
 import static jarvice.frontend.wookie.WookieErrorCode.*;
 import static jarvice.message.MessageType.PARSER_SUMMARY;
+import static jarvice.frontend.wookie.WookieErrorCode.UNEXPECTED_TOKEN;
 
 /**
  * PascalParserTD
@@ -97,4 +99,27 @@ public class WookieParserTD extends Parser {
 	public int getErrorCount() {
 		return errorHandler.getErrorCount();
 	}
+	
+	 public Token synchronize(EnumSet syncSet)
+		        throws Exception
+		    {
+		        Token token = currentToken();
+		  
+		        // If the current token is not in the synchronization set,
+		        // then it is unexpected and the parser must recover.
+		        if (!syncSet.contains(token.getType())) {
+
+		            // Flag the unexpected token.
+		            errorHandler.flag(token, UNEXPECTED_TOKEN, this);
+
+		            // Recover by skipping tokens that are not
+		            // in the synchronization set.
+		            do {
+		                token = nextToken();
+		            } while (!(token instanceof EofToken) &&
+		                     !syncSet.contains(token.getType()));
+		       }
+
+		       return token;
+		    }
 }
