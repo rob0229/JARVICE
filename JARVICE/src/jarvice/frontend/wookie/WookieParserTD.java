@@ -2,9 +2,11 @@ package jarvice.frontend.wookie;
 
 import java.util.EnumSet;
 
+import src.wci.frontend.pascal.BlockParser;
 import jarvice.frontend.*;
 import jarvice.frontend.wookie.parsers.*;
 import jarvice.intermediate.*;
+import jarvice.intermediate.symtabimpl.Predefined;
 import jarvice.message.*;
 import static jarvice.frontend.wookie.WookieTokenType.*;
 import static jarvice.frontend.wookie.WookieErrorCode.*;
@@ -58,11 +60,29 @@ public class WookieParserTD extends Parser {
 	public void parse() throws Exception {
 		long startTime = System.currentTimeMillis();
 		iCode = ICodeFactory.createICode();
+		
+		// Create a dummy program identifier symbol table entry.
+        routineId = symTabStack.enterLocal("DummyProgramName".toLowerCase());
+        routineId.setDefinition(DefinitionImpl.PROGRAM);
+        symTabStack.setProgramId(routineId);
+
+        // Push a new symbol table onto the symbol table stack and set
+        // the routine's symbol table and intermediate code.
+        routineId.setAttribute(ROUTINE_SYMTAB, symTabStack.push());
+        routineId.setAttribute(ROUTINE_ICODE, iCode);
+
+        BlockParser blockParser = new BlockParser(this);
+			
+		
 
 		try {
 
 			Token token = nextToken();
-			ICodeNode rootNode = null;
+			ICodeNode rootNode = blockParser.parse(token, routineId);
+			iCode.setRoot(rootNode);
+			symTabStack.pop();
+			
+			
 			// Look for the ( token to parse a compound statement.
 
 			if (token.getType() == LEFT_BRACE) {
