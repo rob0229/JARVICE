@@ -50,17 +50,17 @@ public class BlockParser extends WookieParserTD
         ICodeNode rootNode = null;
 
         // Look for the BEGIN token to parse a compound statement.
-        if (tokenType == BEGIN) {
+        if (tokenType == LEFT_BRACE) {
             rootNode = statementParser.parse(token);
         }
 
         // Missing BEGIN: Attempt to parse anyway if possible.
         else {
-            errorHandler.flag(token, MISSING_BEGIN, this);
+            errorHandler.flag(token, MISSING_LEFT_BRACE, this);
 
             if (StatementParser.STMT_START_SET.contains(tokenType)) {
                 rootNode = ICodeFactory.createICodeNode(COMPOUND);
-                statementParser.parseList(token, rootNode, END, MISSING_END);
+                statementParser.parseList(token, rootNode, RIGHT_BRACE, MISSING_RIGHT_BRACE);
             }
         }
 

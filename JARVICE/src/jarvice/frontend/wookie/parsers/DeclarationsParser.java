@@ -31,7 +31,7 @@ public class DeclarationsParser extends WookieParserTD
     }
 
     static final EnumSet<WookieTokenType> DECLARATION_START_SET =
-        EnumSet.of(CONST, TYPE, VAR, PROCEDURE, FUNCTION, BEGIN);
+        EnumSet.of(CONST, TYPE, VAR, PROCEDURE, FUNCTION, LEFT_BRACE, BEGIN);
 
     static final EnumSet<WookieTokenType> TYPE_START_SET =
         DECLARATION_START_SET.clone();

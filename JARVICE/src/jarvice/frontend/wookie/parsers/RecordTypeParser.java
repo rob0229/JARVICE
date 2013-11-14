@@ -38,7 +38,7 @@ class RecordTypeParser extends TypeSpecificationParser
     private static final EnumSet<WookieTokenType> END_SET =
         DeclarationsParser.VAR_START_SET.clone();
     static {
-        END_SET.add(END);
+        END_SET.add(RIGHT_BRACE);
         END_SET.add(SEMICOLON);
     }
 
@@ -70,11 +70,11 @@ class RecordTypeParser extends TypeSpecificationParser
         token = synchronize(END_SET);
 
         // Look for the END.
-        if (token.getType() == END) {
+        if (token.getType() == RIGHT_BRACE) {
             token = nextToken();  // consume END
         }
         else {
-            errorHandler.flag(token, MISSING_END, this);
+            errorHandler.flag(token, MISSING_RIGHT_BRACE, this);
         }
 
         return recordType;
