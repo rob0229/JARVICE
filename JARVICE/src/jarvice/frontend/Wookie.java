@@ -3,16 +3,14 @@ package jarvice.frontend;
 import java.io.BufferedReader;
 import java.io.FileReader;
 
-import jarvice.message.Message;
-import jarvice.message.MessageListener;
-import jarvice.message.MessageType;
 import jarvice.frontend.*;
 import jarvice.intermediate.*;
 import jarvice.backend.*;
 import jarvice.message.*;
 import jarvice.util.*;
+
+import static jarvice.intermediate.symtabimpl.SymTabKeyImpl.*;
 import static jarvice.message.MessageType.*;
-import jarvice.intermediate.symtabimpl.SymTabKeyImpl;
 /**
  * <h1>Pascal</h1>
  * 

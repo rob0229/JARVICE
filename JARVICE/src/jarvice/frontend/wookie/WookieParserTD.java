@@ -2,19 +2,20 @@ package jarvice.frontend.wookie;
 
 import java.util.EnumSet;
 
-import jarvice.intermediate.symtabimpl.SymTabKeyImpl;
-import jarvice.intermediate.SymTabEntry;
-import jarvice.intermediate.symtabimpl.DefinitionImpl;
-import jarvice.frontend.wookie.parsers.BlockParser;
+
 import jarvice.frontend.*;
 import jarvice.frontend.wookie.parsers.*;
 import jarvice.intermediate.*;
-import jarvice.intermediate.symtabimpl.Predefined;
+import jarvice.intermediate.symtabimpl.*;
+import jarvice.intermediate.typeimpl.*;
 import jarvice.message.*;
+
 import static jarvice.frontend.wookie.WookieTokenType.*;
 import static jarvice.frontend.wookie.WookieErrorCode.*;
+import static jarvice.intermediate.symtabimpl.SymTabKeyImpl.*;
+import static jarvice.intermediate.typeimpl.TypeFormImpl.*;
 import static jarvice.message.MessageType.PARSER_SUMMARY;
-import static jarvice.frontend.wookie.WookieErrorCode.UNEXPECTED_TOKEN;
+
 
 
 /**
@@ -68,7 +69,7 @@ public class WookieParserTD extends Parser {
 	 */
 	public void parse() throws Exception {
 		long startTime = System.currentTimeMillis();
-		iCode = ICodeFactory.createICode();
+		ICode iCode = ICodeFactory.createICode();
 		
 		// Create a dummy program identifier symbol table entry.
         routineId = symTabStack.enterLocal("DummyProgramName".toLowerCase());
