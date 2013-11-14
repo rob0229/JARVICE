@@ -2,7 +2,10 @@ package jarvice.frontend.wookie;
 
 import java.util.EnumSet;
 
-import src.wci.frontend.pascal.BlockParser;
+import jarvice.intermediate.symtabimpl.SymTabKeyImpl;
+import jarvice.intermediate.SymTabEntry;
+import jarvice.intermediate.symtabimpl.DefinitionImpl;
+import jarvice.frontend.wookie.parsers.BlockParser;
 import jarvice.frontend.*;
 import jarvice.frontend.wookie.parsers.*;
 import jarvice.intermediate.*;
@@ -13,6 +16,7 @@ import static jarvice.frontend.wookie.WookieErrorCode.*;
 import static jarvice.message.MessageType.PARSER_SUMMARY;
 import static jarvice.frontend.wookie.WookieErrorCode.UNEXPECTED_TOKEN;
 
+
 /**
  * PascalParserTD
  * 
@@ -21,6 +25,9 @@ import static jarvice.frontend.wookie.WookieErrorCode.UNEXPECTED_TOKEN;
 public class WookieParserTD extends Parser {
 	protected static WookieErrorHandler errorHandler = new WookieErrorHandler();
 
+	 private SymTabEntry routineId;  // name of the routine being parsed
+	
+	
 	/**
 	 * Constructor.
 	 * 
@@ -41,6 +48,8 @@ public class WookieParserTD extends Parser {
 		super(parent.getScanner());
 	}
 
+	
+		
 	/**
 	 * Getter.
 	 * 

@@ -12,7 +12,7 @@ import jarvice.backend.*;
 import jarvice.message.*;
 import jarvice.util.*;
 import static jarvice.message.MessageType.*;
-
+import jarvice.intermediate.symtabimpl.SymTabKeyImpl;
 /**
  * <h1>Pascal</h1>
  * 
@@ -62,8 +62,10 @@ public class Wookie {
 			source.close();
 
 			if (parser.getErrorCount() == 0) {
-				iCode = parser.getICode();
+				
 				symTabStack = parser.getSymTabStack();
+				SymTabEntry programId = symTabStack.getProgramId();
+				iCode = (ICode) programId.getAttribute(ROUTINE_ICODE);
 
 				if (true) {
 					CrossReferencer crossReferencer = new CrossReferencer();
