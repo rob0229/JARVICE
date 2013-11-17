@@ -3,16 +3,14 @@ package jarvice.frontend;
 import java.io.BufferedReader;
 import java.io.FileReader;
 
-import jarvice.message.Message;
-import jarvice.message.MessageListener;
-import jarvice.message.MessageType;
 import jarvice.frontend.*;
 import jarvice.intermediate.*;
 import jarvice.backend.*;
 import jarvice.message.*;
 import jarvice.util.*;
-import static jarvice.message.MessageType.*;
 
+import static jarvice.intermediate.symtabimpl.SymTabKeyImpl.*;
+import static jarvice.message.MessageType.*;
 /**
  * <h1>Pascal</h1>
  * 
@@ -62,8 +60,10 @@ public class Wookie {
 			source.close();
 
 			if (parser.getErrorCount() == 0) {
-				iCode = parser.getICode();
+				
 				symTabStack = parser.getSymTabStack();
+				SymTabEntry programId = symTabStack.getProgramId();
+				iCode = (ICode) programId.getAttribute(ROUTINE_ICODE);
 
 				if (true) {
 					CrossReferencer crossReferencer = new CrossReferencer();

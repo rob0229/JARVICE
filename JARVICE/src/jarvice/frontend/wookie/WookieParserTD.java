@@ -2,14 +2,21 @@ package jarvice.frontend.wookie;
 
 import java.util.EnumSet;
 
+
 import jarvice.frontend.*;
 import jarvice.frontend.wookie.parsers.*;
 import jarvice.intermediate.*;
+import jarvice.intermediate.symtabimpl.*;
+import jarvice.intermediate.typeimpl.*;
 import jarvice.message.*;
+
 import static jarvice.frontend.wookie.WookieTokenType.*;
 import static jarvice.frontend.wookie.WookieErrorCode.*;
+import static jarvice.intermediate.symtabimpl.SymTabKeyImpl.*;
+import static jarvice.intermediate.typeimpl.TypeFormImpl.*;
 import static jarvice.message.MessageType.PARSER_SUMMARY;
-import static jarvice.frontend.wookie.WookieErrorCode.UNEXPECTED_TOKEN;
+
+
 
 /**
  * PascalParserTD
@@ -19,6 +26,9 @@ import static jarvice.frontend.wookie.WookieErrorCode.UNEXPECTED_TOKEN;
 public class WookieParserTD extends Parser {
 	protected static WookieErrorHandler errorHandler = new WookieErrorHandler();
 
+	 private SymTabEntry routineId;  // name of the routine being parsed
+	
+	
 	/**
 	 * Constructor.
 	 * 
@@ -39,6 +49,8 @@ public class WookieParserTD extends Parser {
 		super(parent.getScanner());
 	}
 
+	
+		
 	/**
 	 * Getter.
 	 * 
@@ -57,12 +69,30 @@ public class WookieParserTD extends Parser {
 	 */
 	public void parse() throws Exception {
 		long startTime = System.currentTimeMillis();
-		iCode = ICodeFactory.createICode();
+		ICode iCode = ICodeFactory.createICode();
+		
+		// Create a dummy program identifier symbol table entry.
+        routineId = symTabStack.enterLocal("DummyProgramName".toLowerCase());
+        routineId.setDefinition(DefinitionImpl.PROGRAM);
+        symTabStack.setProgramId(routineId);
+
+        // Push a new symbol table onto the symbol table stack and set
+        // the routine's symbol table and intermediate code.
+        routineId.setAttribute(ROUTINE_SYMTAB, symTabStack.push());
+        routineId.setAttribute(ROUTINE_ICODE, iCode);
+
+        BlockParser blockParser = new BlockParser(this);
+			
+		
 
 		try {
 
 			Token token = nextToken();
-			ICodeNode rootNode = null;
+			ICodeNode rootNode = blockParser.parse(token, routineId);
+			iCode.setRoot(rootNode);
+			symTabStack.pop();
+			
+			
 			// Look for the ( token to parse a compound statement.
 
 			if (token.getType() == LEFT_BRACE) {

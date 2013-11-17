@@ -72,15 +72,7 @@ public class WhileStatementParser extends StatementParser {
 	        ICodeNode exprNode = expressionParser.parse(token);	
 	        // The TEST node adopts the exprNode node as its only child.
 	        testNode.addChild(exprNode);
-	       
-	        
-	        //CALL THE COMPUOND STATEMENT PARSER HERE
-	        
-	        
-	        
-	        
-	       
-	        
+        
 	        //  Synchronize at the LEFT_BRACE.
 	        token = synchronize(LEFT_BRACE_SET);
 			if (token.getType() == LEFT_BRACE) {
