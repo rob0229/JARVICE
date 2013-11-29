@@ -10,13 +10,13 @@ Jeremy Muckel
 
 
 ========= TO GET 70% ==========<br />
-Data Types: int, char, bool<br />
+Data Types: int, bool<br />
 Arithmetic: +, -, *, /<br />
 Assignment: =<br />
 Conditional: if <br />
 Looping: while<br />
 End Line: ;<br />
-Funtion Return: return, (jiggy)<br />
+Function Return: return, <br />
 Function Calls: dataType function(parameters);<br />
 Basic Error Recovery:<br /><br />
 
