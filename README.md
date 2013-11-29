@@ -14,7 +14,7 @@ Data Types: int, char, bool<br />
 Arithmetic: +, -, *, /<br />
 Assignment: =<br />
 Conditional: if <br />
-Looping: while/>
+Looping: while<br />
 End Line: ;<br />
 Funtion Return: return, (jiggy)<br />
 Function Calls: dataType function(parameters);<br />
