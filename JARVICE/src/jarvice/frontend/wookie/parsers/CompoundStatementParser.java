@@ -3,7 +3,6 @@ package jarvice.frontend.wookie.parsers;
 import jarvice.frontend.*;
 import jarvice.frontend.wookie.*;
 import jarvice.intermediate.*;
-
 import static jarvice.frontend.wookie.WookieTokenType.*;
 import static jarvice.frontend.wookie.WookieErrorCode.*;
 import static jarvice.intermediate.icodeimpl.ICodeNodeTypeImpl.*;
@@ -43,6 +42,7 @@ public class CompoundStatementParser extends StatementParser
 
         // Parse the statement list terminated by the END token.
         StatementParser statementParser = new StatementParser(this);
+System.out.println("Printout in compoundStatementParser line 45************** Token type = "+ token.getType());
         statementParser.parseList(token, compoundNode, RIGHT_BRACE, MISSING_RIGHT_BRACE );
 
         return compoundNode;

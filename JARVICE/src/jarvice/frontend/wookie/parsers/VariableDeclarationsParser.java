@@ -135,7 +135,7 @@ public class VariableDeclarationsParser extends DeclarationsParser
 
             token = synchronize(COMMA_SET);
             TokenType tokenType = token.getType();
-
+//******************************************************************looks for comma to accept multiple declarations
             // Look for the comma.
             if (tokenType == COMMA) {
                 token = nextToken();  // consume the comma

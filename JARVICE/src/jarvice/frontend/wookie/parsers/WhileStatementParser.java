@@ -77,7 +77,7 @@ public class WhileStatementParser extends StatementParser {
 	        token = synchronize(LEFT_BRACE_SET);
 			if (token.getType() == LEFT_BRACE) {
 				
-				 System.out.println("Token inside WHILESTATEMENTPARSER = " + token.getType() );
+				
 				//token = nextToken(); // consume the LEFTBRACE
 			} else {
 				errorHandler.flag(token, MISSING_LEFT_BRACE, this);

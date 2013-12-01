@@ -3,7 +3,6 @@ package jarvice.frontend.wookie.parsers;
 import jarvice.frontend.*;
 import jarvice.frontend.wookie.*;
 import jarvice.intermediate.*;
-
 import static jarvice.frontend.wookie.WookieTokenType.*;
 import static jarvice.frontend.wookie.WookieErrorCode.*;
 import static jarvice.intermediate.symtabimpl.SymTabKeyImpl.*;
@@ -39,6 +38,7 @@ public class BlockParser extends WookieParserTD
     public ICodeNode parse(Token token, SymTabEntry routineId)
         throws Exception
     {
+
         DeclarationsParser declarationsParser = new DeclarationsParser(this);
         StatementParser statementParser = new StatementParser(this);
 

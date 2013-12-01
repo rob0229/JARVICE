@@ -59,8 +59,7 @@ public class StatementParser extends WookieParserTD {
 		// variable has not been declared.
 		case LEFT_BRACE: {
 
-			CompoundStatementParser compoundParser = new CompoundStatementParser(
-					this);
+			CompoundStatementParser compoundParser = new CompoundStatementParser(this);
 			statementNode = compoundParser.parse(token);
 			break;
 		}
@@ -83,7 +82,10 @@ public class StatementParser extends WookieParserTD {
 			statementNode = ifParser.parse(token);
 			break;
 		}
-
+		
+	
+		
+		
 		default: {
 			statementNode = ICodeFactory.createICodeNode(NO_OP);
 			break;
@@ -114,7 +116,7 @@ public class StatementParser extends WookieParserTD {
 	 * Parse a statement list.
 	 * 
 	 * @param token
-	 *            the curent token.
+	 *            the current token.
 	 * @param parentNode
 	 *            the parent node of the statement list.
 	 * @param terminator
@@ -127,7 +129,7 @@ public class StatementParser extends WookieParserTD {
 	protected void parseList(Token token, ICodeNode parentNode,
 			WookieTokenType terminator, WookieErrorCode errorCode)
 			throws Exception {
- int count = 0;
+
 		// Synchronization set for the terminator.
 		EnumSet<WookieTokenType> terminatorSet = STMT_START_SET.clone();
 		terminatorSet.add(terminator);
@@ -136,16 +138,14 @@ public class StatementParser extends WookieParserTD {
 		// or the end of the source file.
 		while (!(token instanceof EofToken) && (token.getType() != terminator)) {
 
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////			
- count++;
- System.out.println("Count = " + count);
- ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 			// Parse a statement. The parent node adopts the statement node.
+		
 			ICodeNode statementNode = parse(token);
 			parentNode.addChild(statementNode);
 
 			token = currentToken();
-			
+
 			TokenType tokenType = token.getType();
 			
 
@@ -167,10 +167,8 @@ public class StatementParser extends WookieParserTD {
 		}
 
 		// Look for the terminator token.
-		if (token.getType() == terminator) {
-			//System.out.println("Token is ++++++++++++++++" + token.getType());
-			token = nextToken(); // consume the terminator token
-			//System.out.println("Token is ++++++++++++++++" + token.getType());
+		if (token.getType() == terminator) {			
+			token = nextToken(); // consume the terminator token	
 		}
 
 		else {

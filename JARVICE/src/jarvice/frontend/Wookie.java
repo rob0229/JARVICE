@@ -115,7 +115,7 @@ public class Wookie {
 
 			// Source path.
 			if (true) {
-				String path = "C://Users//Rob//Desktop//cassignments.txt";
+				String path = "C://Users//Rob//Desktop//compilersamplecode//declarations.txt ";
 				new Wookie(operation, path, flags);
 			} else {
 				throw new Exception();

@@ -5,7 +5,6 @@ import java.util.EnumSet;
 import jarvice.frontend.*;
 import jarvice.frontend.wookie.*;
 import jarvice.intermediate.*;
-
 import static jarvice.frontend.wookie.WookieTokenType.*;
 import static jarvice.frontend.wookie.WookieErrorCode.*;
 import static jarvice.intermediate.symtabimpl.SymTabKeyImpl.*;
@@ -31,7 +30,7 @@ public class DeclarationsParser extends WookieParserTD
     }
 
     static final EnumSet<WookieTokenType> DECLARATION_START_SET =
-        EnumSet.of(CONST, TYPE, VAR, PROCEDURE, FUNCTION, LEFT_BRACE, BEGIN);
+        EnumSet.of(CONST, TYPE, VAR, INT, BOOL, PROCEDURE, FUNCTION, LEFT_BRACE, BEGIN);
 
     static final EnumSet<WookieTokenType> TYPE_START_SET =
         DECLARATION_START_SET.clone();
@@ -44,7 +43,20 @@ public class DeclarationsParser extends WookieParserTD
     static {
         VAR_START_SET.remove(TYPE);
     }
-
+    
+   //*************************ADDED BY ROB*******************************************
+    static final EnumSet<WookieTokenType> INT_START_SET =
+            VAR_START_SET.clone();
+        static {
+            INT_START_SET.remove(VAR);
+        }
+    static final EnumSet<WookieTokenType> BOOL_START_SET =
+            INT_START_SET.clone();
+        static {
+            BOOL_START_SET.remove(INT);
+        }
+        
+//******************************************************************************
     static final EnumSet<WookieTokenType> ROUTINE_START_SET =
         VAR_START_SET.clone();
     static {
@@ -60,8 +72,9 @@ public class DeclarationsParser extends WookieParserTD
     public void parse(Token token)
         throws Exception
     {
+System.out.println("Printout in DECLARATIONSPARSER line 69************** Token = "+ token.getType());
         token = synchronize(DECLARATION_START_SET);
-
+//******************************************************************delete const
         if (token.getType() == CONST) {
             token = nextToken();  // consume CONST
 
@@ -71,7 +84,7 @@ public class DeclarationsParser extends WookieParserTD
         }
 
         token = synchronize(TYPE_START_SET);
-
+      //******************************************************************delete type
         if (token.getType() == TYPE) {
             token = nextToken();  // consume TYPE
 
@@ -90,7 +103,32 @@ public class DeclarationsParser extends WookieParserTD
             variableDeclarationsParser.setDefinition(VARIABLE);
             variableDeclarationsParser.parse(token);
         }
+//*********************************************************************ADDED BY ROB  This needs to be modified to not look for INT like Pascal looks for VAR, but look for "int name; and then the sublists"  
+//The IntDeclarationsParser class will create the symbol table entries needed to compile the code, This section just sees that there is about to be an int declared and gets to the correct declarations parser.
+        token = synchronize(INT_START_SET);										//*
 
+        if (token.getType() == INT) {											//*
+            token = nextToken();  // consume INT								//*
+
+            IntDeclarationsParser intDeclarationsParser =						//*
+                new IntDeclarationsParser(this);								//*
+            intDeclarationsParser.setDefinition(VARIABLE);
+            intDeclarationsParser.parse(token);
+        }
+        
+        token = synchronize(INT_START_SET);										//*
+
+        if (token.getType() == BOOL) {											//*
+            token = nextToken();  // consume BOOL								//*
+
+            BoolDeclarationsParser boolDeclarationsParser =						//*
+                new BoolDeclarationsParser(this);								//*
+            boolDeclarationsParser.setDefinition(VARIABLE);
+            boolDeclarationsParser.parse(token);
+        }        
+//*************************************************************************************        
+        
+        
         token = synchronize(ROUTINE_START_SET);
     }
 }

@@ -2,7 +2,6 @@ package jarvice.frontend.wookie;
 
 import java.util.EnumSet;
 
-
 import jarvice.frontend.*;
 import jarvice.frontend.wookie.parsers.*;
 import jarvice.intermediate.*;
@@ -16,8 +15,6 @@ import static jarvice.intermediate.symtabimpl.SymTabKeyImpl.*;
 import static jarvice.intermediate.typeimpl.TypeFormImpl.*;
 import static jarvice.message.MessageType.PARSER_SUMMARY;
 
-
-
 /**
  * PascalParserTD
  * 
@@ -26,9 +23,8 @@ import static jarvice.message.MessageType.PARSER_SUMMARY;
 public class WookieParserTD extends Parser {
 	protected static WookieErrorHandler errorHandler = new WookieErrorHandler();
 
-	 private SymTabEntry routineId;  // name of the routine being parsed
-	
-	
+	private SymTabEntry routineId; // name of the routine being parsed
+
 	/**
 	 * Constructor.
 	 * 
@@ -49,8 +45,6 @@ public class WookieParserTD extends Parser {
 		super(parent.getScanner());
 	}
 
-	
-		
 	/**
 	 * Getter.
 	 * 
@@ -70,41 +64,43 @@ public class WookieParserTD extends Parser {
 	public void parse() throws Exception {
 		long startTime = System.currentTimeMillis();
 		ICode iCode = ICodeFactory.createICode();
-		
+
 		// Create a dummy program identifier symbol table entry.
-        routineId = symTabStack.enterLocal("DummyProgramName".toLowerCase());
-        routineId.setDefinition(DefinitionImpl.PROGRAM);
-        symTabStack.setProgramId(routineId);
+		routineId = symTabStack.enterLocal("DummyProgramName".toLowerCase());
+		System.out.println("************** DUMMY PROGRAM NAME SYSOUT**********************************************************");
+		routineId.setDefinition(DefinitionImpl.PROGRAM);
+		symTabStack.setProgramId(routineId);
 
-        // Push a new symbol table onto the symbol table stack and set
-        // the routine's symbol table and intermediate code.
-        routineId.setAttribute(ROUTINE_SYMTAB, symTabStack.push());
-        routineId.setAttribute(ROUTINE_ICODE, iCode);
+		// Push a new symbol table onto the symbol table stack and set
+		// the routine's symbol table and intermediate code.
+		routineId.setAttribute(ROUTINE_SYMTAB, symTabStack.push());
+		routineId.setAttribute(ROUTINE_ICODE, iCode);
 
-        BlockParser blockParser = new BlockParser(this);
-			
-		
+		BlockParser blockParser = new BlockParser(this);
+
 
 		try {
 
 			Token token = nextToken();
+
 			ICodeNode rootNode = blockParser.parse(token, routineId);
 			iCode.setRoot(rootNode);
 			symTabStack.pop();
-			
-			
-			// Look for the ( token to parse a compound statement.
+	
+			// Look for the { token to parse a compound statement.
 
-			if (token.getType() == LEFT_BRACE) {
+			/*if (token.getType() == LEFT_BRACE) {
+	
 				StatementParser statementParser = new StatementParser(this);
 				rootNode = statementParser.parse(token);
 				token = currentToken();
+
 			}
 
 			else {
 				errorHandler.flag(token, UNEXPECTED_TOKEN, this);
 			}
-
+*/
 			token = currentToken();
 
 			// Set the parse tree root node.
@@ -129,27 +125,25 @@ public class WookieParserTD extends Parser {
 	public int getErrorCount() {
 		return errorHandler.getErrorCount();
 	}
-	
-	 public Token synchronize(EnumSet syncSet)
-		        throws Exception
-		    {
-		        Token token = currentToken();
-		  
-		        // If the current token is not in the synchronization set,
-		        // then it is unexpected and the parser must recover.
-		        if (!syncSet.contains(token.getType())) {
 
-		            // Flag the unexpected token.
-		            errorHandler.flag(token, UNEXPECTED_TOKEN, this);
+	public Token synchronize(EnumSet syncSet) throws Exception {
+		Token token = currentToken();
 
-		            // Recover by skipping tokens that are not
-		            // in the synchronization set.
-		            do {
-		                token = nextToken();
-		            } while (!(token instanceof EofToken) &&
-		                     !syncSet.contains(token.getType()));
-		       }
+		// If the current token is not in the synchronization set,
+		// then it is unexpected and the parser must recover.
+		if (!syncSet.contains(token.getType())) {
 
-		       return token;
-		    }
+			// Flag the unexpected token.
+			errorHandler.flag(token, UNEXPECTED_TOKEN, this);
+
+			// Recover by skipping tokens that are not
+			// in the synchronization set.
+			do {
+				token = nextToken();
+			} while (!(token instanceof EofToken)
+					&& !syncSet.contains(token.getType()));
+		}
+
+		return token;
+	}
 }
