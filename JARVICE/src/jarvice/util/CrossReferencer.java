@@ -36,7 +36,6 @@ public class CrossReferencer
     static {
         for (int i = 0; i < INDENT_WIDTH; ++i) INDENT.append(" ");
     }
-
     /**
      * Print the cross-reference table.
      * @param symTabStack the symbol table stack.
@@ -48,7 +47,6 @@ public class CrossReferencer
         SymTabEntry programId = symTabStack.getProgramId();
         printRoutine(programId);
     }
-
     /**
      * Print a cross-reference table for a routine.
      * @param routineId the routine identifier's symbol table entry.
@@ -79,7 +77,6 @@ public class CrossReferencer
             }
         }
     }
-
     /**
      * Print column headings.
      */
@@ -103,7 +100,6 @@ public class CrossReferencer
         ArrayList<SymTabEntry> sorted = symTab.sortedEntries();
         for (SymTabEntry entry : sorted) {
             ArrayList<Integer> lineNumbers = entry.getLineNumbers();
-
             // For each entry, print the identifier name
             // followed by the line numbers.
             System.out.print(String.format(NAME_FORMAT, entry.getName()));
@@ -112,13 +108,11 @@ public class CrossReferencer
                     System.out.print(String.format(NUMBER_FORMAT, lineNumber));
                 }
             }
-
             // Print the symbol table entry.
             System.out.println();
             printEntry(entry, recordTypes);
         }
     }
-
     /**
      * Print a symbol table entry.
      * @param entry the symbol table entry.
@@ -145,29 +139,23 @@ public class CrossReferencer
                 if (type.getIdentifier() == null) {
                     printTypeDetail(type, recordTypes);
                 }
-
                 break;
             }
 
             case ENUMERATION_CONSTANT: {
                 Object value = entry.getAttribute(CONSTANT_VALUE);
                 System.out.println(INDENT + "Value = " + toString(value));
-
                 break;
             }
 
             case TYPE: {
-
                 // Print the type details only when the type is first defined.
                 if (entry == type.getIdentifier()) {
                     printTypeDetail(type, recordTypes);
                 }
-
                 break;
             }
-
-            case VARIABLE: {
-
+            case VARIABLE: {          	
                 // Print the type details only if the type is unnamed.
                 if (type.getIdentifier() == null) {
                     printTypeDetail(type, recordTypes);
@@ -177,7 +165,6 @@ public class CrossReferencer
             }
         }
     }
-
     /**
      * Print a type specification.
      * @param type the type specification.
@@ -193,9 +180,7 @@ public class CrossReferencer
                                ", Type id = " + typeName);
         }
     }
-
     private static final String ENUM_CONST_FORMAT = "%" + NAME_WIDTH + "s = %s";
-
     /**
      * Print the details of a type specification.
      * @param type the type specification.
@@ -221,10 +206,8 @@ public class CrossReferencer
                     System.out.println(INDENT + String.format(ENUM_CONST_FORMAT,
                                                               name, value));
                 }
-
                 break;
             }
-
             case SUBRANGE: {
                 Object minValue = type.getAttribute(SUBRANGE_MIN_VALUE);
                 Object maxValue = type.getAttribute(SUBRANGE_MAX_VALUE);
@@ -242,10 +225,8 @@ public class CrossReferencer
                 System.out.print(INDENT + "Range = ");
                 System.out.println(toString(minValue) + ".." +
                                    toString(maxValue));
-
                 break;
             }
-
             case ARRAY: {
                 TypeSpec indexType =
                     (TypeSpec) type.getAttribute(ARRAY_INDEX_TYPE);
@@ -304,7 +285,6 @@ public class CrossReferencer
             }
         }
     }
-
     /**
      * Convert a value to a string.
      * @param value the value.

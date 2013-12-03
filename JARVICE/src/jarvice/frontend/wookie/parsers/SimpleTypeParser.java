@@ -7,7 +7,6 @@ import jarvice.frontend.wookie.*;
 import jarvice.intermediate.*;
 import jarvice.intermediate.symtabimpl.*;
 import jarvice.intermediate.typeimpl.*;
-
 import static jarvice.frontend.wookie.WookieTokenType.*;
 import static jarvice.frontend.wookie.WookieErrorCode.*;
 import static jarvice.intermediate.symtabimpl.SymTabKeyImpl.*;
@@ -39,9 +38,10 @@ class SimpleTypeParser extends TypeSpecificationParser
     static final EnumSet<WookieTokenType> SIMPLE_TYPE_START_SET =
         ConstantDefinitionsParser.CONSTANT_START_SET.clone();
     static {
-        SIMPLE_TYPE_START_SET.add(LEFT_PAREN);
-        SIMPLE_TYPE_START_SET.add(COMMA);
-        SIMPLE_TYPE_START_SET.add(SEMICOLON);
+//************************************************************DO NOT NEED LEFT_PAREN**********************************    	
+        SIMPLE_TYPE_START_SET.add(INT);
+        //SIMPLE_TYPE_START_SET.add(COMMA);
+        //SIMPLE_TYPE_START_SET.add(SEMICOLON);
     }
 
     /**
@@ -64,7 +64,7 @@ class SimpleTypeParser extends TypeSpecificationParser
 
                 if (id != null) {
                     Definition definition = id.getDefinition();
-
+                   
                     // It's either a type identifier
                     // or the start of a subrange type.
                     if (definition == DefinitionImpl.TYPE) {
@@ -87,6 +87,7 @@ class SimpleTypeParser extends TypeSpecificationParser
                     }
                 }
                 else {
+                	
                     errorHandler.flag(token, IDENTIFIER_UNDEFINED, this);
                     token = nextToken();  // consume the identifier
                     return null;
@@ -104,7 +105,13 @@ class SimpleTypeParser extends TypeSpecificationParser
                 errorHandler.flag(token, INVALID_TYPE, this);
                 return null;
             }
-
+            case INT: {
+ 
+            	//token = nextToken();
+            	
+            	return null;
+            	
+            }
             default: {
                 SubrangeTypeParser subrangeTypeParser =
                     new SubrangeTypeParser(this);

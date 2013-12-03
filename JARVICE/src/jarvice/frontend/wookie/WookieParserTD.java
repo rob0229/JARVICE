@@ -8,7 +8,6 @@ import jarvice.intermediate.*;
 import jarvice.intermediate.symtabimpl.*;
 import jarvice.intermediate.typeimpl.*;
 import jarvice.message.*;
-
 import static jarvice.frontend.wookie.WookieTokenType.*;
 import static jarvice.frontend.wookie.WookieErrorCode.*;
 import static jarvice.intermediate.symtabimpl.SymTabKeyImpl.*;
@@ -64,7 +63,7 @@ public class WookieParserTD extends Parser {
 	public void parse() throws Exception {
 		long startTime = System.currentTimeMillis();
 		ICode iCode = ICodeFactory.createICode();
-
+		Predefined.initialize(symTabStack);
 		// Create a dummy program identifier symbol table entry.
 		routineId = symTabStack.enterLocal("DummyProgramName".toLowerCase());
 		System.out.println("************** DUMMY PROGRAM NAME SYSOUT**********************************************************");

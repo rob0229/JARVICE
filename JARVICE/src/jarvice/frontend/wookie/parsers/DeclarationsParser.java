@@ -28,9 +28,9 @@ public class DeclarationsParser extends WookieParserTD
     {
         super(parent);
     }
-
+//*******************************************************CAN DELETE CONST< TYPE< VAR< BEGIN< PROCEDURE*********************************************
     static final EnumSet<WookieTokenType> DECLARATION_START_SET =
-        EnumSet.of(CONST, TYPE, VAR, INT, BOOL, PROCEDURE, FUNCTION, LEFT_BRACE, BEGIN);
+        EnumSet.of(INT, BOOL, PROCEDURE, FUNCTION, LEFT_BRACE);
 
     static final EnumSet<WookieTokenType> TYPE_START_SET =
         DECLARATION_START_SET.clone();
@@ -50,6 +50,7 @@ public class DeclarationsParser extends WookieParserTD
         static {
             INT_START_SET.remove(VAR);
         }
+        
     static final EnumSet<WookieTokenType> BOOL_START_SET =
             INT_START_SET.clone();
         static {
@@ -72,26 +73,9 @@ public class DeclarationsParser extends WookieParserTD
     public void parse(Token token)
         throws Exception
     {
-System.out.println("Printout in DECLARATIONSPARSER line 69************** Token = "+ token.getType());
+
         token = synchronize(DECLARATION_START_SET);
-//******************************************************************delete const
-        if (token.getType() == CONST) {
-            token = nextToken();  // consume CONST
 
-            ConstantDefinitionsParser constantDefinitionsParser =
-                new ConstantDefinitionsParser(this);
-            constantDefinitionsParser.parse(token);
-        }
-
-        token = synchronize(TYPE_START_SET);
-      //******************************************************************delete type
-        if (token.getType() == TYPE) {
-            token = nextToken();  // consume TYPE
-
-            TypeDefinitionsParser typeDefinitionsParser =
-                new TypeDefinitionsParser(this);
-            typeDefinitionsParser.parse(token);
-        }
 
         token = synchronize(VAR_START_SET);
 
@@ -106,18 +90,19 @@ System.out.println("Printout in DECLARATIONSPARSER line 69************** Token =
 //*********************************************************************ADDED BY ROB  This needs to be modified to not look for INT like Pascal looks for VAR, but look for "int name; and then the sublists"  
 //The IntDeclarationsParser class will create the symbol table entries needed to compile the code, This section just sees that there is about to be an int declared and gets to the correct declarations parser.
         token = synchronize(INT_START_SET);										//*
-
+    
         if (token.getType() == INT) {											//*
-            token = nextToken();  // consume INT								//*
+
+            //token = nextToken();  // consume INT								//*
 
             IntDeclarationsParser intDeclarationsParser =						//*
                 new IntDeclarationsParser(this);								//*
             intDeclarationsParser.setDefinition(VARIABLE);
             intDeclarationsParser.parse(token);
+           
         }
         
-        token = synchronize(INT_START_SET);										//*
-
+        token = synchronize(BOOL_START_SET);										//*
         if (token.getType() == BOOL) {											//*
             token = nextToken();  // consume BOOL								//*
 

@@ -70,7 +70,7 @@ public class ConstantDefinitionsParser extends DeclarationsParser
     public void parse(Token token)
         throws Exception
     {
-        token = synchronize(IDENTIFIER_SET);
+       token = synchronize(IDENTIFIER_SET);
 
         // Loop to parse a sequence of constant definitions
         // separated by semicolons.
