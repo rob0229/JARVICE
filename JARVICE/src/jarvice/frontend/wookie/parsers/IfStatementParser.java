@@ -60,7 +60,7 @@ public class IfStatementParser extends StatementParser
             // Synchronize at the LEFT_BRACE.
             token = synchronize(LEFT_BRACE_SET);
             if (token.getType() == LEFT_BRACE) {
-                token = nextToken();  // consume the Left_Brace
+               // token = nextToken();  // consume the Left_Brace
             }
             else {
                 errorHandler.flag(token, MISSING_LEFT_BRACE, this);
@@ -71,7 +71,7 @@ public class IfStatementParser extends StatementParser
             StatementParser statementParser = new StatementParser(this);
             ifNode.addChild(statementParser.parse(token));
             token = currentToken();
-
+            
             // Look for an ELSE.
             if (token.getType() == ELSE) {
                 token = nextToken();  // consume the {

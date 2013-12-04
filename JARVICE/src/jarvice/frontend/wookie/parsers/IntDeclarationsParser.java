@@ -43,29 +43,24 @@ public class IntDeclarationsParser extends DeclarationsParser
     public void parse(Token token)
             throws Exception
         {
-    	   	  
-    	// Parse the type specification (Will be "int" here.
-        TypeSpec type = parseTypeSpec(token); 
-        token = nextToken();      
-        SymTabEntry id = parseIdentifier(token);    
-        id.setTypeSpec(integerType);
-
-                //currentToken should be a semiColon here
-               // 
-                
-                final EnumSet<WookieTokenType> INT_FOLLOW_SET = EnumSet.of(SEMICOLON);
-
-                token = synchronize(INT_FOLLOW_SET);
-                
-            if ( token.getType() == SEMICOLON){
-            	
-            	token = nextToken();
-            	
-            }      
-            
-          
-            
-        }
+    	   Token dataType = token;//save the int/char data type for use later
+	    	
+	       
+	        token = nextToken();      
+	        SymTabEntry id = parseIdentifier(token);    
+	       if(dataType.getType() == INT){
+	    	   id.setTypeSpec(integerType);
+	       }
+	       else if(dataType.getType() == CHAR){
+	    	   id.setTypeSpec(charType);
+	       }
+	       //currentToken should be a semiColon here
+	       final EnumSet<WookieTokenType> INT_FOLLOW_SET = EnumSet.of(SEMICOLON);
+	       token = synchronize(INT_FOLLOW_SET);
+	      /* if ( token.getType() == SEMICOLON){
+	         	token = nextToken();//consume the ;
+	        }*/      
+     }
     
     private SymTabEntry parseIdentifier(Token token)
             throws Exception
@@ -94,27 +89,5 @@ public class IntDeclarationsParser extends DeclarationsParser
 
             return id;
         }
-
-    protected TypeSpec parseTypeSpec(Token token)
-            throws Exception
-        {
-            // Synchronize on the : token.
-           // token = synchronize(INTEGER);
-
-            if (token.getType() == INT) {
-               
-            }
-            else {
-                errorHandler.flag(token, MISSING_COLON, this);
-            }
-
-            // Parse the type specification.
-            TypeSpecificationParser typeSpecificationParser =
-                new TypeSpecificationParser(this);
-        	
-            TypeSpec type = typeSpecificationParser.parse(token);
-
-            return type;
-        }
-    
+   
 }

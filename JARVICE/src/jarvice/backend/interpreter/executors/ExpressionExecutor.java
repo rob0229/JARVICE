@@ -227,7 +227,7 @@ public class ExpressionExecutor extends StatementExecutor
 
             // Integer operands.
             switch (nodeType) {
-                case EQ: return value1 == value2;
+                case EQ_EQ: return value1 == value2;
                 case NE: return value1 != value2;
                 case LT: return value1 <  value2;
                 case LE: return value1 <= value2;
@@ -243,7 +243,7 @@ public class ExpressionExecutor extends StatementExecutor
 
             // Float operands.
             switch (nodeType) {
-                case EQ: return value1 == value2;
+                case EQ_EQ: return value1 == value2;
                 case NE: return value1 != value2;
                 case LT: return value1 <  value2;
                 case LE: return value1 <= value2;

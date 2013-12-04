@@ -20,7 +20,7 @@ public enum ICodeNodeTypeImpl implements ICodeNodeType
     IF, SELECT, SELECT_BRANCH, SELECT_CONSTANTS, NO_OP,
 
     // Relational operators
-    EQ, NE, LT, LE, GT, GE, NOT,
+    EQ_EQ, NE, LT, LE, GT, GE, NOT,
 
     // Additive operators
     ADD, SUBTRACT, OR, NEGATE,

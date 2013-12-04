@@ -56,7 +56,6 @@ public class WookieSpecialSymbolToken extends WookieToken {
 		case ';':
 		case '\'':
 		case '/':
-		case '=':
 		case '(':
 		case ')':
 		case '[':
@@ -69,12 +68,15 @@ public class WookieSpecialSymbolToken extends WookieToken {
 		}
 
 		
-		case ':': {
-			currentChar = nextChar(); // consume ':';
+		case '=': {
+			
 
-			if (currentChar == '=') {
+			if (currentChar == '=' && peekChar() == '=') {
 				text += currentChar;
 				nextChar(); // consume '='
+				nextChar(); // consume '='
+			}else{
+				nextChar();
 			}
 
 			break;

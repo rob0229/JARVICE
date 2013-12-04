@@ -53,14 +53,14 @@ public class ExpressionParser extends StatementParser
 
     // Set of relational operators.
     private static final EnumSet<WookieTokenType> REL_OPS =
-        EnumSet.of(EQUALS, NOT_EQUALS, LESS_THAN, LESS_EQUALS,
+        EnumSet.of(EQUALS_EQUALS, NOT_EQUALS, LESS_THAN, LESS_EQUALS,
                    GREATER_THAN, GREATER_EQUALS);
 
     // Map relational operator tokens to node types.
     private static final HashMap<WookieTokenType, ICodeNodeType>
         REL_OPS_MAP = new HashMap<WookieTokenType, ICodeNodeType>();
     static {
-        REL_OPS_MAP.put(EQUALS, EQ);
+        REL_OPS_MAP.put(EQUALS_EQUALS, EQ_EQ);
         REL_OPS_MAP.put(NOT_EQUALS, NE);
         REL_OPS_MAP.put(LESS_THAN, LT);
         REL_OPS_MAP.put(LESS_EQUALS, LE);
@@ -83,7 +83,7 @@ public class ExpressionParser extends StatementParser
 
         token = currentToken();
         TokenType tokenType = token.getType();
-
+       
         // Look for a relational operator.
         if (REL_OPS.contains(tokenType)) {
 
