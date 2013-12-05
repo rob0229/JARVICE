@@ -124,7 +124,6 @@ public class VariableParser extends StatementParser {
 		variableNode.setAttribute(ID, variableId);
 
 		token = nextToken(); // consume the identifier
-		System.out.println("**********VARPARSER LINE 127  TokenText  is " + token.getText());
 		TypeSpec variableType = variableId.getTypeSpec();
 		/*
 		 * if (!isFunctionTarget) {

@@ -1,31 +1,21 @@
 package jarvice.frontend.wookie.parsers;
 
-
-
 import java.util.EnumSet;
 import java.util.HashMap;
 
-
-
-
-
-
-
-import jarvice.frontend.wookie.WookieTokenType;
-import jarvice.intermediate.TypeSpec;
-import jarvice.intermediate.typeimpl.TypeChecker;
 import jarvice.frontend.*;
 import jarvice.frontend.wookie.*;
+import jarvice.intermediate.symtabimpl.*;
 import jarvice.intermediate.*;
 import jarvice.intermediate.icodeimpl.*;
-import jarvice.intermediate.symtabimpl.Predefined;
+import jarvice.intermediate.typeimpl.*;
+
 import static jarvice.frontend.wookie.WookieTokenType.*;
 import static jarvice.frontend.wookie.WookieErrorCode.*;
+import static jarvice.intermediate.symtabimpl.SymTabKeyImpl.*;
+import static jarvice.intermediate.symtabimpl.DefinitionImpl.*;
 import static jarvice.intermediate.icodeimpl.ICodeNodeTypeImpl.*;
 import static jarvice.intermediate.icodeimpl.ICodeKeyImpl.*;
-import static jarvice.frontend.wookie.WookieErrorCode.INCOMPATIBLE_TYPES;
-
-
 /**
  * <h1>ExpressionParser</h1>
  *
@@ -92,13 +82,12 @@ public class ExpressionParser extends StatementParser
     	
         // Parse a simple expression and make the root of its tree
         // the root node.
-    	
         ICodeNode rootNode = parseSimpleExpression(token);
         TypeSpec resultType = rootNode != null ? rootNode.getTypeSpec() 
         										:Predefined.undefinedType;
         
               
-        System.out.println("$$$$$$$$$$$$$$$$$$$$$$$$$$$$ Tokentext is " + token.getText());
+     
         token = currentToken();
         TokenType tokenType = token.getType();
        
@@ -116,7 +105,7 @@ public class ExpressionParser extends StatementParser
             // Parse the second simple expression.  The operator node adopts
             // the simple expression's tree as its second child.
        
-            ICodeNode simExprNode = parseSimpleExpression(token);  //Passing in 3 here returns????????????????????
+            ICodeNode simExprNode = parseSimpleExpression(token);  //Passing in 3 here returns IcodeNode 
             opNode.addChild(simExprNode);
             // The operator node becomes the new root node.
             rootNode = opNode;
@@ -125,6 +114,8 @@ public class ExpressionParser extends StatementParser
             TypeSpec simExprType = simExprNode != null
                                        ? simExprNode.getTypeSpec()
                                        : Predefined.undefinedType;
+                                       
+
             if (TypeChecker.areComparisonCompatible(resultType, simExprType)) {
                 resultType = Predefined.booleanType;
             }
@@ -414,6 +405,24 @@ public class ExpressionParser extends StatementParser
        
         switch ((WookieTokenType) tokenType) {
 
+        case IDENTIFIER: {
+            return parseIdentifier(token);
+        }
+
+        case INTEGER: {
+            // Create an INTEGER_CONSTANT node as the root node.
+            rootNode = ICodeFactory.createICodeNode(INTEGER_CONSTANT);
+            rootNode.setAttribute(VALUE, token.getValue());
+
+            token = nextToken();  // consume the number
+
+            rootNode.setTypeSpec(Predefined.integerType);
+            break;
+        }
+        
+        /*
+        
+        
             case IDENTIFIER: {
                 // Look up the identifier in the symbol table stack.
                 // Flag the identifier as undefined if it's not found.
@@ -431,6 +440,7 @@ public class ExpressionParser extends StatementParser
                 token = nextToken();  // consume the identifier
                 break;
             }
+           
 //ADDED BY ROB **************************************************************
             case INT: {
                 // Create an INTEGER_CONSTANT node as the root node.
@@ -450,7 +460,7 @@ public class ExpressionParser extends StatementParser
                 token = nextToken();  // consume the number
                 break;
             }
-
+ */
             case REAL: {
                 // Create an REAL_CONSTANT node as the root node.
                 rootNode = ICodeFactory.createICodeNode(REAL_CONSTANT);
@@ -508,4 +518,92 @@ public class ExpressionParser extends StatementParser
 
         return rootNode;
     }
+    
+    /**
+     * Parse an identifier.
+     * @param token the current token.
+     * @return the root node of the generated parse tree.
+     * @throws Exception if an error occurred.
+     */
+    private ICodeNode parseIdentifier(Token token)
+        throws Exception
+    {
+        ICodeNode rootNode = null;
+
+        // Look up the identifier in the symbol table stack.
+        String name = token.getText().toLowerCase();
+        SymTabEntry id = symTabStack.lookup(name);
+
+        // Undefined.
+        if (id == null) {
+            errorHandler.flag(token, IDENTIFIER_UNDEFINED, this);
+            id = symTabStack.enterLocal(name);
+            id.setDefinition(UNDEFINED);
+            id.setTypeSpec(Predefined.undefinedType);
+        }
+
+        Definition defnCode = id.getDefinition();
+
+        switch ((DefinitionImpl) defnCode) {
+
+            case CONSTANT: {
+                Object value = id.getAttribute(CONSTANT_VALUE);
+                TypeSpec type = id.getTypeSpec();
+
+                if (value instanceof Integer) {
+                    rootNode = ICodeFactory.createICodeNode(INTEGER_CONSTANT);
+                    rootNode.setAttribute(VALUE, value);
+                }
+                else if (value instanceof Float) {
+                    rootNode = ICodeFactory.createICodeNode(REAL_CONSTANT);
+                    rootNode.setAttribute(VALUE, value);
+                }
+                else if (value instanceof String) {
+                    rootNode = ICodeFactory.createICodeNode(STRING_CONSTANT);
+                    rootNode.setAttribute(VALUE, value);
+                }
+
+                id.appendLineNumber(token.getLineNumber());
+                token = nextToken();  // consume the constant identifier
+
+                if (rootNode != null) {
+                    rootNode.setTypeSpec(type);
+                }
+
+                break;
+            }
+
+            case ENUMERATION_CONSTANT: {
+                Object value = id.getAttribute(CONSTANT_VALUE);
+                TypeSpec type = id.getTypeSpec();
+
+                rootNode = ICodeFactory.createICodeNode(INTEGER_CONSTANT);
+                rootNode.setAttribute(VALUE, value);
+
+                id.appendLineNumber(token.getLineNumber());
+                token = nextToken();  // consume the enum constant identifier
+
+                rootNode.setTypeSpec(type);
+                break;
+            }
+
+            case FUNCTION: {
+                CallParser callParser = new CallParser(this);
+                rootNode = callParser.parse(token);
+                break;
+            }
+
+            default: {
+                VariableParser variableParser = new VariableParser(this);
+                rootNode = variableParser.parse(token, id);
+                break;
+            }
+        }
+
+        return rootNode;
+    }
 }
+
+    
+    
+

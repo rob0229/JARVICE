@@ -2,10 +2,8 @@ package jarvice.intermediate.symtabimpl;
 
 import java.util.ArrayList;
 
-
 import jarvice.intermediate.*;
 import jarvice.intermediate.symtabimpl.*;
-
 import static jarvice.intermediate.symtabimpl.SymTabKeyImpl.*;
 import static jarvice.intermediate.typeimpl.TypeFormImpl.*;
 import static jarvice.intermediate.typeimpl.TypeKeyImpl.*;
@@ -35,6 +33,28 @@ public class Predefined
     public static SymTabEntry charId;
     public static SymTabEntry falseId;
     public static SymTabEntry trueId;
+    public static SymTabEntry readId;
+    public static SymTabEntry readlnId;
+    public static SymTabEntry writeId;
+    public static SymTabEntry writelnId;
+    public static SymTabEntry absId;
+    public static SymTabEntry arctanId;
+    public static SymTabEntry chrId;
+    public static SymTabEntry cosId;
+    public static SymTabEntry eofId;
+    public static SymTabEntry eolnId;
+    public static SymTabEntry expId;
+    public static SymTabEntry lnId;
+    public static SymTabEntry oddId;
+    public static SymTabEntry ordId;
+    public static SymTabEntry predId;
+    public static SymTabEntry roundId;
+    public static SymTabEntry sinId;
+    public static SymTabEntry sqrId;
+    public static SymTabEntry sqrtId;
+    public static SymTabEntry succId;
+    public static SymTabEntry truncId;
+
 
     /**
      * Initialize a symbol table stack with predefined identifiers.
