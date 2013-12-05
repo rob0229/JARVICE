@@ -1,24 +1,36 @@
 package jarvice.frontend.wookie.parsers;
 
+
+
 import java.util.EnumSet;
 import java.util.HashMap;
 
 
+
+
+
+
+
+import jarvice.frontend.wookie.WookieTokenType;
+import jarvice.intermediate.TypeSpec;
+import jarvice.intermediate.typeimpl.TypeChecker;
 import jarvice.frontend.*;
 import jarvice.frontend.wookie.*;
 import jarvice.intermediate.*;
 import jarvice.intermediate.icodeimpl.*;
+import jarvice.intermediate.symtabimpl.Predefined;
 import static jarvice.frontend.wookie.WookieTokenType.*;
 import static jarvice.frontend.wookie.WookieErrorCode.*;
 import static jarvice.intermediate.icodeimpl.ICodeNodeTypeImpl.*;
 import static jarvice.intermediate.icodeimpl.ICodeKeyImpl.*;
+import static jarvice.frontend.wookie.WookieErrorCode.INCOMPATIBLE_TYPES;
 
 
 /**
  * <h1>ExpressionParser</h1>
  *
  * <p>Parse a Pascal expression.</p>
- *
+ *`
  * <p>Copyright (c) 2009 by Ronald Mak</p>
  * <p>For instructional purposes only.  No warranties.</p>
  */
@@ -77,10 +89,16 @@ public class ExpressionParser extends StatementParser
     private ICodeNode parseExpression(Token token)
         throws Exception
     {
+    	
         // Parse a simple expression and make the root of its tree
         // the root node.
+    	
         ICodeNode rootNode = parseSimpleExpression(token);
-
+        TypeSpec resultType = rootNode != null ? rootNode.getTypeSpec() 
+        										:Predefined.undefinedType;
+        
+              
+        System.out.println("$$$$$$$$$$$$$$$$$$$$$$$$$$$$ Tokentext is " + token.getText());
         token = currentToken();
         TokenType tokenType = token.getType();
        
@@ -92,17 +110,35 @@ public class ExpressionParser extends StatementParser
             ICodeNodeType nodeType = REL_OPS_MAP.get(tokenType);
             ICodeNode opNode = ICodeFactory.createICodeNode(nodeType);
             opNode.addChild(rootNode);
-
+          
             token = nextToken();  // consume the operator
-
+ 
             // Parse the second simple expression.  The operator node adopts
             // the simple expression's tree as its second child.
-            opNode.addChild(parseSimpleExpression(token));
-
+       
+            ICodeNode simExprNode = parseSimpleExpression(token);  //Passing in 3 here returns????????????????????
+            opNode.addChild(simExprNode);
             // The operator node becomes the new root node.
             rootNode = opNode;
+            
+            // Type check: The operands must be comparison compatible.
+            TypeSpec simExprType = simExprNode != null
+                                       ? simExprNode.getTypeSpec()
+                                       : Predefined.undefinedType;
+            if (TypeChecker.areComparisonCompatible(resultType, simExprType)) {
+                resultType = Predefined.booleanType;
+            }
+            else {
+                errorHandler.flag(token, INCOMPATIBLE_TYPES, this);
+                resultType = Predefined.undefinedType;
+            }
         }
 
+        if (rootNode != null) {
+            rootNode.setTypeSpec(resultType);
+        }
+
+        
         return rootNode;
     }
 
@@ -128,18 +164,29 @@ public class ExpressionParser extends StatementParser
     private ICodeNode parseSimpleExpression(Token token)
         throws Exception
     {
+    	Token signToken = null;
         TokenType signType = null;  // type of leading sign (if any)
-
+        
         // Look for a leading + or - sign.
         TokenType tokenType = token.getType();
         if ((tokenType == PLUS) || (tokenType == MINUS)) {
             signType = tokenType;
+            signToken = token;
             token = nextToken();  // consume the + or -
         }
 
         // Parse a term and make the root of its tree the root node.
         ICodeNode rootNode = parseTerm(token);
 
+        TypeSpec resultType = rootNode != null ? rootNode.getTypeSpec()
+        										: Predefined. undefinedType;
+       
+
+        // Type check: Leading sign.
+        if ((signType != null) && (!TypeChecker.isIntegerOrReal(resultType))) {
+            errorHandler.flag(signToken, INCOMPATIBLE_TYPES, this);
+        }
+        
         // Was there a leading - sign?
         if (signType == MINUS) {
 
@@ -147,15 +194,17 @@ public class ExpressionParser extends StatementParser
             // as its child. The NEGATE node becomes the new root node.
             ICodeNode negateNode = ICodeFactory.createICodeNode(NEGATE);
             negateNode.addChild(rootNode);
+            negateNode.setTypeSpec(rootNode.getTypeSpec());
             rootNode = negateNode;
         }
-
-        token = currentToken();
+//*************************************************************************************************************************************This consumes the 3 IS IT RIGHT????????
+        
+        token = currentToken();   
         tokenType = token.getType();
 
         // Loop over additive operators.
         while (ADD_OPS.contains(tokenType)) {
-
+        	TokenType operator = tokenType;
             // Create a new operator node and adopt the current tree
             // as its first child.
             ICodeNodeType nodeType = ADD_OPS_OPS_MAP.get(tokenType);
@@ -166,15 +215,59 @@ public class ExpressionParser extends StatementParser
 
             // Parse another term.  The operator node adopts
             // the term's tree as its second child.
+            ICodeNode termNode = parseTerm(token);
             opNode.addChild(parseTerm(token));
+            TypeSpec termType = termNode != null ? termNode.getTypeSpec()
+									: Predefined.undefinedType;
 
             // The operator node becomes the new root node.
             rootNode = opNode;
 
+            // Determine the result type.
+            switch ((WookieTokenType) operator) {
+
+                case PLUS:
+                case MINUS: {
+                    // Both operands integer ==> integer result.
+                    if (TypeChecker.areBothInteger(resultType, termType)) {
+                        resultType = Predefined.integerType;
+                    }
+
+                    // Both real operands or one real and one integer operand
+                    // ==> real result.
+                    else if (TypeChecker.isAtLeastOneReal(resultType,
+                                                          termType)) {
+                        resultType = Predefined.realType;
+                    }
+
+                    else {
+                        errorHandler.flag(token, INCOMPATIBLE_TYPES, this);
+                    }
+
+                    break;
+                }
+
+                case OR: {
+                    // Both operands boolean ==> boolean result.
+                    if (TypeChecker.areBothBoolean(resultType, termType)) {
+                        resultType = Predefined.booleanType;
+                    }
+                    else {
+                        errorHandler.flag(token, INCOMPATIBLE_TYPES, this);
+                    }
+
+                    break;
+                }
+            }
+
+            rootNode.setTypeSpec(resultType);
+
+            
+            
+            
             token = currentToken();
             tokenType = token.getType();
         }
-
         return rootNode;
     }
 
@@ -204,13 +297,17 @@ public class ExpressionParser extends StatementParser
     {
         // Parse a factor and make its node the root node.
         ICodeNode rootNode = parseFactor(token);
+        
+        TypeSpec resultType = rootNode != null ? rootNode.getTypeSpec()
+                : Predefined.undefinedType;
+       
 
         token = currentToken();
         TokenType tokenType = token.getType();
 
         // Loop over multiplicative operators.
         while (MULT_OPS.contains(tokenType)) {
-
+        	TokenType operator = tokenType;
             // Create a new operator node and adopt the current tree
             // as its first child.
             ICodeNodeType nodeType = MULT_OPS_OPS_MAP.get(tokenType);
@@ -221,15 +318,85 @@ public class ExpressionParser extends StatementParser
 
             // Parse another factor.  The operator node adopts
             // the term's tree as its second child.
-            opNode.addChild(parseFactor(token));
+            ICodeNode factorNode = parseFactor(token);
+            opNode.addChild(factorNode);
 
+            TypeSpec factorType = factorNode != null ? factorNode.getTypeSpec()
+                    : Predefined.undefinedType;
+            
             // The operator node becomes the new root node.
             rootNode = opNode;
+            
+            // Determine the result type.
+            switch ((WookieTokenType) operator) {
 
+                case STAR: {
+                    // Both operands integer ==> integer result.
+                    if (TypeChecker.areBothInteger(resultType, factorType)) {
+                        resultType = Predefined.integerType;
+                    }
+
+                    // Both real operands or one real and one integer operand
+                    // ==> real result.
+                    else if (TypeChecker.isAtLeastOneReal(resultType,
+                                                          factorType)) {
+                        resultType = Predefined.realType;
+                    }
+
+                    else {
+                        errorHandler.flag(token, INCOMPATIBLE_TYPES, this);
+                    }
+
+                    break;
+                }
+
+                case SLASH: {
+                    // All integer and real operand combinations
+                    // ==> real result.
+                    if (TypeChecker.areBothInteger(resultType, factorType) ||
+                        TypeChecker.isAtLeastOneReal(resultType, factorType))
+                    {
+                        resultType = Predefined.realType;
+                    }
+                    else {
+                        errorHandler.flag(token, INCOMPATIBLE_TYPES, this);
+                    }
+
+                    break;
+                }
+
+                case DIV:
+                case MOD: {
+                    // Both operands integer ==> integer result.
+                    if (TypeChecker.areBothInteger(resultType, factorType)) {
+                        resultType = Predefined.integerType;
+                    }
+                    else {
+                        errorHandler.flag(token, INCOMPATIBLE_TYPES, this);
+                    }
+
+                    break;
+                }
+
+                case AND: {
+                    // Both operands boolean ==> boolean result.
+                    if (TypeChecker.areBothBoolean(resultType, factorType)) {
+                        resultType = Predefined.booleanType;
+                    }
+                    else {
+                        errorHandler.flag(token, INCOMPATIBLE_TYPES, this);
+                    }
+
+                    break;
+                }
+            }
+
+            rootNode.setTypeSpec(resultType);
+          
             token = currentToken();
             tokenType = token.getType();
         }
-
+        //System.out.println("***********************  expParser line 398, token at return from parseTerm  is  Tokentext is " + token.getText());
         return rootNode;
     }
 
@@ -276,10 +443,10 @@ public class ExpressionParser extends StatementParser
             
            
             case INTEGER: {
+            	
                 // Create an INTEGER_CONSTANT node as the root node.
                 rootNode = ICodeFactory.createICodeNode(INTEGER_CONSTANT);
                 rootNode.setAttribute(VALUE, token.getValue());
-
                 token = nextToken();  // consume the number
                 break;
             }

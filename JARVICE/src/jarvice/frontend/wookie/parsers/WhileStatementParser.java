@@ -1,5 +1,7 @@
 package jarvice.frontend.wookie.parsers;
 
+
+
 import java.util.EnumSet;
 
 import jarvice.frontend.*;
@@ -10,7 +12,9 @@ import static jarvice.frontend.wookie.WookieTokenType.*;
 import static jarvice.frontend.wookie.WookieErrorCode.*;
 import static jarvice.intermediate.icodeimpl.ICodeNodeTypeImpl.*;
 import static jarvice.intermediate.icodeimpl.ICodeKeyImpl.*;
+import jarvice.intermediate.typeimpl.TypeChecker;
 
+import jarvice.intermediate.symtabimpl.*;
 
 /**
  * <h1>WhileStatementParser</h1>
@@ -72,7 +76,11 @@ public class WhileStatementParser extends StatementParser {
 	        ICodeNode exprNode = expressionParser.parse(token);	
 	        // The TEST node adopts the exprNode node as its only child.
 	        testNode.addChild(exprNode);
-        
+	        TypeSpec exprType = exprNode != null ? exprNode.getTypeSpec()
+                    : Predefined.undefinedType;
+	        		if (!TypeChecker.isBoolean(exprType)) {
+errorHandler.flag(token, INCOMPATIBLE_TYPES, this);
+}
 	        //  Synchronize at the LEFT_BRACE.
 	        token = synchronize(LEFT_BRACE_SET);
 			if (token.getType() == LEFT_BRACE) {

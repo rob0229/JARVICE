@@ -61,12 +61,12 @@ class TypeSpecificationParser extends WookieParserTD
                 ArrayTypeParser arrayTypeParser = new ArrayTypeParser(this);
                 return arrayTypeParser.parse(token);
             }
-
+/*
             case RECORD: {
                 RecordTypeParser recordTypeParser = new RecordTypeParser(this);
                 return recordTypeParser.parse(token);
             }
-
+*/
             default: {
             
                 SimpleTypeParser simpleTypeParser = new SimpleTypeParser(this);

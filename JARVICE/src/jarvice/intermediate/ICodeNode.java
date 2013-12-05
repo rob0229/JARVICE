@@ -3,6 +3,8 @@ package jarvice.intermediate;
 
 import java.util.ArrayList;
 
+
+
 /**
  * <h1>ICodeNode</h1>
  *
@@ -24,6 +26,18 @@ public interface ICodeNode
      * @return the parent node.
      */
     public ICodeNode getParent();
+
+    /**
+     * Set the type specification of this node.
+     * @param typeSpec the type sprcification to set.
+     */
+    public void setTypeSpec(TypeSpec typeSpec);
+
+    /**
+     * Return the type specification of this node.
+     * @return the type specification.
+     */
+    public TypeSpec getTypeSpec();
 
     /**
      * Add a child node.

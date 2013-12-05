@@ -1,5 +1,7 @@
 package jarvice.frontend.wookie.parsers;
 
+
+
 import java.util.EnumSet;
 
 import jarvice.frontend.*;
@@ -37,7 +39,11 @@ public class DeclarationsParser extends WookieParserTD
         static {
             CHAR_START_SET.remove(INT);
         }
-        
+        static final EnumSet<WookieTokenType> VAR_START_SET =
+                INT_START_SET.clone();
+            static {
+                VAR_START_SET.remove(TYPE);
+            }
 //******************************************************************************
     static final EnumSet<WookieTokenType> ROUTINE_START_SET =
         CHAR_START_SET.clone();

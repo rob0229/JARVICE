@@ -36,7 +36,7 @@ class SimpleTypeParser extends TypeSpecificationParser
 
     // Synchronization set for starting a simple type specification.
     static final EnumSet<WookieTokenType> SIMPLE_TYPE_START_SET =
-        ConstantDefinitionsParser.CONSTANT_START_SET.clone();
+    		EnumSet.of(IDENTIFIER, INTEGER, REAL, PLUS, MINUS, STRING, SEMICOLON);
     static {
 //************************************************************DO NOT NEED LEFT_PAREN**********************************    	
         SIMPLE_TYPE_START_SET.add(INT);
