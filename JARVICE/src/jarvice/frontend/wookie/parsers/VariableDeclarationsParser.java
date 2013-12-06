@@ -8,12 +8,10 @@ import jarvice.frontend.TokenType;
 import jarvice.frontend.wookie.WookieTokenType;
 import jarvice.intermediate.SymTabEntry;
 import jarvice.intermediate.TypeSpec;
-
 import jarvice.frontend.*;
 import jarvice.frontend.wookie.*;
 import jarvice.intermediate.*;
 import jarvice.intermediate.symtabimpl.*;
-
 import static jarvice.frontend.wookie.WookieTokenType.*;
 import static jarvice.frontend.wookie.WookieErrorCode.*;
 import static jarvice.intermediate.symtabimpl.SymTabKeyImpl.*;
@@ -88,6 +86,7 @@ public class VariableDeclarationsParser extends DeclarationsParser {
 	 *             if an error occurred.
 	 */
 	public void parse(Token token) throws Exception {
+	
 		token = synchronize(IDENTIFIER_SET);
 
 		// Loop to parse a sequence of variable declarations

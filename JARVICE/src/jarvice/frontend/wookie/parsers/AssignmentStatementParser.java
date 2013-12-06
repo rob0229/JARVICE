@@ -58,6 +58,7 @@ public class AssignmentStatementParser extends StatementParser {
     static {
         EQUALS_SET.add(EQUALS);
         EQUALS_SET.addAll(StatementParser.STMT_FOLLOW_SET);
+        EQUALS_SET.add(RETURN);
     }
 
 
@@ -92,10 +93,16 @@ public class AssignmentStatementParser extends StatementParser {
 */
 		
 		 // Parse the target variable.
+		
+	
+	
         VariableParser variableParser = new VariableParser(this);
+        System.out.println("&*******line 100 assParser*************** isfunction target " +isFunctionTarget);	
         ICodeNode targetNode = isFunctionTarget
                                ? variableParser.parseFunctionNameTarget(token)
                                : variableParser.parse(token);
+                               
+
         TypeSpec targetType = targetNode != null ? targetNode.getTypeSpec()
                                                  : Predefined.undefinedType;
 		
@@ -108,10 +115,13 @@ public class AssignmentStatementParser extends StatementParser {
 		// ROB**************************************************************************
 		// Look for the = token.
 		  // Synchronize on the := token.
-        token = synchronize(EQUALS_SET);
-		if (token.getType() == EQUALS) {
-			token = nextToken(); // consume the =
 
+	
+        token = synchronize(EQUALS_SET);
+        
+		if (token.getType() == EQUALS || token.getType() == RETURN) {
+			token = nextToken(); // consume the =
+			
 		} else {
 			errorHandler.flag(token, MISSING_EQUALS, this);
 		}

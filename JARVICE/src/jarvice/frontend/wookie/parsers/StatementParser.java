@@ -66,14 +66,15 @@ public class StatementParser extends WookieParserTD {
 		// An assignment statement in c starts with the data type if the
 		// variable has not been declared.
 		
-		case RETURN:{
+		case RETURN:{			
 			
-			System.out.println("I found Matts Balls");
+			AssignmentStatementParser assignmentParser =
+                    new AssignmentStatementParser(this);
+                statementNode = assignmentParser.parse(token);
 			break; 
 		}
 		
 		case LEFT_BRACE: {
-
 			CompoundStatementParser compoundParser = new CompoundStatementParser(this);
 			statementNode = compoundParser.parse(token);
 			break;

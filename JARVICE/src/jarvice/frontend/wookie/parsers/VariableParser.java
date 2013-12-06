@@ -8,7 +8,6 @@ import jarvice.intermediate.*;
 import jarvice.intermediate.symtabimpl.*;
 import jarvice.intermediate.icodeimpl.*;
 import jarvice.intermediate.typeimpl.*;
-
 import static jarvice.frontend.wookie.WookieTokenType.*;
 import static jarvice.frontend.wookie.WookieErrorCode.*;
 import static jarvice.intermediate.symtabimpl.SymTabKeyImpl.*;
@@ -59,7 +58,7 @@ public class VariableParser extends StatementParser {
 		// Look up the identifier in the symbol table stack.
 		String name = token.getText().toLowerCase();
 		SymTabEntry variableId = symTabStack.lookup(name);
-
+		System.out.println("&*******line 61 assParser*************** Token here is " + variableId);	
 		// If not found, flag the error and enter the identifier
 		// as an undefined identifier with an undefined type.
 		if (variableId == null) {
@@ -97,7 +96,7 @@ public class VariableParser extends StatementParser {
 
 		// Check how the variable is defined.
 		Definition defnCode = variableId.getDefinition();
-
+System.out.println("&*******line 99 assParser*************** Token here is " + variableId.getDefinition());	
 		if (!((defnCode == VARIABLE) || (defnCode == VALUE_PARM)
 				|| (defnCode == VAR_PARM) || (isFunctionTarget && (defnCode == FUNCTION)))) {
 			errorHandler.flag(token, INVALID_IDENTIFIER_USAGE, this);
