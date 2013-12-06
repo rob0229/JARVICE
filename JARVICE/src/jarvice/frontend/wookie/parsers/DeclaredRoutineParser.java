@@ -59,7 +59,7 @@ public class DeclaredRoutineParser extends DeclarationsParser {
 			throws Exception {
 		
 		Token FunctionReturnToken = token;
-		boolean mainUsed = false;
+		
 		
 		Definition routineDefn = null;
 		String dummyName = null;
@@ -149,11 +149,7 @@ public class DeclaredRoutineParser extends DeclarationsParser {
 		// ONLY PASCAL NEEDS PROGRAM HERE
 		// Program: Set the program identifier in the symbol table stack.
 
-		//ADDED BY ROB
-		if(token.getText() == "main"){
-			mainUsed = true;
-			//symTabStack.setProgramId(routineId);
-		}
+		
 	
 		
 		parseFormalParameters(token, routineId);

@@ -21,10 +21,49 @@ public class SymTabImpl
     implements SymTab
 {
     private int nestingLevel;
+    private String funcName;
+    private boolean isFunc = false;
 
     public SymTabImpl(int nestingLevel)
     {
         this.nestingLevel = nestingLevel;
+    }
+    
+    /**
+     * Getter.
+     * @return the scope nesting level of this entry.
+     */
+    public String getfuncName()
+    {
+        return funcName;
+    }
+
+    /**
+     * Getter.
+     * @return the scope nesting level of this entry.
+     */
+    public boolean getIsFunc()
+    {
+        return isFunc;
+    }
+    
+    
+    /**
+     * Setter.
+     * @return the scope nesting level of this entry.
+     */
+    public void setfuncName( String name)
+    {
+       funcName = name;
+    }
+
+    /**
+     * Getter.
+     * @return the scope nesting level of this entry.
+     */
+    public void setisFunc(boolean x)
+    {
+        isFunc = x;
     }
 
     /**

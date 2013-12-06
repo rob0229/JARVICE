@@ -20,6 +20,13 @@ public interface SymTab
      */
     public int getNestingLevel();
 
+    public String getfuncName();
+   
+    public boolean getIsFunc();
+    
+    public void setfuncName( String name);
+  
+    public void setisFunc(boolean x);
     /**
      * Create and enter a new entry into the symbol table.
      * @param name the name of the entry.

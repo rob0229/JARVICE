@@ -22,7 +22,7 @@ import static jarvice.intermediate.symtabimpl.DefinitionImpl.VAR_PARM;
 import static jarvice.frontend.wookie.WookieErrorCode.MISSING_SEMICOLON;
 import static jarvice.frontend.wookie.WookieErrorCode.UNEXPECTED_TOKEN;
 import static jarvice.intermediate.symtabimpl.DefinitionImpl.UNDEFINED;
-
+import static jarvice.intermediate.symtabimpl.SymTabImpl.*;
 /**
  * <h1>StatementParser</h1>
  * 
@@ -67,11 +67,25 @@ public class StatementParser extends WookieParserTD {
 		// variable has not been declared.
 		
 		case RETURN:{			
+			SymTab symTab = symTabStack.getLocalSymTab();
+			boolean isFunc = (symTab).getIsFunc();
 			
-			AssignmentStatementParser assignmentParser =
-                    new AssignmentStatementParser(this);
-                statementNode = assignmentParser.parse(token);
-			break; 
+			if (isFunc){
+		
+			AssignmentStatementParser assignmentParser = new AssignmentStatementParser(this);
+            statementNode = assignmentParser.parse(token);
+            
+            
+            
+		
+			}
+			else{
+				
+				
+				
+			}
+			
+			break;
 		}
 		
 		case LEFT_BRACE: {
