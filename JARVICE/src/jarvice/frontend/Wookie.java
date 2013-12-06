@@ -73,7 +73,7 @@ public class Wookie {
 				if (true) {
 					ParseTreePrinter treePrinter = new ParseTreePrinter(
 							System.out);
-					treePrinter.print(iCode);
+					treePrinter.print(symTabStack);
 				}
 
 				backend.process(iCode, symTabStack);
@@ -115,7 +115,7 @@ public class Wookie {
 
 			// Source path.
 			if (true) {
-				String path = "C://Users//Rob//Desktop//compilersamplecode//declarations.txt";
+				String path = "C://Users//matt//Desktop//math.c";
 				new Wookie(operation, path, flags);
 			} else {
 				throw new Exception();

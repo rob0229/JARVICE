@@ -59,6 +59,7 @@ public class IfStatementParser extends StatementParser
 
             ICodeNode exprNode = expressionParser.parse(token);
             ifNode.addChild(exprNode);
+            token = currentToken();
 
             // Type check: The expression type must be boolean.
             TypeSpec exprType = exprNode != null ? exprNode.getTypeSpec()

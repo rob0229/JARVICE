@@ -4,6 +4,11 @@ package jarvice.frontend.wookie.parsers;
 
 import java.util.EnumSet;
 
+import jarvice.frontend.TokenType;
+import jarvice.frontend.wookie.parsers.DeclaredRoutineParser;
+
+import jarvice.frontend.wookie.WookieTokenType;
+
 import jarvice.frontend.*;
 import jarvice.frontend.wookie.*;
 import jarvice.intermediate.*;
@@ -11,6 +16,12 @@ import static jarvice.frontend.wookie.WookieTokenType.*;
 import static jarvice.frontend.wookie.WookieErrorCode.*;
 import static jarvice.intermediate.symtabimpl.SymTabKeyImpl.*;
 import static jarvice.intermediate.symtabimpl.DefinitionImpl.VARIABLE;
+import static jarvice.frontend.wookie.WookieTokenType.BEGIN;
+import static jarvice.frontend.wookie.WookieTokenType.CONST;
+import static jarvice.frontend.wookie.WookieTokenType.FUNCTION;
+import static jarvice.frontend.wookie.WookieTokenType.PROCEDURE;
+import static jarvice.frontend.wookie.WookieTokenType.TYPE;
+import static jarvice.frontend.wookie.WookieTokenType.VAR;
 
 /**
  * <h1>DeclarationsParser</h1>
@@ -30,6 +41,10 @@ public class DeclarationsParser extends WookieParserTD
     {
         super(parent);
     }
+//*******************************************************Added this for programparser*****************************************
+    static final EnumSet<WookieTokenType> DECLARATION_START_SET =
+            EnumSet.of(CONST, TYPE, VAR, PROCEDURE, FUNCTION, BEGIN);
+    
 //*******************************************************CAN DELETE CONST< TYPE< VAR< BEGIN< PROCEDURE*********************************************
     static final EnumSet<WookieTokenType> INT_START_SET =
         EnumSet.of(INT, CHAR, PROCEDURE, FUNCTION, LEFT_BRACE);
@@ -57,7 +72,7 @@ public class DeclarationsParser extends WookieParserTD
      * @param token the initial token.
      * @throws Exception if an error occurred.
      */
-    public void parse(Token token)
+    public SymTabEntry parse(Token token, SymTabEntry parentId)
         throws Exception
     {
      
@@ -88,5 +103,24 @@ public class DeclarationsParser extends WookieParserTD
         
         
         token = synchronize(ROUTINE_START_SET);
+        TokenType tokenType = token.getType();
+
+        while ((tokenType == PROCEDURE) || (tokenType == FUNCTION)) {
+            DeclaredRoutineParser routineParser =
+                new DeclaredRoutineParser(this);
+            routineParser.parse(token, parentId);
+
+            // Look for one or more semicolons after a definition.
+            token = currentToken();
+            if (token.getType() == SEMICOLON) {
+                while (token.getType() == SEMICOLON) {
+                    token = nextToken();  // consume the ;
+                }
+            }
+
+            token = synchronize(ROUTINE_START_SET);
+            tokenType = token.getType();
+        }
+        return null;
     }
 }

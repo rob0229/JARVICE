@@ -2,6 +2,11 @@ package jarvice.frontend.wookie;
 
 import java.util.EnumSet;
 
+import jarvice.frontend.Token;
+import jarvice.frontend.wookie.parsers.ProgramParser;
+import jarvice.intermediate.symtabimpl.Predefined;
+import jarvice.message.Message;
+
 import jarvice.frontend.*;
 import jarvice.frontend.wookie.parsers.*;
 import jarvice.intermediate.*;
@@ -12,6 +17,8 @@ import static jarvice.frontend.wookie.WookieTokenType.*;
 import static jarvice.frontend.wookie.WookieErrorCode.*;
 import static jarvice.intermediate.symtabimpl.SymTabKeyImpl.*;
 import static jarvice.intermediate.typeimpl.TypeFormImpl.*;
+import static jarvice.message.MessageType.PARSER_SUMMARY;
+import static jarvice.frontend.wookie.WookieErrorCode.IO_ERROR;
 import static jarvice.message.MessageType.PARSER_SUMMARY;
 
 /**
@@ -61,12 +68,12 @@ public class WookieParserTD extends Parser {
 	 *             if an error occurred.
 	 */
 	public void parse() throws Exception {
-		long startTime = System.currentTimeMillis();
+		/*long startTime = System.currentTimeMillis();
 		ICode iCode = ICodeFactory.createICode();
 		Predefined.initialize(symTabStack);
 		// Create a dummy program identifier symbol table entry.
 		routineId = symTabStack.enterLocal("DummyProgramName".toLowerCase());
-		System.out.println("************** DUMMY PROGRAM NAME SYSOUT**********************************************************");
+		
 		routineId.setDefinition(DefinitionImpl.PROGRAM);
 		symTabStack.setProgramId(routineId);
 
@@ -100,7 +107,7 @@ public class WookieParserTD extends Parser {
 				errorHandler.flag(token, UNEXPECTED_TOKEN, this);
 			}
 */
-			token = currentToken();
+			/*token = currentToken();
 
 			// Set the parse tree root node.
 			if (rootNode != null) {
@@ -113,7 +120,30 @@ public class WookieParserTD extends Parser {
 					token.getLineNumber(), getErrorCount(), elapsedTime }));
 		} catch (java.io.IOException ex) {
 			errorHandler.abortTranslation(IO_ERROR, this);
-		}
+		}*/
+		
+		 long startTime = System.currentTimeMillis();
+	        Predefined.initialize(symTabStack);
+
+	        try {
+	            Token token = nextToken();
+
+	            // Parse a program.
+	            ProgramParser programParser = new ProgramParser(this);
+	            programParser.parse(token, null);
+	            token = currentToken();
+
+	            // Send the parser summary message.
+	            float elapsedTime = (System.currentTimeMillis() - startTime)/1000f;
+	            sendMessage(new Message(PARSER_SUMMARY,
+	                                    new Number[] {token.getLineNumber(),
+	                                                  getErrorCount(),
+	                                                  elapsedTime}));
+	        }
+	        catch (java.io.IOException ex) {
+	            errorHandler.abortTranslation(IO_ERROR, this);
+	        }
+		
 	}
 
 	/**

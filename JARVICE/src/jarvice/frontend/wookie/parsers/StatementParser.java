@@ -2,6 +2,8 @@ package jarvice.frontend.wookie.parsers;
 
 import java.util.EnumSet;
 
+
+
 import jarvice.frontend.wookie.WookieTokenType;
 import jarvice.frontend.wookie.parsers.IfStatementParser;
 import jarvice.frontend.wookie.parsers.WhileStatementParser;
@@ -9,12 +11,17 @@ import jarvice.frontend.wookie.WookieTokenType;
 import jarvice.frontend.*;
 import jarvice.frontend.wookie.*;
 import jarvice.intermediate.*;
+import jarvice.intermediate.symtabimpl.DefinitionImpl;
 import static jarvice.frontend.wookie.WookieTokenType.*;
 import static jarvice.frontend.wookie.WookieErrorCode.*;
 import static jarvice.intermediate.icodeimpl.ICodeNodeTypeImpl.*;
 import static jarvice.intermediate.icodeimpl.ICodeKeyImpl.*;
 import static jarvice.intermediate.symtabimpl.DefinitionImpl.VARIABLE;
+import static jarvice.intermediate.symtabimpl.DefinitionImpl.VALUE_PARM;
+import static jarvice.intermediate.symtabimpl.DefinitionImpl.VAR_PARM;
 import static jarvice.frontend.wookie.WookieErrorCode.MISSING_SEMICOLON;
+import static jarvice.frontend.wookie.WookieErrorCode.UNEXPECTED_TOKEN;
+import static jarvice.intermediate.symtabimpl.DefinitionImpl.UNDEFINED;
 
 /**
  * <h1>StatementParser</h1>
@@ -81,12 +88,47 @@ public class StatementParser extends WookieParserTD {
            break;
         }
 		// An assignment statement begins with a variable's identifier.
-		case IDENTIFIER: {
-			AssignmentStatementParser assignmentParser = new AssignmentStatementParser(
-					this);
-			statementNode = assignmentParser.parse(token);
-			break;
-		}
+		 case IDENTIFIER: {
+             String name = token.getText().toLowerCase();
+             SymTabEntry id = symTabStack.lookup(name);
+             Definition idDefn = id != null ? id.getDefinition()
+                                            : UNDEFINED;
+
+             // Assignment statement or procedure call.
+             switch ((DefinitionImpl) idDefn) {
+
+                 case VARIABLE:
+                 case VALUE_PARM:
+                 case VAR_PARM:
+                 case UNDEFINED: {
+                     AssignmentStatementParser assignmentParser =
+                         new AssignmentStatementParser(this);
+                     statementNode = assignmentParser.parse(token);
+                     break;
+                 }
+
+                 case FUNCTION: {
+                     AssignmentStatementParser assignmentParser =
+                         new AssignmentStatementParser(this);
+                     statementNode =
+                         assignmentParser.parseFunctionNameAssignment(token);
+                     break;
+                 }
+
+                 case PROCEDURE: {
+                     CallParser callParser = new CallParser(this);
+                     statementNode = callParser.parse(token);
+                     break;
+                 }
+
+                 default: {
+                     errorHandler.flag(token, UNEXPECTED_TOKEN, this);
+                     token = nextToken();  // consume identifier
+                 }
+             }
+
+             break;
+         }
 		case WHILE: {
 			WhileStatementParser whileParser = new WhileStatementParser(this);
 			statementNode = whileParser.parse(token);
@@ -154,7 +196,7 @@ public class StatementParser extends WookieParserTD {
 		// Loop to parse each statement until the } token
 		// or the end of the source file.
 		while (!(token instanceof EofToken) && (token.getType() != terminator)) {
-
+			
 			boolean oldToken = false;
 			// Parse a statement. The parent node adopts the statement node.
 			if((token.getType() == WookieTokenType.IF ) || (token.getType() == WHILE)){

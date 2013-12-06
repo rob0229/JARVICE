@@ -90,10 +90,10 @@ public class ExpressionParser extends StatementParser
      
         token = currentToken();
         TokenType tokenType = token.getType();
-       
+        
         // Look for a relational operator.
         if (REL_OPS.contains(tokenType)) {
-
+        	
             // Create a new operator node and adopt the current tree
             // as its first child.
             ICodeNodeType nodeType = REL_OPS_MAP.get(tokenType);
@@ -128,8 +128,8 @@ public class ExpressionParser extends StatementParser
         if (rootNode != null) {
             rootNode.setTypeSpec(resultType);
         }
-
-        
+        token = currentToken();
+       
         return rootNode;
     }
 
@@ -155,6 +155,7 @@ public class ExpressionParser extends StatementParser
     private ICodeNode parseSimpleExpression(Token token)
         throws Exception
     {
+    	
     	Token signToken = null;
         TokenType signType = null;  // type of leading sign (if any)
         
@@ -206,8 +207,8 @@ public class ExpressionParser extends StatementParser
 
             // Parse another term.  The operator node adopts
             // the term's tree as its second child.
-            ICodeNode termNode = parseTerm(token);
-            opNode.addChild(parseTerm(token));
+            ICodeNode termNode = parseTerm(token);//there is a double call to parseTerm here
+            opNode.addChild(termNode);//weird I am not sure what is happening here
             TypeSpec termType = termNode != null ? termNode.getTypeSpec()
 									: Predefined.undefinedType;
 
@@ -286,6 +287,7 @@ public class ExpressionParser extends StatementParser
     private ICodeNode parseTerm(Token token)
         throws Exception
     {
+
         // Parse a factor and make its node the root node.
         ICodeNode rootNode = parseFactor(token);
         
@@ -400,20 +402,24 @@ public class ExpressionParser extends StatementParser
     private ICodeNode parseFactor(Token token)
         throws Exception
     {
+
         TokenType tokenType = token.getType();
         ICodeNode rootNode = null;
        
         switch ((WookieTokenType) tokenType) {
 
         case IDENTIFIER: {
+
             return parseIdentifier(token);
+            
         }
 
         case INTEGER: {
+        	token = currentToken();
+
             // Create an INTEGER_CONSTANT node as the root node.
             rootNode = ICodeFactory.createICodeNode(INTEGER_CONSTANT);
             rootNode.setAttribute(VALUE, token.getValue());
-
             token = nextToken();  // consume the number
 
             rootNode.setTypeSpec(Predefined.integerType);
@@ -528,6 +534,7 @@ public class ExpressionParser extends StatementParser
     private ICodeNode parseIdentifier(Token token)
         throws Exception
     {
+
         ICodeNode rootNode = null;
 
         // Look up the identifier in the symbol table stack.
@@ -594,6 +601,7 @@ public class ExpressionParser extends StatementParser
             }
 
             default: {
+
                 VariableParser variableParser = new VariableParser(this);
                 rootNode = variableParser.parse(token, id);
                 break;

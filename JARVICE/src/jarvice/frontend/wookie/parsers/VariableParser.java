@@ -26,16 +26,10 @@ import static jarvice.intermediate.icodeimpl.ICodeKeyImpl.*;
 /**
  * <h1>VariableParser</h1>
  * 
- * <p>
- * Parse a Pascal variable.
- * </p>
+ * <p> * Parse a Pascal variable.</p>
  * 
- * <p>
- * Copyright (c) 2009 by Ronald Mak
- * </p>
- * <p>
- * For instructional purposes only. No warranties.
- * </p>
+ * <p>Copyright (c) 2009 by Ronald Mak</p>
+ * <p> * For instructional purposes only. No warranties. * </p>
  */
 public class VariableParser extends StatementParser {
 	// Set to true to parse a function name
@@ -45,24 +39,21 @@ public class VariableParser extends StatementParser {
 	/**
 	 * Constructor.
 	 * 
-	 * @param parent
-	 *            the parent parser.
+	 * @param parent the parent parser.
 	 */
 	public VariableParser(WookieParserTD parent) {
 		super(parent);
 	}
 
-	// private static final EnumSet<WookieTokenType> SUBSCRIPT_FIELD_START_SET =
-	// EnumSet.of(LEFT_BRACKET, DOT);
+	 private static final EnumSet<WookieTokenType> SUBSCRIPT_FIELD_START_SET =
+	 EnumSet.of(LEFT_BRACKET, DOT);
 
 	/**
 	 * Parse a variable.
 	 * 
-	 * @param token
-	 *            the initial token.
+	 * @param token the initial token.
 	 * @return the root node of the generated parse tree.
-	 * @throws Exception
-	 *             if an error occurred.
+	 * @throws Exception if an error occurred.
 	 */
 	public ICodeNode parse(Token token) throws Exception {
 		// Look up the identifier in the symbol table stack.
@@ -84,11 +75,9 @@ public class VariableParser extends StatementParser {
 	/**
 	 * Parse a function name as the target of an assignment statement.
 	 * 
-	 * @param token
-	 *            the initial token.
+	 * @param token the initial token.
 	 * @return the root node of the generated parse tree.
-	 * @throws Exception
-	 *             if an error occurred.
+	 * @throws Exception if an error occurred.
 	 */
 	public ICodeNode parseFunctionNameTarget(Token token) throws Exception {
 		isFunctionTarget = true;
@@ -98,13 +87,10 @@ public class VariableParser extends StatementParser {
 	/**
 	 * Parse a variable.
 	 * 
-	 * @param token
-	 *            the initial token.
-	 * @param variableId
-	 *            the symbol table entry of the variable identifier.
+	 * @param token the initial token.
+	 * @param variableId the symbol table entry of the variable identifier.
 	 * @return the root node of the generated parse tree.
-	 * @throws Exception
-	 *             if an error occurred.
+	 * @throws Exception if an error occurred.
 	 */
 	public ICodeNode parse(Token token, SymTabEntry variableId)
 			throws Exception {
@@ -125,19 +111,17 @@ public class VariableParser extends StatementParser {
 
 		token = nextToken(); // consume the identifier
 		TypeSpec variableType = variableId.getTypeSpec();
-		/*
-		 * if (!isFunctionTarget) {
-		 * 
-		 * // Parse array subscripts or record fields. while
-		 * (SUBSCRIPT_FIELD_START_SET.contains(token.getType())) { ICodeNode
-		 * subFldNode = token.getType() == LEFT_BRACKET ?
-		 * parseSubscripts(variableType) : parseField(variableType); token =
-		 * currentToken();
-		 * 
-		 * // Update the variable's type. // The variable node adopts the
-		 * SUBSCRIPTS or FIELD node. variableType = subFldNode.getTypeSpec();
-		 * variableNode.addChild(subFldNode); } }
-		 */
+		
+		 if (!isFunctionTarget) {
+		 
+		 // Parse array subscripts or record fields. 
+			 while (SUBSCRIPT_FIELD_START_SET.contains(token.getType())) { ICodeNode
+		 subFldNode = token.getType() == LEFT_BRACKET ?
+		  parseSubscripts(variableType) : parseField(variableType); token =
+		  currentToken();
+		  
+		  // Update the variable's type. // The variable node adopts the SUBSCRIPTS or FIELD node. variableType = subFldNode.getTypeSpec();
+		  variableNode.addChild(subFldNode); } }
 		variableNode.setTypeSpec(variableType);
 		return variableNode;
 	}
@@ -158,7 +142,6 @@ public class VariableParser extends StatementParser {
 	private ICodeNode parseSubscripts(TypeSpec variableType) throws Exception {
 		Token token;
 		ExpressionParser expressionParser = new ExpressionParser(this);
-
 		// Create a SUBSCRIPTS node.
 		ICodeNode subscriptsNode = ICodeFactory.createICodeNode(SUBSCRIPTS);
 
