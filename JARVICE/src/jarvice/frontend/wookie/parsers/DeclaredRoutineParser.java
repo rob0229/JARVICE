@@ -8,385 +8,392 @@ import jarvice.frontend.wookie.*;
 import jarvice.intermediate.*;
 import jarvice.intermediate.symtabimpl.*;
 import jarvice.intermediate.typeimpl.*;
-
 import static jarvice.frontend.wookie.WookieTokenType.*;
 import static jarvice.frontend.wookie.WookieErrorCode.*;
 import static jarvice.intermediate.symtabimpl.SymTabKeyImpl.*;
 import static jarvice.intermediate.symtabimpl.DefinitionImpl.*;
+import static jarvice.intermediate.symtabimpl.Predefined.charType;
+import static jarvice.intermediate.symtabimpl.Predefined.integerType;
 import static jarvice.intermediate.symtabimpl.RoutineCodeImpl.*;
+//import jarvice.frontend.wookie.WookieTokenType.*; 
 
 /**
  * <h1>DeclaredRoutineParser</h1>
- *
- * <p>Parse a main program routine or a declared procedure or function.</p>
- *
- * <p>Copyright (c) 2009 by Ronald Mak</p>
- * <p>For instructional purposes only.  No warranties.</p>
+ * 
+ * <p>
+ * Parse a main program routine or a declared procedure or function.
+ * </p>
+ * 
+ * <p>
+ * Copyright (c) 2009 by Ronald Mak
+ * </p>
+ * <p>
+ * For instructional purposes only. No warranties.
+ * </p>
  */
-public class DeclaredRoutineParser extends DeclarationsParser
-{
-    /**
-     * Constructor.
-     * @param parent the parent parser.
-     */
-    public DeclaredRoutineParser(WookieParserTD parent)
-    {
-        super(parent);
-    }
+public class DeclaredRoutineParser extends DeclarationsParser {
+	/**
+	 * Constructor.
+	 * 
+	 * @param parent
+	 *            the parent parser.
+	 */
+	public DeclaredRoutineParser(WookieParserTD parent) {
+		super(parent);
+	}
 
-    private static int dummyCounter = 0;  // counter for dummy routine names
+	private static int dummyCounter = 0; // counter for dummy routine names
 
-    /**
-     * Parse a standard subroutine declaration.
-     * @param token the initial token.
-     * @param parentId the symbol table entry of the parent routine's name.
-     * @return the symbol table entry of the declared routine's name.
-     * @throws Exception if an error occurred.
-     */
-    public SymTabEntry parse(Token token, SymTabEntry parentId)
-        throws Exception
-    {
-        Definition routineDefn = null;
-        String dummyName = null;
-        SymTabEntry routineId = null;
-        TokenType routineType = token.getType();
+	/**
+	 * Parse a standard subroutine declaration.
+	 * 
+	 * @param token
+	 *            the initial token.
+	 * @param parentId
+	 *            the symbol table entry of the parent routine's name.
+	 * @return the symbol table entry of the declared routine's name.
+	 * @throws Exception
+	 *             if an error occurred.
+	 */
+	public SymTabEntry parse(Token token, SymTabEntry parentId)
+			throws Exception {
+		
+		Token FunctionReturnToken = token;
+		boolean mainUsed = false;
+		
+		Definition routineDefn = null;
+		String dummyName = null;
+		SymTabEntry routineId = null;
+		TokenType routineType = token.getType();
 
-        // Initialize.
-        switch ((WookieTokenType) routineType) {
+		// Initialize.
+		switch ((WookieTokenType) routineType) {
+/*
+		case PROGRAM: {
+			token = nextToken(); // consume PROGRAM
+			routineDefn = DefinitionImpl.PROGRAM;
+			dummyName = "DummyProgramName".toLowerCase();
+			break;
+		}
+*/
+		case INT: {
+			// save the int data type for use later
+			FunctionReturnToken = token;
 
-            case PROGRAM: {
-                token = nextToken();  // consume PROGRAM
-                routineDefn = DefinitionImpl.PROGRAM;
-                dummyName = "DummyProgramName".toLowerCase();
-                break;
-            }
+			token = nextToken(); // consume Int
+			routineDefn = DefinitionImpl.FUNCTION;
+			dummyName = "DummyProgramName".toLowerCase()+ String.format("%03d", ++dummyCounter);
+			break;
+		}
+		
+		case CHAR: {
+			// save the char data type for use later
+			FunctionReturnToken = token;
 
-            case PROCEDURE: {
-                token = nextToken();  // consume PROCEDURE
-                routineDefn = DefinitionImpl.PROCEDURE;
-                dummyName = "DummyProcedureName_".toLowerCase() +
-                            String.format("%03d", ++dummyCounter);
-                break;
-            }
+			token = nextToken(); // consume Char
+			routineDefn = DefinitionImpl.FUNCTION;
+			dummyName = "DummyProgramName".toLowerCase()+ String.format("%03d", ++dummyCounter);
+			break;
+		}
+		
+		case VOID: {
+			// save the void data type for use later
+			FunctionReturnToken = token;
 
-            case FUNCTION: {
-                token = nextToken();  // consume FUNCTION
-                routineDefn = DefinitionImpl.FUNCTION;
-                dummyName = "DummyFunctionName_".toLowerCase() +
-                            String.format("%03d", ++dummyCounter);
-                break;
-            }
+			token = nextToken(); // consume PROGRAM
+			routineDefn = DefinitionImpl.PROCEDURE;
+			dummyName = "DummyProgramName".toLowerCase()+ String.format("%03d", ++dummyCounter);
+			break;
+		}
 
-            default: {
-                routineDefn = DefinitionImpl.PROGRAM;
-                dummyName = "DummyProgramName".toLowerCase();
-                break;
-            }
-        }
+		case PROCEDURE: {
+			token = nextToken(); // consume PROCEDURE
+			routineDefn = DefinitionImpl.PROCEDURE;
+			dummyName = "DummyProcedureName_".toLowerCase()
+					+ String.format("%03d", ++dummyCounter);
+			break;
+		}
 
-        // Parse the routine name.
-        routineId = parseRoutineName(token, dummyName);
-        routineId.setDefinition(routineDefn);
+		case FUNCTION: {
+			token = nextToken(); // consume FUNCTION
+			routineDefn = DefinitionImpl.FUNCTION;
+			dummyName = "DummyFunctionName_".toLowerCase()
+					+ String.format("%03d", ++dummyCounter);
+			break;
+		}
 
-        token = currentToken();
+		default: {
+			routineDefn = DefinitionImpl.PROGRAM;
+			dummyName = "DummyProgramName".toLowerCase();
+			break;
+		}
+		}
+		// Parse the routine name.
+		routineId = parseRoutineName(token, dummyName);
+		routineId.setDefinition(routineDefn);
 
-        // Create new intermediate code for the routine.
-        ICode iCode = ICodeFactory.createICode();
-        routineId.setAttribute(ROUTINE_ICODE, iCode);
-        routineId.setAttribute(ROUTINE_ROUTINES, new ArrayList<SymTabEntry>());
+		token = currentToken();
+		
+		// Create new intermediate code for the routine.
+		ICode iCode = ICodeFactory.createICode();
+		routineId.setAttribute(ROUTINE_ICODE, iCode);
+		routineId.setAttribute(ROUTINE_ROUTINES, new ArrayList<SymTabEntry>());
+		// *********************************************************************************
+		// DO NOT NEED TO HANDLE FORWARD HERE
+		// Push the routine's new symbol table onto the stack.
+		// If it was forwarded, push its existing symbol table.
+	
+		routineId.setAttribute(ROUTINE_SYMTAB, symTabStack.push());
+		
+		// *************************************************************************
+		// ONLY PASCAL NEEDS PROGRAM HERE
+		// Program: Set the program identifier in the symbol table stack.
 
-        // Push the routine's new symbol table onto the stack.
-        // If it was forwarded, push its existing symbol table.
-        if (routineId.getAttribute(ROUTINE_CODE) == FORWARD) {
-            SymTab symTab = (SymTab) routineId.getAttribute(ROUTINE_SYMTAB);
-            symTabStack.push(symTab);
-        }
-        else {
-            routineId.setAttribute(ROUTINE_SYMTAB, symTabStack.push());
-        }
+		//ADDED BY ROB
+		if(token.getText() == "main"){
+			mainUsed = true;
+			//symTabStack.setProgramId(routineId);
+		}
+	
+		
+		parseFormalParameters(token, routineId);
+		token = currentToken();
+		
+		if(FunctionReturnToken.getType() == INT){
+	    	   routineId.setTypeSpec(integerType);
+	       }
+	       else if(FunctionReturnToken.getType() == CHAR){
+	    	   routineId.setTypeSpec(charType);
+	       }
+	
+		// Parse the routine's block or forward declaration.
+		if (token.getType() == LEFT_BRACE){
 
-        // Program: Set the program identifier in the symbol table stack.
-        if (routineDefn == DefinitionImpl.PROGRAM) {
-            symTabStack.setProgramId(routineId);
-        }
+			routineId.setAttribute(ROUTINE_CODE, DECLARED);
 
-        // Non-forwarded procedure or function: Append to the parent's list
-        //                                      of routines.
-        else if (routineId.getAttribute(ROUTINE_CODE) != FORWARD) {
-            ArrayList<SymTabEntry> subroutines = (ArrayList<SymTabEntry>)
-                                       parentId.getAttribute(ROUTINE_ROUTINES);
-            subroutines.add(routineId);
-        }
+			BlockParser blockParser = new BlockParser(this);
+			ICodeNode rootNode = blockParser.parse(token, routineId);
+			iCode.setRoot(rootNode);
+		}
 
-        // If the routine was forwarded, there should not be
-        // any formal parameters or a function return type.
-        // But parse them anyway if they're there.
-        if (routineId.getAttribute(ROUTINE_CODE) == FORWARD) {
-            if (token.getType() != SEMICOLON) {
-                errorHandler.flag(token, ALREADY_FORWARDED, this);
-                parseHeader(token, routineId);
-            }
-        }
+		// Pop the routine's symbol table off the stack.
+		symTabStack.pop();
 
-        // Parse the routine's formal parameters and function return type.
-        else {
-            parseHeader(token, routineId);
-        }
+		return routineId;
+	}
 
-        // Look for the semicolon.
-        token = currentToken();
-        if (token.getType() == SEMICOLON) {
-            do {
-                token = nextToken();  // consume ;
-            } while (token.getType() == SEMICOLON);
-        }
-        else {
-            errorHandler.flag(token, MISSING_SEMICOLON, this);
-        }
+	/**
+	 * Parse a routine's name.
+	 * 
+	 * @param token
+	 *            the current token.
+	 * @param routineDefn
+	 *            how the routine is defined.
+	 * @param dummyName
+	 *            a dummy name in case of parsing problem.
+	 * @return the symbol table entry of the declared routine's name.
+	 * @throws Exception
+	 *             if an error occurred.
+	 */
+	private SymTabEntry parseRoutineName(Token token, String dummyName)
+			throws Exception {
+		SymTabEntry routineId = null;
 
-        // Parse the routine's block or forward declaration.
-        if ((token.getType() == IDENTIFIER) &&
-            (token.getText().equalsIgnoreCase("forward")))
-        {
-            token = nextToken();  // consume forward
-            routineId.setAttribute(ROUTINE_CODE, FORWARD);
-        }
-        else {
-            routineId.setAttribute(ROUTINE_CODE, DECLARED);
+		// Parse the routine name identifier.
+		if (token.getType() == IDENTIFIER) {
+			String routineName = token.getText().toLowerCase();
+			routineId = symTabStack.lookupLocal(routineName);
 
-            BlockParser blockParser = new BlockParser(this);
-            ICodeNode rootNode = blockParser.parse(token, routineId);
-            iCode.setRoot(rootNode);
-        }
+			// Not already defined locally: Enter into the local symbol table.
+			if (routineId == null) {
+				
+				routineId = symTabStack.enterLocal(routineName);
 
-        // Pop the routine's symbol table off the stack.
-        symTabStack.pop();
+			}
 
-        return routineId;
-    }
+			// If already defined, it should be a forward definition.
+			else {
+				routineId = null;
+				errorHandler.flag(token, IDENTIFIER_REDEFINED, this);
+			}
 
-    /**
-     * Parse a routine's name.
-     * @param token the current token.
-     * @param routineDefn how the routine is defined.
-     * @param dummyName a dummy name in case of parsing problem.
-     * @return the symbol table entry of the declared routine's name.
-     * @throws Exception if an error occurred.
-     */
-    private SymTabEntry parseRoutineName(Token token, String dummyName)
-        throws Exception
-    {
-        SymTabEntry routineId = null;
+			token = nextToken(); // consume routine name identifier
+		} else {
+			errorHandler.flag(token, MISSING_IDENTIFIER, this);
+		}
 
-        // Parse the routine name identifier.
-        if (token.getType() == IDENTIFIER) {
-            String routineName = token.getText().toLowerCase();
-            routineId = symTabStack.lookupLocal(routineName);
+		// If necessary, create a dummy routine name symbol table entry.
+		if (routineId == null) {
+			routineId = symTabStack.enterLocal(dummyName);
+		}
 
-            // Not already defined locally: Enter into the local symbol table.
-            if (routineId == null) {
-                routineId = symTabStack.enterLocal(routineName);
-            }
+		return routineId;
+	}
 
-            // If already defined, it should be a forward definition.
-            else if (routineId.getAttribute(ROUTINE_CODE) != FORWARD) {
-                routineId = null;
-                errorHandler.flag(token, IDENTIFIER_REDEFINED, this);
-            }
+	/**
+	 * Parse a routine's formal parameter list and the function return type.
+	 * 
+	 * @param token
+	 *            the current token.
+	 * @param routineId
+	 *            the symbol table entry of the declared routine's name.
+	 * @throws Exception
+	 *             if an error occurred.
+	 */
+	private void parseHeader(Token token, SymTabEntry routineId)
+			throws Exception {
 
-            token = nextToken();  // consume routine name identifier
-        }
-        else {
-            errorHandler.flag(token, MISSING_IDENTIFIER, this);
-        }
+		// Parse the routine's formal parameters.
+		System.out.println("**********************       DecRoutineParser line 236 token " + token.getType());
+		
+		System.out.println("**********************       DecRoutineParser line 241 token " + token.getType());
+		// If this is a function, parse and set its return type.
+		if (routineId.getDefinition() == DefinitionImpl.FUNCTION) {
+			VariableDeclarationsParser variableDeclarationsParser = new VariableDeclarationsParser(
+					this);
+			variableDeclarationsParser.setDefinition(DefinitionImpl.FUNCTION);
+			TypeSpec type = variableDeclarationsParser.parseTypeSpec(token);
 
-        // If necessary, create a dummy routine name symbol table entry.
-        if (routineId == null) {
-            routineId = symTabStack.enterLocal(dummyName);
-        }
+			token = currentToken();
 
-        return routineId;
-    }
+			// The return type cannot be an array or record.
+			if (type != null) {
+				TypeForm form = type.getForm();
+				if ((form == TypeFormImpl.ARRAY)
+						|| (form == TypeFormImpl.RECORD)) {
+					errorHandler.flag(token, INVALID_TYPE, this);
+				}
+			}
 
-    /**
-     * Parse a routine's formal parameter list and the function return type.
-     * @param token the current token.
-     * @param routineId the symbol table entry of the declared routine's name.
-     * @throws Exception if an error occurred.
-     */
-    private void parseHeader(Token token, SymTabEntry routineId)
-        throws Exception
-    {
-        // Parse the routine's formal parameters.
-        parseFormalParameters(token, routineId);
-        token = currentToken();
+			// Missing return type.
+			else {
+				type = Predefined.undefinedType;
+			}
 
-        // If this is a function, parse and set its return type.
-        if (routineId.getDefinition() == DefinitionImpl.FUNCTION) {
-            VariableDeclarationsParser variableDeclarationsParser =
-                new VariableDeclarationsParser(this);
-            variableDeclarationsParser.setDefinition(DefinitionImpl.FUNCTION);
-            TypeSpec type = variableDeclarationsParser.parseTypeSpec(token);
+			routineId.setTypeSpec(type);
+			token = currentToken();
+		}
+	}
 
-            token = currentToken();
+	// Synchronization set for a formal parameter sublist.
+	private static final EnumSet<WookieTokenType> PARAMETER_SET = EnumSet.of(INT, CHAR, RIGHT_PAREN);
+			
 
-            // The return type cannot be an array or record.
-            if (type != null) {
-                TypeForm form = type.getForm();
-                if ((form == TypeFormImpl.ARRAY) ||
-                    (form == TypeFormImpl.RECORD))
-                {
-                    errorHandler.flag(token, INVALID_TYPE, this);
-                }
-            }
+	// Synchronization set for the opening left parenthesis.
+	private static final EnumSet<WookieTokenType> LEFT_PAREN_SET = EnumSet.of(LEFT_PAREN, LEFT_BRACE);
+	
 
-            // Missing return type.
-            else {
-                type = Predefined.undefinedType;
-            }
+	// Synchronization set for the closing right parenthesis.
+	private static final EnumSet<WookieTokenType> RIGHT_PAREN_SET = EnumSet.of(RIGHT_PAREN);
 
-            routineId.setTypeSpec(type);
-            token = currentToken();
-        }
-    }
+	/**
+	 * Parse a routine's formal parameter list.
+	 * 
+	 * @param token
+	 *            the current token.
+	 * @param routineId
+	 *            the symbol table entry of the declared routine's name.
+	 * @throws Exception
+	 *             if an error occurred.
+	 */
+	protected void parseFormalParameters(Token token, SymTabEntry routineId)
+			throws Exception {
+		// Parse the formal parameters if there is an opening left parenthesis.
+		token = synchronize(LEFT_PAREN_SET);
+		if (token.getType() == LEFT_PAREN) {
+			token = nextToken(); // consume (
+			TokenType tokenType1 = token.getType();
+			
+			
+			ArrayList<SymTabEntry> parms = new ArrayList<SymTabEntry>();
+			while(tokenType1 != RIGHT_PAREN ){
+				parms.addAll(parseParmSublist(token, routineId));
+				token = currentToken();
+				tokenType1 = token.getType();
+			}
 
-    // Synchronization set for a formal parameter sublist.
-    private static final EnumSet<WookieTokenType> PARAMETER_SET =
-        DeclarationsParser.DECLARATION_START_SET.clone();
-    static {
-        PARAMETER_SET.add(VAR);
-        PARAMETER_SET.add(IDENTIFIER);
-        PARAMETER_SET.add(RIGHT_PAREN);
-    }
+			//This sync needs to check for Int or Char
+			token = synchronize(PARAMETER_SET);
+		
+			// Closing right parenthesis.
+			if (token.getType() == RIGHT_PAREN) {
+				token = nextToken(); // consume )
+			} else {
+				errorHandler.flag(token, MISSING_RIGHT_PAREN, this);
+			}
 
-    // Synchronization set for the opening left parenthesis.
-    private static final EnumSet<WookieTokenType> LEFT_PAREN_SET =
-        DeclarationsParser.DECLARATION_START_SET.clone();
-    static {
-        LEFT_PAREN_SET.add(LEFT_PAREN);
-        LEFT_PAREN_SET.add(SEMICOLON);
-        LEFT_PAREN_SET.add(COLON);
-    }
+			routineId.setAttribute(ROUTINE_PARMS, parms);
+		}
+	}
 
-    // Synchronization set for the closing right parenthesis.
-    private static final EnumSet<WookieTokenType> RIGHT_PAREN_SET =
-        LEFT_PAREN_SET.clone();
-    static {
-        RIGHT_PAREN_SET.remove(LEFT_PAREN);
-        RIGHT_PAREN_SET.add(RIGHT_PAREN);
-    }
+	// Synchronization set to follow a formal parameter identifier.
+	private static final EnumSet<WookieTokenType> PARAMETER_FOLLOW_SET = EnumSet
+			.of(COLON, RIGHT_PAREN, SEMICOLON);
+	static {
+		PARAMETER_FOLLOW_SET.addAll(DeclarationsParser.DECLARATION_START_SET);
+	}
 
-    /**
-     * Parse a routine's formal parameter list.
-     * @param token the current token.
-     * @param routineId the symbol table entry of the declared routine's name.
-     * @throws Exception if an error occurred.
-     */
-    protected void parseFormalParameters(Token token, SymTabEntry routineId)
-        throws Exception
-    {
-        // Parse the formal parameters if there is an opening left parenthesis.
-        token = synchronize(LEFT_PAREN_SET);
-        if (token.getType() == LEFT_PAREN) {
-            token = nextToken();  // consume (
+	// Synchronization set for the , token.
+	private static final EnumSet<WookieTokenType> COMMA_SET = EnumSet.of(COMMA,
+			COLON, IDENTIFIER, RIGHT_PAREN, SEMICOLON);
+	static {
+		COMMA_SET.addAll(DeclarationsParser.DECLARATION_START_SET);
+	}
 
-            ArrayList<SymTabEntry> parms = new ArrayList<SymTabEntry>();
+	/**
+	 * Parse a sublist of formal parameter declarations.
+	 * 
+	 * @param token
+	 *            the current token.
+	 * @param routineId
+	 *            the symbol table entry of the declared routine's name.
+	 * @return the sublist of symbol table entries for the parm identifiers.
+	 * @throws Exception
+	 *             if an error occurred.
+	 */
+	private ArrayList<SymTabEntry> parseParmSublist(Token token,
+			SymTabEntry routineId) throws Exception {
+	
+		//name = main, definition == function
+		
+		
+		Definition parmDefn = null;
+		TokenType tokenType = token.getType();
 
-            token = synchronize(PARAMETER_SET);
-            TokenType tokenType = token.getType();
+		parmDefn = VALUE_PARM;
+		
+		SymTabEntry sublist = null;
+		
+		/*
+		// Parse the parameter sublist and its type specification.
+		VariableDeclarationsParser variableDeclarationsParser = new VariableDeclarationsParser(
+				this);
+		variableDeclarationsParser.setDefinition(parmDefn);
+		*/
+		if(tokenType == INT){
 
-            // Loop to parse sublists of formal parameter declarations.
-            while ((tokenType == IDENTIFIER) || (tokenType == VAR)) {
-                parms.addAll(parseParmSublist(token, routineId));
-                token = currentToken();
-                tokenType = token.getType();
-            }
+		IntDeclarationsParser intDeclarationsParser = new IntDeclarationsParser(this);
+		intDeclarationsParser.setDefinition(parmDefn);
+		token = nextToken();
+		 sublist = intDeclarationsParser.parseIdentifier(token);
+		 
+		}else if (tokenType == CHAR){
+			
+			IntDeclarationsParser intDeclarationsParser = new IntDeclarationsParser(this);
+			intDeclarationsParser.setDefinition(parmDefn);
+			
+			 sublist = intDeclarationsParser.parseIdentifier(token);
+			
+		}
+		token = currentToken();
+		tokenType = token.getType();
 
-            // Closing right parenthesis.
-            if (token.getType() == RIGHT_PAREN) {
-                token = nextToken();  // consume )
-            }
-            else {
-                errorHandler.flag(token, MISSING_RIGHT_PAREN, this);
-            }
+	
+			
 
-            routineId.setAttribute(ROUTINE_PARMS, parms);
-        }
-    }
-
-    // Synchronization set to follow a formal parameter identifier.
-    private static final EnumSet<WookieTokenType> PARAMETER_FOLLOW_SET =
-        EnumSet.of(COLON, RIGHT_PAREN, SEMICOLON);
-    static {
-        PARAMETER_FOLLOW_SET.addAll(DeclarationsParser.DECLARATION_START_SET);
-    }
-
-    // Synchronization set for the , token.
-    private static final EnumSet<WookieTokenType> COMMA_SET =
-        EnumSet.of(COMMA, COLON, IDENTIFIER, RIGHT_PAREN, SEMICOLON);
-    static {
-        COMMA_SET.addAll(DeclarationsParser.DECLARATION_START_SET);
-    }
-
-    /**
-     * Parse a sublist of formal parameter declarations.
-     * @param token the current token.
-     * @param routineId the symbol table entry of the declared routine's name.
-     * @return the sublist of symbol table entries for the parm identifiers.
-     * @throws Exception if an error occurred.
-     */
-    private ArrayList<SymTabEntry> parseParmSublist(Token token,
-                                                    SymTabEntry routineId)
-        throws Exception
-    {
-        boolean isProgram = routineId.getDefinition() == DefinitionImpl.PROGRAM;
-        Definition parmDefn = isProgram ? PROGRAM_PARM : null;
-        TokenType tokenType = token.getType();
-
-        // VAR or value parameter?
-        if (tokenType == VAR) {
-            if (!isProgram) {
-                parmDefn = VAR_PARM;
-            }
-            else {
-                errorHandler.flag(token, INVALID_VAR_PARM, this);
-            }
-
-            token = nextToken();  // consume VAR
-        }
-        else if (!isProgram) {
-            parmDefn = VALUE_PARM;
-        }
-
-        // Parse the parameter sublist and its type specification.
-        VariableDeclarationsParser variableDeclarationsParser =
-            new VariableDeclarationsParser(this);
-        variableDeclarationsParser.setDefinition(parmDefn);
-        ArrayList<SymTabEntry> sublist =
-            variableDeclarationsParser.parseIdentifierSublist(
-                                           token, PARAMETER_FOLLOW_SET,
-                                           COMMA_SET);
-        token = currentToken();
-        tokenType = token.getType();
-
-        if (!isProgram) {
-
-            // Look for one or more semicolons after a sublist.
-            if (tokenType == SEMICOLON) {
-                while (token.getType() == SEMICOLON) {
-                    token = nextToken();  // consume the ;
-                }
-            }
-
-            // If at the start of the next sublist, then missing a semicolon.
-            else if (VariableDeclarationsParser.
-                         NEXT_START_SET.contains(tokenType)) {
-                errorHandler.flag(token, MISSING_SEMICOLON, this);
-            }
-
-            token = synchronize(PARAMETER_SET);
-        }
-
-        return sublist;
-    }
+			token = synchronize(PARAMETER_SET);
+			ArrayList<SymTabEntry> SC = new ArrayList<SymTabEntry>();
+			SC.add(sublist);
+		return SC;
+	}
 }

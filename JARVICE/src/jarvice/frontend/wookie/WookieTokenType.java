@@ -28,7 +28,7 @@ public enum WookieTokenType implements TokenType {
     STRUCT, _PACKED, DOUBLE, BOOL,
     
     // PASCAL reserved words    
-    ARRAY, BEGIN, DIV, DOWNTO, END, MAIN,
+    ARRAY, BEGIN, DIV, DOWNTO, END, 
     FILE, FUNCTION, IN, LABEL, MOD, NIL,
     OF, PACKED, PROCEDURE, PROGRAM, RECORD, REPEAT, SET,
     THEN, TO, TYPE, UNTIL, VAR, WITH,

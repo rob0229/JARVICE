@@ -84,7 +84,6 @@ public class WookieParserTD extends Parser {
 
 		BlockParser blockParser = new BlockParser(this);
 
-
 		try {
 
 			Token token = nextToken();
@@ -100,7 +99,6 @@ public class WookieParserTD extends Parser {
 				StatementParser statementParser = new StatementParser(this);
 				rootNode = statementParser.parse(token);
 				token = currentToken();
-
 			}
 
 			else {
@@ -126,24 +124,28 @@ public class WookieParserTD extends Parser {
 	        Predefined.initialize(symTabStack);
 
 	        try {
-	            Token token = nextToken();
 
+	            Token token = nextToken();
+		            
+	           // We do not need to use program parser in C. Each function must be declared before it can be used in the int main() function so we do 
+	           //parse them first and create the symbol tables for all the functions before int main()
+	           /*
 	            // Parse a program.
 	            ProgramParser programParser = new ProgramParser(this);
-	            programParser.parse(token, null);
+	            programParser.parse(token, null);            
+	           */  	            
+	            DeclaredRoutineParser routineParser = new DeclaredRoutineParser(this);
+	            routineParser.parse(token, null);
+	            
 	            token = currentToken();
 
 	            // Send the parser summary message.
 	            float elapsedTime = (System.currentTimeMillis() - startTime)/1000f;
-	            sendMessage(new Message(PARSER_SUMMARY,
-	                                    new Number[] {token.getLineNumber(),
-	                                                  getErrorCount(),
-	                                                  elapsedTime}));
+	            sendMessage(new Message(PARSER_SUMMARY, new Number[] {token.getLineNumber(), getErrorCount(), elapsedTime}));
 	        }
 	        catch (java.io.IOException ex) {
 	            errorHandler.abortTranslation(IO_ERROR, this);
-	        }
-		
+	        }		
 	}
 
 	/**

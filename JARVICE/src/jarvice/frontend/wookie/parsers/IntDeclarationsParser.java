@@ -37,17 +37,19 @@ public class IntDeclarationsParser extends DeclarationsParser
 
     protected void setDefinition(Definition definition)
     {
-        this.definition = definition;
+
+    	this.definition = definition;
     }
     
     public void parse(Token token)
             throws Exception
         {
     	   Token dataType = token;//save the int/char data type for use later
-	    	
+    	   	
 	       
 	        token = nextToken();      
-	        SymTabEntry id = parseIdentifier(token);    
+	        SymTabEntry id = parseIdentifier(token);  
+
 	       if(dataType.getType() == INT){
 	    	   id.setTypeSpec(integerType);
 	       }
@@ -62,11 +64,11 @@ public class IntDeclarationsParser extends DeclarationsParser
 	        }*/      
      }
     
-    private SymTabEntry parseIdentifier(Token token)
+    public SymTabEntry parseIdentifier(Token token)
             throws Exception
         {
             SymTabEntry id = null;
-
+       
             if (token.getType() == IDENTIFIER) {
                 String name = token.getText().toLowerCase();
                 id = symTabStack.lookupLocal(name);
