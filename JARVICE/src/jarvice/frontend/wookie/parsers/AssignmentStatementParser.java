@@ -40,7 +40,7 @@ public class AssignmentStatementParser extends StatementParser {
 	// Set to true to parse a function name
     // as the target of an assignment.
     private boolean isFunctionTarget = false;
-	
+	public boolean isReturn = false;
 	
 	/**
 	 * Constructor.
@@ -74,30 +74,11 @@ public class AssignmentStatementParser extends StatementParser {
 	public ICodeNode parse(Token token) throws Exception {
 		// Create the ASSIGN node.
 		ICodeNode assignNode = ICodeFactory.createICodeNode(ASSIGN);
-			
-		/*
-		// Look up the target identifer in the symbol table stack.
-		// Enter the identifier into the table if it's not found.
-		String targetName = token.getText().toLowerCase();
-		SymTabEntry targetId = symTabStack.lookup(targetName);
-		if (targetId == null) {
-			targetId = symTabStack.enterLocal(targetName);
-		}
-		targetId.appendLineNumber(token.getLineNumber());
-
-		token = nextToken(); // consume the identifier token
-
-		// Create the variable node and set its name attribute.
-		ICodeNode variableNode = ICodeFactory.createICodeNode(VARIABLE);
-		variableNode.setAttribute(ID, targetId);
-*/
 		
-		 // Parse the target variable.
+		TokenType tokenType = token.getType();
 		
-	
-	
         VariableParser variableParser = new VariableParser(this);
-        System.out.println("&*******line 100 assParser*************** isfunction target " +isFunctionTarget);	
+      
         ICodeNode targetNode = isFunctionTarget
                                ? variableParser.parseFunctionNameTarget(token)
                                : variableParser.parse(token);
@@ -107,36 +88,37 @@ public class AssignmentStatementParser extends StatementParser {
                                                  : Predefined.undefinedType;
 		
 		
-		
+		token=currentToken();
 		
 		// The ASSIGN node adopts the variable node as its first child.
 		assignNode.addChild(targetNode);
-		// CHANGED from := to just = by
-		// ROB**************************************************************************
-		// Look for the = token.
-		  // Synchronize on the := token.
-
-	
-        token = synchronize(EQUALS_SET);
-        
-		if (token.getType() == EQUALS || token.getType() == RETURN) {
-			token = nextToken(); // consume the =
-			
-		} else {
-			errorHandler.flag(token, MISSING_EQUALS, this);
+		if(tokenType != RETURN){
+			// Synchronize on the = token.
+	        token = synchronize(EQUALS_SET);
+	        
+				if (token.getType() == EQUALS || token.getType() == RETURN) {
+					token = nextToken(); // consume the =
+					
+				} else {
+					errorHandler.flag(token, MISSING_EQUALS, this);
+				}
 		}
-
 		// Parse the expression. The ASSIGN node adopts the expression's
 		// node as its second child.
 		ExpressionParser expressionParser = new ExpressionParser(this);
+		
+		
+		
 		ICodeNode exprNode = expressionParser.parse(token);
-		assignNode.addChild(expressionParser.parse(token));
+		
+		token = currentToken();
+		
+		assignNode.addChild(exprNode);
 		 // Type check: Assignment compatible?
         TypeSpec exprType = exprNode != null ? exprNode.getTypeSpec()
                                              : Predefined.undefinedType;
-        if (!TypeChecker.areAssignmentCompatible(targetType, exprType)) {
-            errorHandler.flag(token, INCOMPATIBLE_TYPES, this);
-        }
+        
+       
 
         assignNode.setTypeSpec(targetType);
 		return assignNode;
@@ -155,5 +137,14 @@ public ICodeNode parseFunctionNameAssignment(Token token)
     isFunctionTarget = true;
     return parse(token);
 }
+
+public ICodeNode parseReturn(Token token) throws Exception{
+	
+	isReturn = true;
+	return parse(token);
+	
+}
+
+
 }
 

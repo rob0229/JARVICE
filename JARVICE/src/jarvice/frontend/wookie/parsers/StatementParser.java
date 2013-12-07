@@ -4,6 +4,7 @@ import java.util.EnumSet;
 
 
 
+
 import jarvice.frontend.wookie.WookieTokenType;
 import jarvice.frontend.wookie.parsers.IfStatementParser;
 import jarvice.frontend.wookie.parsers.WhileStatementParser;
@@ -11,6 +12,7 @@ import jarvice.frontend.wookie.WookieTokenType;
 import jarvice.frontend.*;
 import jarvice.frontend.wookie.*;
 import jarvice.intermediate.*;
+import jarvice.intermediate.icodeimpl.ICodeNodeTypeImpl;
 import jarvice.intermediate.symtabimpl.DefinitionImpl;
 import static jarvice.frontend.wookie.WookieTokenType.*;
 import static jarvice.frontend.wookie.WookieErrorCode.*;
@@ -66,24 +68,28 @@ public class StatementParser extends WookieParserTD {
 		// An assignment statement in c starts with the data type if the
 		// variable has not been declared.
 		
-		case RETURN:{			
-			SymTab symTab = symTabStack.getLocalSymTab();
-			boolean isFunc = (symTab).getIsFunc();
+		case RETURN:{	
 			
-			if (isFunc){
-		
+			SymTab symTab = symTabStack.getLocalSymTab();
+			boolean isFunc = symTab.getIsFunc();
+			
+			//if (isFunc){
+
 			AssignmentStatementParser assignmentParser = new AssignmentStatementParser(this);
-            statementNode = assignmentParser.parse(token);
-            
-            
-            
-		
-			}
-			else{
+            ICodeNode icodenode = assignmentParser.parseReturn(token);
+            setLineNumber(icodenode, token);
+            statementNode = ICodeFactory.createICodeNode(COMPOUND);
+            statementNode.addChild(icodenode);           
+            statementNode.addChild(icodenode);
+            ICodeNode returnNode = ICodeFactory.createICodeNode(ICodeNodeTypeImpl.FUNCTION );
+            setLineNumber(returnNode, token);
+            statementNode.addChild(returnNode);
+			//}
+			//else{
 				
 				
 				
-			}
+			//}
 			
 			break;
 		}

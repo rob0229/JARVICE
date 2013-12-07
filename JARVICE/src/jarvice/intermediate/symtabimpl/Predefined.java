@@ -32,12 +32,15 @@ public class Predefined
     public static TypeSpec booleanType;
     public static TypeSpec charType;
     public static TypeSpec undefinedType;
+    public static TypeSpec returnType;
 
     // Predefined identifiers.
     public static SymTabEntry integerId;
     public static SymTabEntry realId;
     public static SymTabEntry booleanId;
     public static SymTabEntry charId;
+    public static SymTabEntry returnId;
+    
     public static SymTabEntry falseId;
     public static SymTabEntry trueId;
     public static SymTabEntry readId;
@@ -107,6 +110,14 @@ public class Predefined
         charType.setIdentifier(charId);
         charId.setDefinition(DefinitionImpl.TYPE);
         charId.setTypeSpec(charType);
+        
+        //return type 
+        returnId = symTabStack.enterLocal("return");
+        returnType = TypeFactory.createType(SCALAR);
+        returnType.setIdentifier(returnId);
+        returnId.setDefinition(DefinitionImpl.TYPE);
+        returnId.setTypeSpec(returnType);
+        
 
         // Undefined type.
         undefinedType = TypeFactory.createType(SCALAR);

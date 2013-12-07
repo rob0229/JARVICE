@@ -61,7 +61,15 @@ public class VariableParser extends StatementParser {
 		System.out.println("&*******line 61 assParser*************** Token here is " + variableId);	
 		// If not found, flag the error and enter the identifier
 		// as an undefined identifier with an undefined type.
-		if (variableId == null) {
+		if(token.getType() == WookieTokenType.RETURN){
+			
+			variableId = symTabStack.enterLocal(name);
+			variableId.setDefinition(DefinitionImpl.RETURN);
+			variableId.setTypeSpec(Predefined.returnType);
+		}
+			
+		else if (variableId == null) {
+			
 			errorHandler.flag(token, IDENTIFIER_UNDEFINED, this);
 			variableId = symTabStack.enterLocal(name);
 			variableId.setDefinition(UNDEFINED);
@@ -96,8 +104,8 @@ public class VariableParser extends StatementParser {
 
 		// Check how the variable is defined.
 		Definition defnCode = variableId.getDefinition();
-System.out.println("&*******line 99 assParser*************** Token here is " + variableId.getDefinition());	
-		if (!((defnCode == VARIABLE) || (defnCode == VALUE_PARM)
+
+		if (!((defnCode == VARIABLE) || (defnCode == DefinitionImpl.RETURN) ||(defnCode == VALUE_PARM)
 				|| (defnCode == VAR_PARM) || (isFunctionTarget && (defnCode == FUNCTION)))) {
 			errorHandler.flag(token, INVALID_IDENTIFIER_USAGE, this);
 		}
