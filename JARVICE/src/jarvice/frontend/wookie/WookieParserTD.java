@@ -6,7 +6,6 @@ import jarvice.frontend.Token;
 import jarvice.frontend.wookie.parsers.ProgramParser;
 import jarvice.intermediate.symtabimpl.Predefined;
 import jarvice.message.Message;
-
 import jarvice.frontend.*;
 import jarvice.frontend.wookie.parsers.*;
 import jarvice.intermediate.*;
@@ -73,21 +72,23 @@ public class WookieParserTD extends Parser {
 	        Predefined.initialize(symTabStack);
 
 	        try {
-
+	        	
 	            Token token = nextToken();
-		            
+		        
 	           // We do not need to use program parser in C. Each function must be declared before it can be used in the int main() function so we do 
 	           //parse them first and create the symbol tables for all the functions before int main()
-	           /*
+	           
 	            // Parse a program.
 	            ProgramParser programParser = new ProgramParser(this);
 	            programParser.parse(token, null);            
-	           */  	            
+	             	
+	            /*
 	            DeclaredRoutineParser routineParser = new DeclaredRoutineParser(this);
 	            routineParser.parse(token, null);
-	            
+	          
 	            token = currentToken();
-
+	       */
+		     
 	            // Send the parser summary message.
 	            float elapsedTime = (System.currentTimeMillis() - startTime)/1000f;
 	            sendMessage(new Message(PARSER_SUMMARY, new Number[] {token.getLineNumber(), getErrorCount(), elapsedTime}));

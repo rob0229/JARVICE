@@ -60,6 +60,7 @@ public class DeclaredRoutineParser extends DeclarationsParser {
 		
 		Token FunctionReturnToken = token;
 		boolean isFirstFunction = false;
+		boolean mainDeclaredYet = false;
 		
 		Definition routineDefn = null;
 		String dummyName = null;
@@ -68,19 +69,13 @@ public class DeclaredRoutineParser extends DeclarationsParser {
 
 		// Initialize.
 		switch ((WookieTokenType) routineType) {
-/*
-		case PROGRAM: {
-			token = nextToken(); // consume PROGRAM
-			routineDefn = DefinitionImpl.PROGRAM;
-			dummyName = "DummyProgramName".toLowerCase();
-			break;
-		}
-*/
+
 		case INT: {
 			// save the int data type for use later
 			FunctionReturnToken = token;
 
 			token = nextToken(); // consume Int
+			
 			routineDefn = DefinitionImpl.FUNCTION;
 			dummyName = "DummyProgramName".toLowerCase()+ String.format("%03d", ++dummyCounter);			
 			break;
@@ -115,8 +110,12 @@ public class DeclaredRoutineParser extends DeclarationsParser {
 		// Parse the routine name.
 		routineId = parseRoutineName(token, dummyName);	
 
+		if(routineId.getName() == "main"){
+			mainDeclaredYet = true;
+			
+		}
+		
 		routineId.setDefinition(routineDefn);
-
 		token = currentToken();
 		
 		// Create new intermediate code for the routine.
@@ -128,39 +127,32 @@ public class DeclaredRoutineParser extends DeclarationsParser {
 		 symTabStack.setProgramId(routineId);
 		 isFirstFunction = true;
 		}
-		
-		// *********************************************************************************
-		// DO NOT NEED TO HANDLE FORWARD HERE
-		// Push the routine's new symbol table onto the stack.
-		// If it was forwarded, push its existing symbol table.
 	
+		
+		
 		routineId.setAttribute(ROUTINE_SYMTAB, symTabStack.push());
-		
-		// *****************************************************************************************    This may need a if statement to only set program ID when MAIN is encountered   ******
-		// ONLY PASCAL NEEDS PROGRAM HERE
-		// Program: Set the program identifier in the symbol table stack.
-		
 		parseFormalParameters(token, routineId);
 		token = currentToken();
 		
 		if(FunctionReturnToken.getType() == INT){
 	    	   routineId.setTypeSpec(integerType);
 	       }
-	       else if(FunctionReturnToken.getType() == CHAR){
+	    else if(FunctionReturnToken.getType() == CHAR){
 	    	   routineId.setTypeSpec(charType);
 	       }
 	
-		// Parse the routine's block or forward declaration.
+		// Parse the routine's block  declaration.
 		if (token.getType() == LEFT_BRACE){
 
 			routineId.setAttribute(ROUTINE_CODE, DECLARED);
-
 			BlockParser blockParser = new BlockParser(this);
+			
 			ICodeNode rootNode = blockParser.parse(token, routineId);
 			iCode.setRoot(rootNode);
 		}
 
 		// Pop the routine's symbol table off the stack.
+		
 		symTabStack.pop();
 
 		return routineId;
@@ -203,7 +195,11 @@ public class DeclaredRoutineParser extends DeclarationsParser {
 
 			token = nextToken(); // consume routine name identifier
 			
-		} else {
+		}
+		else 
+		{
+	       	 System.out.println(" DecRoutineParser line 192     GETS HERE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+
 			errorHandler.flag(token, MISSING_IDENTIFIER, this);
 		}
 
@@ -211,7 +207,7 @@ public class DeclaredRoutineParser extends DeclarationsParser {
 		if (routineId == null) {
 			routineId = symTabStack.enterLocal(dummyName);
 		}
-
+		
 		return routineId;
 	}
 
@@ -290,8 +286,9 @@ public class DeclaredRoutineParser extends DeclarationsParser {
 			
 			ArrayList<SymTabEntry> parms = new ArrayList<SymTabEntry>();
 			while(tokenType1 != RIGHT_PAREN ){
+				
 				parms.addAll(parseParmSublist(token, routineId));
-
+				
 				token = currentToken();
 
 				tokenType1 = token.getType();
@@ -299,7 +296,7 @@ public class DeclaredRoutineParser extends DeclarationsParser {
 
 			//This sync needs to check for Int or Char
 			token = synchronize(PARAMETER_SET);
-		
+	
 			// Closing right parenthesis.
 			if (token.getType() == RIGHT_PAREN) {
 				token = nextToken(); // consume )
@@ -359,10 +356,10 @@ public class DeclaredRoutineParser extends DeclarationsParser {
 		if(tokenType == INT){
 			IntDeclarationsParser intDeclarationsParser = new IntDeclarationsParser(this);
 			intDeclarationsParser.setDefinition(parmDefn);
-					
-
 			token = nextToken();
 			sublist = intDeclarationsParser.parseIdentifier(token);
+			sublist.setTypeSpec(integerType);
+			//set typeForm value here?
 		}
 		else if (tokenType == CHAR){
 			
@@ -370,8 +367,9 @@ public class DeclaredRoutineParser extends DeclarationsParser {
 			intDeclarationsParser.setDefinition(parmDefn);
 			token = nextToken();
 			sublist = intDeclarationsParser.parseIdentifier(token);
-			
+			sublist.setTypeSpec(charType);
 		}
+		token = nextToken();
 		token = currentToken();
         if (token.getType() == COMMA){
         	token = nextToken();

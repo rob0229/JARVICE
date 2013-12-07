@@ -9,7 +9,6 @@ import jarvice.intermediate.symtabimpl.*;
 import jarvice.intermediate.*;
 import jarvice.intermediate.icodeimpl.*;
 import jarvice.intermediate.typeimpl.*;
-
 import static jarvice.frontend.wookie.WookieTokenType.*;
 import static jarvice.frontend.wookie.WookieErrorCode.*;
 import static jarvice.intermediate.symtabimpl.SymTabKeyImpl.*;
@@ -386,8 +385,7 @@ public class ExpressionParser extends StatementParser {
 			token = currentToken();
 			tokenType = token.getType();
 		}
-		// System.out.println("***********************  expParser line 398, token at return from parseTerm  is  Tokentext is "
-		// + token.getText());
+		
 		return rootNode;
 	}
 
@@ -468,6 +466,7 @@ public class ExpressionParser extends StatementParser {
 		}
 
 		default: {
+
 			errorHandler.flag(token, UNEXPECTED_TOKEN, this);
 			break;
 		}

@@ -7,6 +7,7 @@ import java.util.EnumSet;
 
 
 
+
 import jarvice.frontend.wookie.WookieTokenType;
 import jarvice.frontend.wookie.parsers.IfStatementParser;
 import jarvice.frontend.wookie.parsers.WhileStatementParser;
@@ -75,21 +76,17 @@ public class StatementParser extends WookieParserTD {
 			SymTab symTab = symTabStack.getLocalSymTab();
 			boolean isFunc = symTab.getIsFunc();
 			
-			//if (isFunc){
+			
 
 			AssignmentStatementParser assignmentParser = new AssignmentStatementParser(this);
             ICodeNode icodenode = assignmentParser.parseReturn(token);
             setLineNumber(icodenode, token);
             statementNode = ICodeFactory.createICodeNode(COMPOUND);
             statementNode.addChild(icodenode);           
-            statementNode.addChild(icodenode);
             ICodeNode returnNode = ICodeFactory.createICodeNode(ICodeNodeTypeImpl.FUNCTION );
             setLineNumber(returnNode, token);
             statementNode.addChild(returnNode);
-			//}
-			//else{
-							
-			//}
+			
 			
 			break;
 		}
@@ -105,7 +102,7 @@ public class StatementParser extends WookieParserTD {
 	                new IntDeclarationsParser(this);								//*
 	            intDeclarationsParser.setDefinition(VARIABLE);
 	            intDeclarationsParser.parse(token);
-	            //token = currentToken();
+	      
 	            
 	           break;
 	        }
@@ -221,7 +218,7 @@ public class StatementParser extends WookieParserTD {
 		// Synchronization set for the terminator.
 		EnumSet<WookieTokenType> terminatorSet = STMT_START_SET.clone();
 		terminatorSet.add(terminator);
-		
+		terminatorSet.add(END_OF_FILE);
 		terminatorSet.add(RETURN);
 
 		// Loop to parse each statement until the } token
@@ -260,7 +257,6 @@ public class StatementParser extends WookieParserTD {
 			// Synchronize at the start of the next statement
 			// or at the terminator.
 			token = synchronize(terminatorSet);
-			
 		}
 
 		// Look for the terminator token.
@@ -269,6 +265,7 @@ public class StatementParser extends WookieParserTD {
 		}
 
 		else {
+			
 			errorHandler.flag(token, errorCode, this);
 		}
 	}

@@ -44,13 +44,10 @@ public class IntDeclarationsParser extends DeclarationsParser
     public void parse(Token token)
             throws Exception
         {
-    	   Token dataType = token;//save the int/char data type for use later
-    	  
+    	   Token dataType = token;//save the int/char data type for use later	        
+	       Token name = nextToken();
+	       Token third = nextToken();
 	       
-	        token = nextToken(); 	        
-	        Token name = token;
-	        Token third = nextToken();
-	        
 	        if(third.getType() == LEFT_PAREN){
 	        	
 	        	 DeclaredRoutineParser routineParser = new DeclaredRoutineParser(this);
@@ -91,8 +88,8 @@ public class IntDeclarationsParser extends DeclarationsParser
                     errorHandler.flag(token, IDENTIFIER_REDEFINED, this);
                 }
 
-                token = nextToken();   // consume the identifier token
-    
+                //token = nextToken();   // consume the identifier token
+
             }
             else {
                 errorHandler.flag(token, MISSING_IDENTIFIER, this);
