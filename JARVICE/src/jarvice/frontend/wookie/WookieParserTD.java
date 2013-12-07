@@ -68,58 +68,7 @@ public class WookieParserTD extends Parser {
 	 *             if an error occurred.
 	 */
 	public void parse() throws Exception {
-		/*long startTime = System.currentTimeMillis();
-		ICode iCode = ICodeFactory.createICode();
-		Predefined.initialize(symTabStack);
-		// Create a dummy program identifier symbol table entry.
-		routineId = symTabStack.enterLocal("DummyProgramName".toLowerCase());
-		
-		routineId.setDefinition(DefinitionImpl.PROGRAM);
-		symTabStack.setProgramId(routineId);
-
-		// Push a new symbol table onto the symbol table stack and set
-		// the routine's symbol table and intermediate code.
-		routineId.setAttribute(ROUTINE_SYMTAB, symTabStack.push());
-		routineId.setAttribute(ROUTINE_ICODE, iCode);
-
-		BlockParser blockParser = new BlockParser(this);
-
-		try {
-
-			Token token = nextToken();
-
-			ICodeNode rootNode = blockParser.parse(token, routineId);
-			iCode.setRoot(rootNode);
-			symTabStack.pop();
 	
-			// Look for the { token to parse a compound statement.
-
-			/*if (token.getType() == LEFT_BRACE) {
-	
-				StatementParser statementParser = new StatementParser(this);
-				rootNode = statementParser.parse(token);
-				token = currentToken();
-			}
-
-			else {
-				errorHandler.flag(token, UNEXPECTED_TOKEN, this);
-			}
-*/
-			/*token = currentToken();
-
-			// Set the parse tree root node.
-			if (rootNode != null) {
-				iCode.setRoot(rootNode);
-			}
-
-			// Send the parser summary message.
-			float elapsedTime = (System.currentTimeMillis() - startTime) / 1000f;
-			sendMessage(new Message(PARSER_SUMMARY, new Number[] {
-					token.getLineNumber(), getErrorCount(), elapsedTime }));
-		} catch (java.io.IOException ex) {
-			errorHandler.abortTranslation(IO_ERROR, this);
-		}*/
-		
 		 long startTime = System.currentTimeMillis();
 	        Predefined.initialize(symTabStack);
 

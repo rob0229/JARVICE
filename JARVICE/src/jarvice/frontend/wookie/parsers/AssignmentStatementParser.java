@@ -107,8 +107,6 @@ public class AssignmentStatementParser extends StatementParser {
 		// node as its second child.
 		ExpressionParser expressionParser = new ExpressionParser(this);
 		
-		
-		
 		ICodeNode exprNode = expressionParser.parse(token);
 		
 		token = currentToken();
@@ -118,8 +116,6 @@ public class AssignmentStatementParser extends StatementParser {
         TypeSpec exprType = exprNode != null ? exprNode.getTypeSpec()
                                              : Predefined.undefinedType;
         
-       
-
         assignNode.setTypeSpec(targetType);
 		return assignNode;
 	}
@@ -144,7 +140,5 @@ public ICodeNode parseReturn(Token token) throws Exception{
 	return parse(token);
 	
 }
-
-
 }
 

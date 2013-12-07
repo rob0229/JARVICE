@@ -5,6 +5,8 @@ import java.util.EnumSet;
 
 
 
+
+
 import jarvice.frontend.wookie.WookieTokenType;
 import jarvice.frontend.wookie.parsers.IfStatementParser;
 import jarvice.frontend.wookie.parsers.WhileStatementParser;
@@ -86,9 +88,7 @@ public class StatementParser extends WookieParserTD {
             statementNode.addChild(returnNode);
 			//}
 			//else{
-				
-				
-				
+							
 			//}
 			
 			break;
@@ -105,6 +105,8 @@ public class StatementParser extends WookieParserTD {
 	                new IntDeclarationsParser(this);								//*
 	            intDeclarationsParser.setDefinition(VARIABLE);
 	            intDeclarationsParser.parse(token);
+	            //token = currentToken();
+	            
 	           break;
 	        }
 		//look for a CHAR and parse this declaration
@@ -178,10 +180,9 @@ public class StatementParser extends WookieParserTD {
 			break;
 		}
 		}
-
 		// Set the current line number as an attribute.
 		setLineNumber(statementNode, token);
-		
+	
 		return statementNode;
 	}
 
@@ -220,6 +221,8 @@ public class StatementParser extends WookieParserTD {
 		// Synchronization set for the terminator.
 		EnumSet<WookieTokenType> terminatorSet = STMT_START_SET.clone();
 		terminatorSet.add(terminator);
+		
+		terminatorSet.add(RETURN);
 
 		// Loop to parse each statement until the } token
 		// or the end of the source file.
@@ -230,7 +233,10 @@ public class StatementParser extends WookieParserTD {
 			if((token.getType() == WookieTokenType.IF ) || (token.getType() == WHILE)){
 				oldToken = true;
 			}
+			
+		
 			ICodeNode statementNode = parse(token);
+		
 			parentNode.addChild(statementNode);
 
 			token = currentToken();

@@ -58,7 +58,7 @@ public class VariableParser extends StatementParser {
 		// Look up the identifier in the symbol table stack.
 		String name = token.getText().toLowerCase();
 		SymTabEntry variableId = symTabStack.lookup(name);
-		System.out.println("&*******line 61 assParser*************** Token here is " + variableId);	
+	
 		// If not found, flag the error and enter the identifier
 		// as an undefined identifier with an undefined type.
 		if(token.getType() == WookieTokenType.RETURN){

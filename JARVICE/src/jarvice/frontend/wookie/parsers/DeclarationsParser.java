@@ -6,9 +6,7 @@ import java.util.EnumSet;
 
 import jarvice.frontend.TokenType;
 import jarvice.frontend.wookie.parsers.DeclaredRoutineParser;
-
 import jarvice.frontend.wookie.WookieTokenType;
-
 import jarvice.frontend.*;
 import jarvice.frontend.wookie.*;
 import jarvice.intermediate.*;
@@ -43,7 +41,7 @@ public class DeclarationsParser extends WookieParserTD
     }
 //*******************************************************Added this for programparser*****************************************
     static final EnumSet<WookieTokenType> DECLARATION_START_SET =
-            EnumSet.of(CONST, TYPE, VAR, PROCEDURE, FUNCTION, BEGIN);
+            EnumSet.of(VAR, PROCEDURE, FUNCTION);
     
 //*******************************************************CAN DELETE CONST< TYPE< VAR< BEGIN< PROCEDURE*********************************************
     static final EnumSet<WookieTokenType> INT_START_SET =

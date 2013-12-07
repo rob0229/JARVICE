@@ -45,30 +45,38 @@ public class IntDeclarationsParser extends DeclarationsParser
             throws Exception
         {
     	   Token dataType = token;//save the int/char data type for use later
-    	   	
+    	  
 	       
-	        token = nextToken();      
-	        SymTabEntry id = parseIdentifier(token);  
-
-	       if(dataType.getType() == INT){
-	    	   id.setTypeSpec(integerType);
-	       }
-	       else if(dataType.getType() == CHAR){
-	    	   id.setTypeSpec(charType);
-	       }
-	       //currentToken should be a semiColon here
-	       final EnumSet<WookieTokenType> INT_FOLLOW_SET = EnumSet.of(SEMICOLON);
-	       token = synchronize(INT_FOLLOW_SET);
-	      /* if ( token.getType() == SEMICOLON){
-	         	token = nextToken();//consume the ;
-	        }*/      
+	        token = nextToken(); 	        
+	        Token name = token;
+	        Token third = nextToken();
+	        
+	        if(third.getType() == LEFT_PAREN){
+	        	
+	        	 DeclaredRoutineParser routineParser = new DeclaredRoutineParser(this);
+		         routineParser.parse(dataType, null);
+	        	
+	        	
+	        }else{
+		        SymTabEntry id = parseIdentifier(name); 
+		       if(dataType.getType() == INT){
+		    	   id.setTypeSpec(integerType);
+		       }
+		       else if(dataType.getType() == CHAR){
+		    	   id.setTypeSpec(charType);
+		       }
+		     
+		       
+		       //currentToken should be a semiColon here
+		       final EnumSet<WookieTokenType> INT_FOLLOW_SET = EnumSet.of(SEMICOLON);
+		       token = synchronize(INT_FOLLOW_SET);
+	        }
      }
     
     public SymTabEntry parseIdentifier(Token token)
             throws Exception
         {
             SymTabEntry id = null;
-       
             if (token.getType() == IDENTIFIER) {
                 String name = token.getText().toLowerCase();
                 id = symTabStack.lookupLocal(name);
@@ -84,6 +92,7 @@ public class IntDeclarationsParser extends DeclarationsParser
                 }
 
                 token = nextToken();   // consume the identifier token
+    
             }
             else {
                 errorHandler.flag(token, MISSING_IDENTIFIER, this);

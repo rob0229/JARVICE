@@ -59,7 +59,7 @@ public class DeclaredRoutineParser extends DeclarationsParser {
 			throws Exception {
 		
 		Token FunctionReturnToken = token;
-		
+		boolean isFirstFunction = false;
 		
 		Definition routineDefn = null;
 		String dummyName = null;
@@ -82,7 +82,7 @@ public class DeclaredRoutineParser extends DeclarationsParser {
 
 			token = nextToken(); // consume Int
 			routineDefn = DefinitionImpl.FUNCTION;
-			dummyName = "DummyProgramName".toLowerCase()+ String.format("%03d", ++dummyCounter);
+			dummyName = "DummyProgramName".toLowerCase()+ String.format("%03d", ++dummyCounter);			
 			break;
 		}
 		
@@ -106,22 +106,6 @@ public class DeclaredRoutineParser extends DeclarationsParser {
 			break;
 		}
 
-		case PROCEDURE: {
-			token = nextToken(); // consume PROCEDURE
-			routineDefn = DefinitionImpl.PROCEDURE;
-			dummyName = "DummyProcedureName_".toLowerCase()
-					+ String.format("%03d", ++dummyCounter);
-			break;
-		}
-
-		case FUNCTION: {
-			token = nextToken(); // consume FUNCTION
-			routineDefn = DefinitionImpl.FUNCTION;
-			dummyName = "DummyFunctionName_".toLowerCase()
-					+ String.format("%03d", ++dummyCounter);
-			break;
-		}
-
 		default: {
 			routineDefn = DefinitionImpl.PROGRAM;
 			dummyName = "DummyProgramName".toLowerCase();
@@ -129,7 +113,8 @@ public class DeclaredRoutineParser extends DeclarationsParser {
 		}
 		}
 		// Parse the routine name.
-		routineId = parseRoutineName(token, dummyName);
+		routineId = parseRoutineName(token, dummyName);	
+
 		routineId.setDefinition(routineDefn);
 
 		token = currentToken();
@@ -138,6 +123,12 @@ public class DeclaredRoutineParser extends DeclarationsParser {
 		ICode iCode = ICodeFactory.createICode();
 		routineId.setAttribute(ROUTINE_ICODE, iCode);
 		routineId.setAttribute(ROUTINE_ROUTINES, new ArrayList<SymTabEntry>());
+		
+		if(isFirstFunction == false){
+		 symTabStack.setProgramId(routineId);
+		 isFirstFunction = true;
+		}
+		
 		// *********************************************************************************
 		// DO NOT NEED TO HANDLE FORWARD HERE
 		// Push the routine's new symbol table onto the stack.
@@ -145,12 +136,9 @@ public class DeclaredRoutineParser extends DeclarationsParser {
 	
 		routineId.setAttribute(ROUTINE_SYMTAB, symTabStack.push());
 		
-		// *************************************************************************
+		// *****************************************************************************************    This may need a if statement to only set program ID when MAIN is encountered   ******
 		// ONLY PASCAL NEEDS PROGRAM HERE
 		// Program: Set the program identifier in the symbol table stack.
-
-		
-	
 		
 		parseFormalParameters(token, routineId);
 		token = currentToken();
@@ -214,6 +202,7 @@ public class DeclaredRoutineParser extends DeclarationsParser {
 			}
 
 			token = nextToken(); // consume routine name identifier
+			
 		} else {
 			errorHandler.flag(token, MISSING_IDENTIFIER, this);
 		}
@@ -240,9 +229,7 @@ public class DeclaredRoutineParser extends DeclarationsParser {
 			throws Exception {
 
 		// Parse the routine's formal parameters.
-		System.out.println("**********************       DecRoutineParser line 236 token " + token.getType());
-		
-		System.out.println("**********************       DecRoutineParser line 241 token " + token.getType());
+
 		// If this is a function, parse and set its return type.
 		if (routineId.getDefinition() == DefinitionImpl.FUNCTION) {
 			VariableDeclarationsParser variableDeclarationsParser = new VariableDeclarationsParser(
@@ -299,12 +286,14 @@ public class DeclaredRoutineParser extends DeclarationsParser {
 		if (token.getType() == LEFT_PAREN) {
 			token = nextToken(); // consume (
 			TokenType tokenType1 = token.getType();
-			
+		
 			
 			ArrayList<SymTabEntry> parms = new ArrayList<SymTabEntry>();
 			while(tokenType1 != RIGHT_PAREN ){
 				parms.addAll(parseParmSublist(token, routineId));
+
 				token = currentToken();
+
 				tokenType1 = token.getType();
 			}
 
@@ -366,22 +355,28 @@ public class DeclaredRoutineParser extends DeclarationsParser {
 				this);
 		variableDeclarationsParser.setDefinition(parmDefn);
 		*/
+		
 		if(tokenType == INT){
+			IntDeclarationsParser intDeclarationsParser = new IntDeclarationsParser(this);
+			intDeclarationsParser.setDefinition(parmDefn);
+					
 
-		IntDeclarationsParser intDeclarationsParser = new IntDeclarationsParser(this);
-		intDeclarationsParser.setDefinition(parmDefn);
-		token = nextToken();
-		 sublist = intDeclarationsParser.parseIdentifier(token);
-		 
-		}else if (tokenType == CHAR){
+			token = nextToken();
+			sublist = intDeclarationsParser.parseIdentifier(token);
+		}
+		else if (tokenType == CHAR){
 			
 			IntDeclarationsParser intDeclarationsParser = new IntDeclarationsParser(this);
 			intDeclarationsParser.setDefinition(parmDefn);
-			
-			 sublist = intDeclarationsParser.parseIdentifier(token);
+			token = nextToken();
+			sublist = intDeclarationsParser.parseIdentifier(token);
 			
 		}
 		token = currentToken();
+        if (token.getType() == COMMA){
+        	token = nextToken();
+        }
+        
 		tokenType = token.getType();
 
 	
