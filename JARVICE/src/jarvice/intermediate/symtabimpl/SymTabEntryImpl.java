@@ -22,7 +22,7 @@ public class SymTabEntryImpl
     private Definition definition;           // how the identifier is defined
     private TypeSpec typeSpec;               // type specification
     private ArrayList<Integer> lineNumbers;  // source line numbers
-
+    private boolean mainDeclared = false; 
     /**
      * Constructor.
      * @param name the name of the entry.
@@ -44,6 +44,16 @@ public class SymTabEntryImpl
         return name;
     }
 
+    public boolean getmainDeclared(){
+    	return mainDeclared;
+    	
+    }
+    public void setmainDeclared(boolean value){
+    	mainDeclared = value;
+   	
+    }
+    
+    
     /**
      * Getter.
      * @return the symbol table that contains this entry.

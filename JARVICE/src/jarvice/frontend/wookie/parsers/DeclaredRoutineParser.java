@@ -60,7 +60,7 @@ public class DeclaredRoutineParser extends DeclarationsParser {
 		
 		Token FunctionReturnToken = token;
 		boolean isFirstFunction = false;
-		boolean mainDeclaredYet = false;
+		
 		
 		Definition routineDefn = null;
 		String dummyName = null;
@@ -109,11 +109,12 @@ public class DeclaredRoutineParser extends DeclarationsParser {
 		}
 		// Parse the routine name.
 		routineId = parseRoutineName(token, dummyName);	
-
+		
 		if(routineId.getName() == "main"){
-			mainDeclaredYet = true;
+			routineId.setmainDeclared(true);
 			
 		}
+		
 		
 		routineId.setDefinition(routineDefn);
 		token = currentToken();
@@ -126,10 +127,7 @@ public class DeclaredRoutineParser extends DeclarationsParser {
 		if(isFirstFunction == false){
 		 symTabStack.setProgramId(routineId);
 		 isFirstFunction = true;
-		}
-	
-		
-		
+		}				
 		routineId.setAttribute(ROUTINE_SYMTAB, symTabStack.push());
 		parseFormalParameters(token, routineId);
 		token = currentToken();
@@ -198,8 +196,7 @@ public class DeclaredRoutineParser extends DeclarationsParser {
 		}
 		else 
 		{
-	       	 System.out.println(" DecRoutineParser line 192     GETS HERE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-
+	       	System.out.println(" DecRoutineParser line 192     GETS HERE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
 			errorHandler.flag(token, MISSING_IDENTIFIER, this);
 		}
 

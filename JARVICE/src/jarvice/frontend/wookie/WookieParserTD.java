@@ -28,7 +28,7 @@ import static jarvice.message.MessageType.PARSER_SUMMARY;
 public class WookieParserTD extends Parser {
 	protected static WookieErrorHandler errorHandler = new WookieErrorHandler();
 
-	private SymTabEntry routineId; // name of the routine being parsed
+	protected SymTabEntry routineId; // name of the routine being parsed
 
 	/**
 	 * Constructor.
