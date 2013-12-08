@@ -98,7 +98,7 @@ public class StatementExecutor extends Executor
      * @param javaValue the Java string.
      * @return the Pascal string or character.
      */
-    protected Object toPascal(TypeSpec targetType, Object javaValue)
+    protected Object toWookie(TypeSpec targetType, Object javaValue)
     {
         if (javaValue instanceof String) {
             String string = (String) javaValue;
@@ -114,7 +114,7 @@ public class StatementExecutor extends Executor
                     charCells[i] = MemoryFactory.createCell(string.charAt(i));
                 }
 
-                return charCells;  // Pascal string (array of characters)
+                return charCells;  // Wookie string (array of characters)
             }
             else {
                 return javaValue;

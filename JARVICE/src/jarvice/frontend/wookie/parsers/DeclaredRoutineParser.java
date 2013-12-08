@@ -136,7 +136,7 @@ public class DeclaredRoutineParser extends DeclarationsParser {
 			if (routineId == null) {
 				
 				routineId = symTabStack.enterLocal(routineName);
-
+				routineId.appendLineNumber(token.getLineNumber());
 			}
 
 			// If already defined, it should be a forward definition.
@@ -162,16 +162,7 @@ public class DeclaredRoutineParser extends DeclarationsParser {
 		return routineId;
 	}
 
-	/**
-	 * Parse a routine's formal parameter list and the function return type.
-	 * 
-	 * @param token
-	 *            the current token.
-	 * @param routineId
-	 *            the symbol table entry of the declared routine's name.
-	 * @throws Exception
-	 *             if an error occurred.
-	 */
+	
 	private void parseHeader(Token token, SymTabEntry routineId)
 			throws Exception {
 
@@ -297,12 +288,7 @@ public class DeclaredRoutineParser extends DeclarationsParser {
 		
 		SymTabEntry sublist = null;
 		
-		/*
-		// Parse the parameter sublist and its type specification.
-		VariableDeclarationsParser variableDeclarationsParser = new VariableDeclarationsParser(
-				this);
-		variableDeclarationsParser.setDefinition(parmDefn);
-		*/
+		
 		
 		if(tokenType == INT){
 			IntDeclarationsParser intDeclarationsParser = new IntDeclarationsParser(this);
