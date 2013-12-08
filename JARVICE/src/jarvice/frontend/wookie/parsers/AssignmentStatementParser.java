@@ -53,24 +53,16 @@ public class AssignmentStatementParser extends StatementParser {
 	}
 
 	 // Synchronization set for the := token.
-    private static final EnumSet<WookieTokenType> EQUALS_SET =
-        ExpressionParser.EXPR_START_SET.clone();
+    private static final EnumSet<WookieTokenType> EQUALS_SET = EnumSet.of(PLUS,
+			MINUS, IDENTIFIER, INTEGER, INT, REAL, STRING, WookieTokenType.NOT,
+			LEFT_PAREN);
+      
     static {
         EQUALS_SET.add(EQUALS);
         EQUALS_SET.addAll(StatementParser.STMT_FOLLOW_SET);
         EQUALS_SET.add(RETURN);
     }
-
-
-	/**
-	 * Parse an assignment statement.
-	 * 
-	 * @param token
-	 *            the initial token.
-	 * @return the root node of the generated parse tree.
-	 * @throws Exception
-	 *             if an error occurred.
-	 */
+    
 	public ICodeNode parse(Token token) throws Exception {
 		// Create the ASSIGN node.
 		ICodeNode assignNode = null;
@@ -82,6 +74,10 @@ public class AssignmentStatementParser extends StatementParser {
 		}
 		
 		TokenType tokenType = token.getType();
+		
+		SymTabEntry tokenId = null;
+		String TokenName = token.getText();
+		
 		
 		
         VariableParser variableParser = new VariableParser(this);
@@ -99,11 +95,12 @@ public class AssignmentStatementParser extends StatementParser {
 		
 		// The ASSIGN node adopts the variable node as its first child.
 		assignNode.addChild(targetNode);
+		
 		if(tokenType != RETURN){
 			// Synchronize on the = token.
 	        token = synchronize(EQUALS_SET);
 	        
-				if (token.getType() == EQUALS || token.getType() == RETURN) {
+				if (token.getType() == EQUALS) {
 					token = nextToken(); // consume the =
 					
 				} else {

@@ -39,13 +39,11 @@ public class BlockParser extends WookieParserTD
         throws Exception
     {
 
-        DeclarationsParser declarationsParser = new DeclarationsParser(this);
+        //DeclarationsParser declarationsParser = new DeclarationsParser(this);
         StatementParser statementParser = new StatementParser(this);
 
-        // Parse any declarations.
- 
-       
-        declarationsParser.parse(token, routineId);
+        // Parse any declarations.   
+        //declarationsParser.parse(token, routineId);
 
         token = synchronize(StatementParser.STMT_START_SET);
         TokenType tokenType = token.getType();
@@ -54,7 +52,6 @@ public class BlockParser extends WookieParserTD
         // Look for the { token to parse a compound statement.
         if (tokenType == LEFT_BRACE) {
             rootNode = statementParser.parse(token);
-
         }
 
         // Missing Left_Brace: Attempt to parse anyway if possible.

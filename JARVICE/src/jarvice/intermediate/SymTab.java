@@ -45,4 +45,10 @@ public interface SymTab
      * @return a list of symbol table entries sorted by name.
      */
     public ArrayList<SymTabEntry> sortedEntries();
+
+    //Borrowed from "Team Redundancy Team"
+	public int nextSlotNumber();
+	public int maxSlotNumber();
+	
+	
 }

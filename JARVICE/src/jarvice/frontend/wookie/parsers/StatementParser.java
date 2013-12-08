@@ -129,8 +129,7 @@ public class StatementParser extends WookieParserTD {
 
 		case IF: {
 			IfStatementParser ifParser = new IfStatementParser(this);
-			statementNode = ifParser.parse(token);
-			//token = currentToken();			
+			statementNode = ifParser.parse(token);		
 			break;
 		}
 		
@@ -153,7 +152,11 @@ public class StatementParser extends WookieParserTD {
 	protected void parseList(Token token, ICodeNode parentNode,
 			WookieTokenType terminator, WookieErrorCode errorCode)
 			throws Exception {
-
+		
+		//without this the compound statements must be followed by a semiColon
+		boolean oldToken = false;
+		
+		
 		// Synchronization set for the terminator.
 		EnumSet<WookieTokenType> terminatorSet = STMT_START_SET.clone();
 		terminatorSet.add(terminator);
@@ -167,7 +170,7 @@ public class StatementParser extends WookieParserTD {
 		
 			// Parse a statement. The parent node adopts the statement node.
 			if((token.getType() == WookieTokenType.IF ) || (token.getType() == WHILE)){
-			
+				oldToken = true;
 			}
 			
 		
@@ -175,8 +178,10 @@ public class StatementParser extends WookieParserTD {
 			parentNode.addChild(statementNode);
 			token = currentToken();
 			TokenType tokenType = token.getType();
-			
-			if (tokenType == SEMICOLON) {
+			if(oldToken && tokenType != SEMICOLON){
+				oldToken = false;			
+			}
+			else if (tokenType == SEMICOLON) {
 				token = nextToken(); // consume the ;				
 			}
 

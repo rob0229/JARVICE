@@ -46,15 +46,6 @@ public class ExpressionParser extends StatementParser {
 			MINUS, IDENTIFIER, INTEGER, INT, REAL, STRING, WookieTokenType.NOT,
 			LEFT_PAREN);
 
-	/**
-	 * Parse an expression.
-	 * 
-	 * @param token
-	 *            the initial token.
-	 * @return the root node of the generated parse tree.
-	 * @throws Exception
-	 *             if an error occurred.
-	 */
 	public ICodeNode parse(Token token) throws Exception {
 
 		return parseExpression(token);

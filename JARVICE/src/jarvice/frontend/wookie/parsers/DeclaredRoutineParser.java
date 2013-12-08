@@ -31,7 +31,7 @@ public class DeclaredRoutineParser extends DeclarationsParser {
 			throws Exception {
 	
 		Token FunctionReturnToken = token;
-		boolean isFirstFunction = false;				
+	
 		Definition routineDefn = null;
 		String dummyName = null;
 		SymTabEntry routineId = null;
@@ -79,17 +79,22 @@ public class DeclaredRoutineParser extends DeclarationsParser {
 		
 		routineId.setDefinition(routineDefn);
 		token = currentToken();	
-				
+			
+		    
+		
 		// Create new intermediate code for the routine.
 		ICode iCode = ICodeFactory.createICode();
 		routineId.setAttribute(ROUTINE_ICODE, iCode);
 		routineId.setAttribute(ROUTINE_ROUTINES, new ArrayList<SymTabEntry>());
 		
-		if(isFirstFunction == false){
-		 symTabStack.setProgramId(routineId);
-		 isFirstFunction = true;
-		}				
+		
+		
 		routineId.setAttribute(ROUTINE_SYMTAB, symTabStack.push());
+		
+		//String name = token.getText();
+		//((SymTabImpl)symTabStack.push()).setfuncName(name);
+		//((SymTabImpl)symTabStack.push()).setisFunc(true);
+		
 		parseFormalParameters(token, routineId);
 		token = currentToken();
 		
@@ -109,7 +114,8 @@ public class DeclaredRoutineParser extends DeclarationsParser {
 			ICodeNode rootNode = blockParser.parse(token, routineId);
 			iCode.setRoot(rootNode);
 		}
-
+		ArrayList<SymTabEntry> subroutines = (ArrayList<SymTabEntry>) parentId.getAttribute(ROUTINE_ROUTINES);
+		subroutines.add(routineId);
 		// Pop the routine's symbol table off the stack.
 		
 		symTabStack.pop();
@@ -117,19 +123,6 @@ public class DeclaredRoutineParser extends DeclarationsParser {
 		return routineId;
 	}
 
-	/**
-	 * Parse a routine's name.
-	 * 
-	 * @param token
-	 *            the current token.
-	 * @param routineDefn
-	 *            how the routine is defined.
-	 * @param dummyName
-	 *            a dummy name in case of parsing problem.
-	 * @return the symbol table entry of the declared routine's name.
-	 * @throws Exception
-	 *             if an error occurred.
-	 */
 	private SymTabEntry parseRoutineName(Token token, String dummyName)
 			throws Exception {
 		SymTabEntry routineId = null;
@@ -157,7 +150,7 @@ public class DeclaredRoutineParser extends DeclarationsParser {
 		}
 		else 
 		{
-	       	System.out.println(" DecRoutineParser line 192     GETS HERE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+
 			errorHandler.flag(token, MISSING_IDENTIFIER, this);
 		}
 
@@ -334,9 +327,6 @@ public class DeclaredRoutineParser extends DeclarationsParser {
         }
         
 		tokenType = token.getType();
-
-	
-			
 
 			token = synchronize(PARAMETER_SET);
 			ArrayList<SymTabEntry> SC = new ArrayList<SymTabEntry>();

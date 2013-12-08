@@ -1,89 +1,75 @@
 package jarvice.frontend.wookie;
 
+import java.util.ArrayList;
 import java.util.EnumSet;
 
 import jarvice.frontend.Token;
-import jarvice.frontend.wookie.parsers.ProgramParser;
+import jarvice.frontend.wookie.parsers.DeclaredRoutineParser;
+import jarvice.intermediate.symtabimpl.DefinitionImpl;
+import static jarvice.intermediate.symtabimpl.SymTabKeyImpl.ROUTINE_ICODE;
+import static jarvice.intermediate.symtabimpl.SymTabKeyImpl.ROUTINE_ROUTINES;
+import static jarvice.intermediate.symtabimpl.SymTabKeyImpl.ROUTINE_SYMTAB;
 import jarvice.intermediate.symtabimpl.Predefined;
 import jarvice.message.Message;
 import jarvice.frontend.*;
-import jarvice.frontend.wookie.parsers.*;
 import jarvice.intermediate.*;
-import jarvice.intermediate.symtabimpl.*;
-import jarvice.intermediate.typeimpl.*;
-import jarvice.message.*;
 import static jarvice.frontend.wookie.WookieTokenType.*;
 import static jarvice.frontend.wookie.WookieErrorCode.*;
-import static jarvice.intermediate.symtabimpl.SymTabKeyImpl.*;
-import static jarvice.intermediate.typeimpl.TypeFormImpl.*;
 import static jarvice.message.MessageType.PARSER_SUMMARY;
 import static jarvice.frontend.wookie.WookieErrorCode.IO_ERROR;
-import static jarvice.message.MessageType.PARSER_SUMMARY;
 
-/**
- * PascalParserTD
- * 
- * 
- */
 public class WookieParserTD extends Parser {
 	protected static WookieErrorHandler errorHandler = new WookieErrorHandler();
-
+	
 	public SymTabEntry routineId; // name of the routine being parsed
 
-	/**
-	 * Constructor.
-	 * 
-	 * @param scanner
-	 *            the scanner to be used with this parser.
-	 */
 	public WookieParserTD(Scanner scanner) {
 		super(scanner);
 	}
 
-	/**
-	 * Constructor for subclasses.
-	 * 
-	 * @param parent
-	 *            the parent parser.
-	 */
 	public WookieParserTD(WookieParserTD parent) {
 		super(parent.getScanner());
 	}
-
-	/**
-	 * Getter.
-	 * 
-	 * @return the error handler.
-	 */
+	
 	public WookieErrorHandler getErrorHandler() {
 		return errorHandler;
 	}
 
-	/**
-	 * Parse a Wookie source program and generate the symbol table and the
-	 * intermediate code.
-	 * 
-	 * @throws Exception
-	 *             if an error occurred.
-	 */
 	public void parse() throws Exception {
-	
+			 
 		 long startTime = System.currentTimeMillis();
 	        Predefined.initialize(symTabStack);
+	        SymTabEntry routineId = symTabStack.enterLocal("c code");
+	        routineId.setDefinition(DefinitionImpl.PROGRAM);
 
-	        try {
-	        	
-	            Token token = nextToken();
-		        
-	           // We do not need to use program parser in C. Each function must be declared before it can be used in the int main() function so we do 
-	           //parse them first and create the symbol tables for all the functions before int main()
-	           
-	            // Parse a program.
-	            ProgramParser programParser = new ProgramParser(this);
-	            programParser.parse(token, null);            
-	             	
+            // create intermediate code for calling main()
+            ICode iCode = ICodeFactory.createICode();
+            routineId.setAttribute(ROUTINE_ICODE, iCode);
+            routineId.setAttribute(ROUTINE_ROUTINES, new ArrayList<SymTabEntry>());
+
+            // push symbol table onto stack
+            routineId.setAttribute(ROUTINE_SYMTAB, symTabStack.push());
+
+            // set program identifier in symbol table stack
+            symTabStack.setProgramId(routineId);
+           
+             symTabStack.getLocalSymTab().nextSlotNumber();
+            
+            // parse routines
+	        
+	        
+	        
+	        
+	        try {	        	
+	            Token token = nextToken();		
+	            DeclaredRoutineParser routineParser = new DeclaredRoutineParser(this);
+	            
+	        	// Parse the program.
+	          do {     
+	            routineParser.parse(token, routineId);
+	            token = currentToken();        
+	          } while (token.getType() == INT ||token.getType() == CHAR ||token.getType() == VOID);
 	          
-		     
 	            // Send the parser summary message.
 	            float elapsedTime = (System.currentTimeMillis() - startTime)/1000f;
 	            sendMessage(new Message(PARSER_SUMMARY, new Number[] {token.getLineNumber(), getErrorCount(), elapsedTime}));

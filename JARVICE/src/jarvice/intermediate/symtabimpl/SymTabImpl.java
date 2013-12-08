@@ -21,6 +21,8 @@ public class SymTabImpl
     implements SymTab
 {
     private int nestingLevel;
+    private int slotNumber;         // local variables array slot number
+    private int maxSlotNumber;      // max slot number value
     private String funcName;
     private boolean isFunc = false;
 
@@ -113,5 +115,18 @@ public class SymTabImpl
         }
 
         return list;  // sorted list of entries
+    }
+
+    //Borrowed this code from "Team Redundancy Team"
+    public int nextSlotNumber()
+    {
+        maxSlotNumber = ++slotNumber;
+        return slotNumber;
+    }
+
+    
+    public int maxSlotNumber()
+    {
+        return maxSlotNumber;
     }
 }

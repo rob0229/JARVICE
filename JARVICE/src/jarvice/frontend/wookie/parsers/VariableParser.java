@@ -22,24 +22,11 @@ import static jarvice.intermediate.typeimpl.TypeKeyImpl.*;
 import static jarvice.intermediate.icodeimpl.ICodeNodeTypeImpl.*;
 import static jarvice.intermediate.icodeimpl.ICodeKeyImpl.*;
 
-/**
- * <h1>VariableParser</h1>
- * 
- * <p> * Parse a Pascal variable.</p>
- * 
- * <p>Copyright (c) 2009 by Ronald Mak</p>
- * <p> * For instructional purposes only. No warranties. * </p>
- */
 public class VariableParser extends StatementParser {
 	// Set to true to parse a function name
 	// as the target of an assignment.
 	private boolean isFunctionTarget = false;
 
-	/**
-	 * Constructor.
-	 * 
-	 * @param parent the parent parser.
-	 */
 	public VariableParser(WookieParserTD parent) {
 		super(parent);
 	}
@@ -47,13 +34,6 @@ public class VariableParser extends StatementParser {
 	 private static final EnumSet<WookieTokenType> SUBSCRIPT_FIELD_START_SET =
 	 EnumSet.of(LEFT_BRACKET, DOT);
 
-	/**
-	 * Parse a variable.
-	 * 
-	 * @param token the initial token.
-	 * @return the root node of the generated parse tree.
-	 * @throws Exception if an error occurred.
-	 */
 	public ICodeNode parse(Token token) throws Exception {
 		// Look up the identifier in the symbol table stack.
 		String name = token.getText().toLowerCase();
@@ -79,26 +59,11 @@ public class VariableParser extends StatementParser {
 		return parse(token, variableId);
 	}
 
-	/**
-	 * Parse a function name as the target of an assignment statement.
-	 * 
-	 * @param token the initial token.
-	 * @return the root node of the generated parse tree.
-	 * @throws Exception if an error occurred.
-	 */
 	public ICodeNode parseFunctionNameTarget(Token token) throws Exception {
 		isFunctionTarget = true;
 		return parse(token);
 	}
 
-	/**
-	 * Parse a variable.
-	 * 
-	 * @param token the initial token.
-	 * @param variableId the symbol table entry of the variable identifier.
-	 * @return the root node of the generated parse tree.
-	 * @throws Exception if an error occurred.
-	 */
 	public ICodeNode parse(Token token, SymTabEntry variableId)
 			throws Exception {
 
@@ -136,16 +101,7 @@ public class VariableParser extends StatementParser {
 	// Synchronization set for the ] token.
 	private static final EnumSet<WookieTokenType> RIGHT_BRACKET_SET = EnumSet
 			.of(RIGHT_BRACKET, EQUALS, SEMICOLON);
-
-	/**
-	 * Parse a set of comma-separated subscript expressions.
-	 * 
-	 * @param variableType
-	 *            the type of the array variable.
-	 * @return the root node of the generated parse tree.
-	 * @throws Exception
-	 *             if an error occurred.
-	 */
+	
 	private ICodeNode parseSubscripts(TypeSpec variableType) throws Exception {
 		Token token;
 		ExpressionParser expressionParser = new ExpressionParser(this);
@@ -200,15 +156,6 @@ public class VariableParser extends StatementParser {
 		return subscriptsNode;
 	}
 
-	/**
-	 * Parse a record field.
-	 * 
-	 * @param variableType
-	 *            the type of the record variable.
-	 * @return the root node of the generated parse tree.
-	 * @throws Exception
-	 *             if an error occurred.
-	 */
 	private ICodeNode parseField(TypeSpec variableType) throws Exception {
 		// Create a FIELD node.
 		ICodeNode fieldNode = ICodeFactory.createICodeNode(FIELD);
