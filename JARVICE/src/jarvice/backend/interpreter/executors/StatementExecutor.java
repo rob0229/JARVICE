@@ -58,8 +58,7 @@ public class StatementExecutor extends Executor
             }
 
             case ASSIGN: {
-                AssignmentExecutor assignmentExecutor =
-                    new AssignmentExecutor(this);
+                AssignmentExecutor assignmentExecutor = new AssignmentExecutor(this);
                 return assignmentExecutor.execute(node);
             }
 
@@ -82,6 +81,11 @@ public class StatementExecutor extends Executor
                 CallExecutor callExecutor = new CallExecutor(this);
                 return callExecutor.execute(node);
             }
+            case _RETURN: {
+            	
+                ReturnExecutor returnExecutor = new ReturnExecutor(this);
+                return returnExecutor.execute(node);
+            }
 
             case NO_OP: return null;
 
@@ -93,7 +97,7 @@ public class StatementExecutor extends Executor
     }
 
     /**
-     * Convert a Java string to a Pascal string or character.
+     * Convert a Java string to a Wookie string or character.
      * @param targetType the target type specification.
      * @param javaValue the Java string.
      * @return the Pascal string or character.
@@ -126,7 +130,7 @@ public class StatementExecutor extends Executor
     }
 
     /**
-     * Convert a Pascal string to a Java string.
+     * Convert a Wookie string to a Java string.
      * @param targetType the target type specification
      * @param pascalValue the Pascal string.
      * @return the Java string.
@@ -152,7 +156,7 @@ public class StatementExecutor extends Executor
     }
 
     /**
-     * Return a copy of a Pascal value.
+     * Return a copy of a Wookie value.
      * @param value the value.
      * @param node the statement node.
      * @return the copy.

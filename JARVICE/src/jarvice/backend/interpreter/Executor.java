@@ -15,14 +15,6 @@ import static jarvice.intermediate.icodeimpl.ICodeNodeTypeImpl.*;
 import static jarvice.intermediate.icodeimpl.ICodeKeyImpl.*;
 import static jarvice.message.MessageType.INTERPRETER_SUMMARY;
 
-/**
- * <h1>Executor</h1>
- *
- * <p>The executor for an interpreter back end.</p>
- *
- * <p>Copyright (c) 2009 by Ronald Mak</p>
- * <p>For instructional purposes only.  No warranties.</p>
- */
 public class Executor extends Backend
 {
     protected static int executionCount;

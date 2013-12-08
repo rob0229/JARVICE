@@ -213,6 +213,15 @@ public class CallStandardExecutor extends CallExecutor
                 : new Float(((Integer) value).intValue());
         }
 
+        if (tokenType == INT) {
+            Number value = sign == MINUS ? -((Integer) token.getValue())
+                           : (Integer) token.getValue();
+            return type == Predefined.integerType
+                ? value
+                : new Float(((Integer) value).intValue());
+        }
+        
+        
         // Real value.
         else if (tokenType == REAL) {
             Number value = sign == MINUS ? -((Float) token.getValue())

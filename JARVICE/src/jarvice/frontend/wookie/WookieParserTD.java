@@ -17,6 +17,8 @@ import static jarvice.frontend.wookie.WookieTokenType.*;
 import static jarvice.frontend.wookie.WookieErrorCode.*;
 import static jarvice.message.MessageType.PARSER_SUMMARY;
 import static jarvice.frontend.wookie.WookieErrorCode.IO_ERROR;
+import static jarvice.intermediate.icodeimpl.ICodeNodeTypeImpl.CALL;
+import static jarvice.intermediate.icodeimpl.ICodeKeyImpl.ID;
 
 public class WookieParserTD extends Parser {
 	protected static WookieErrorHandler errorHandler = new WookieErrorHandler();
@@ -69,6 +71,15 @@ public class WookieParserTD extends Parser {
 	            routineParser.parse(token, routineId);
 	            token = currentToken();        
 	          } while (token.getType() == INT ||token.getType() == CHAR ||token.getType() == VOID);
+	          
+	          ICodeNode callNode = ICodeFactory.createICodeNode(CALL);
+              SymTabEntry pfId = symTabStack.lookupLocal("main");
+              callNode.setAttribute(ID, pfId);
+              // force main as void
+             // callNode.setTypeSpec(symTabStack.lookup("void").getTypeSpec());
+              iCode.setRoot(callNode);
+	          
+	          
 	          
 	            // Send the parser summary message.
 	            float elapsedTime = (System.currentTimeMillis() - startTime)/1000f;

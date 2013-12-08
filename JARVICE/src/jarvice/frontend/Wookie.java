@@ -65,8 +65,9 @@ public class Wookie {
                                          new ParseTreePrinter(System.out);
                     treePrinter.print(symTabStack);
                 }
-
+           
                 backend.process(iCode, symTabStack);
+              
             }
         }
 		 catch (Exception ex) {
@@ -104,7 +105,7 @@ public class Wookie {
 
             // Source path.
             if (i < args.length) {
-                String path = "C://Users//Rob//Desktop//compilersamplecode//declarations.txt";
+                String path = args[2];
                 new Wookie(operation, path, flags);
             }
             else {
