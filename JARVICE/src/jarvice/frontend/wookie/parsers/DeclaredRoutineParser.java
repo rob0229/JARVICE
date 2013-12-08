@@ -15,53 +15,23 @@ import static jarvice.intermediate.symtabimpl.DefinitionImpl.*;
 import static jarvice.intermediate.symtabimpl.Predefined.charType;
 import static jarvice.intermediate.symtabimpl.Predefined.integerType;
 import static jarvice.intermediate.symtabimpl.RoutineCodeImpl.*;
-//import jarvice.frontend.wookie.WookieTokenType.*; 
 
-/**
- * <h1>DeclaredRoutineParser</h1>
- * 
- * <p>
- * Parse a main program routine or a declared procedure or function.
- * </p>
- * 
- * <p>
- * Copyright (c) 2009 by Ronald Mak
- * </p>
- * <p>
- * For instructional purposes only. No warranties.
- * </p>
- */
+
+
 public class DeclaredRoutineParser extends DeclarationsParser {
-	/**
-	 * Constructor.
-	 * 
-	 * @param parent
-	 *            the parent parser.
-	 */
+	
 	public DeclaredRoutineParser(WookieParserTD parent) {
 		super(parent);
 	}
 
 	private static int dummyCounter = 0; // counter for dummy routine names
 
-	/**
-	 * Parse a standard subroutine declaration.
-	 * 
-	 * @param token
-	 *            the initial token.
-	 * @param parentId
-	 *            the symbol table entry of the parent routine's name.
-	 * @return the symbol table entry of the declared routine's name.
-	 * @throws Exception
-	 *             if an error occurred.
-	 */
+	
 	public SymTabEntry parse(Token token, SymTabEntry parentId)
 			throws Exception {
-		
+	
 		Token FunctionReturnToken = token;
-		boolean isFirstFunction = false;
-		
-		
+		boolean isFirstFunction = false;				
 		Definition routineDefn = null;
 		String dummyName = null;
 		SymTabEntry routineId = null;
@@ -70,55 +40,46 @@ public class DeclaredRoutineParser extends DeclarationsParser {
 		// Initialize.
 		switch ((WookieTokenType) routineType) {
 
-		case INT: {
-			// save the int data type for use later
-			FunctionReturnToken = token;
-
-			token = nextToken(); // consume Int
+			case INT: {
+				// save the int data type for use later
+				FunctionReturnToken = token;
+				token = nextToken(); // consume Int			
+				routineDefn = DefinitionImpl.FUNCTION;
+				dummyName = "DummyProgramName".toLowerCase()+ String.format("%03d", ++dummyCounter);			
+				break;
+			}
 			
-			routineDefn = DefinitionImpl.FUNCTION;
-			dummyName = "DummyProgramName".toLowerCase()+ String.format("%03d", ++dummyCounter);			
-			break;
+			case CHAR: {
+				// save the char data type for use later
+				FunctionReturnToken = token;
+				token = nextToken(); // consume Char
+				routineDefn = DefinitionImpl.FUNCTION;
+				dummyName = "DummyProgramName".toLowerCase()+ String.format("%03d", ++dummyCounter);
+				break;
+			}
+			
+			case VOID: {
+				// save the void data type for use later
+				FunctionReturnToken = token;
+				token = nextToken(); // consume PROGRAM
+				routineDefn = DefinitionImpl.PROCEDURE;
+				dummyName = "DummyProgramName".toLowerCase()+ String.format("%03d", ++dummyCounter);
+				break;
+			}
+	
+			default: {
+				routineDefn = DefinitionImpl.PROGRAM;
+				dummyName = "DummyProgramName".toLowerCase();
+				break;
+			}
 		}
 		
-		case CHAR: {
-			// save the char data type for use later
-			FunctionReturnToken = token;
-
-			token = nextToken(); // consume Char
-			routineDefn = DefinitionImpl.FUNCTION;
-			dummyName = "DummyProgramName".toLowerCase()+ String.format("%03d", ++dummyCounter);
-			break;
-		}
-		
-		case VOID: {
-			// save the void data type for use later
-			FunctionReturnToken = token;
-
-			token = nextToken(); // consume PROGRAM
-			routineDefn = DefinitionImpl.PROCEDURE;
-			dummyName = "DummyProgramName".toLowerCase()+ String.format("%03d", ++dummyCounter);
-			break;
-		}
-
-		default: {
-			routineDefn = DefinitionImpl.PROGRAM;
-			dummyName = "DummyProgramName".toLowerCase();
-			break;
-		}
-		}
 		// Parse the routine name.
 		routineId = parseRoutineName(token, dummyName);	
 		
-		if(routineId.getName() == "main"){
-			routineId.setmainDeclared(true);
-			
-		}
-		
-		
 		routineId.setDefinition(routineDefn);
-		token = currentToken();
-		
+		token = currentToken();	
+				
 		// Create new intermediate code for the routine.
 		ICode iCode = ICodeFactory.createICode();
 		routineId.setAttribute(ROUTINE_ICODE, iCode);

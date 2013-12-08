@@ -28,7 +28,7 @@ import static jarvice.message.MessageType.PARSER_SUMMARY;
 public class WookieParserTD extends Parser {
 	protected static WookieErrorHandler errorHandler = new WookieErrorHandler();
 
-	protected SymTabEntry routineId; // name of the routine being parsed
+	public SymTabEntry routineId; // name of the routine being parsed
 
 	/**
 	 * Constructor.
@@ -82,12 +82,7 @@ public class WookieParserTD extends Parser {
 	            ProgramParser programParser = new ProgramParser(this);
 	            programParser.parse(token, null);            
 	             	
-	            /*
-	            DeclaredRoutineParser routineParser = new DeclaredRoutineParser(this);
-	            routineParser.parse(token, null);
 	          
-	            token = currentToken();
-	       */
 		     
 	            // Send the parser summary message.
 	            float elapsedTime = (System.currentTimeMillis() - startTime)/1000f;

@@ -40,11 +40,9 @@ public class CompoundStatementParser extends StatementParser
         // Create the COMPOUND node.
         ICodeNode compoundNode = ICodeFactory.createICodeNode(COMPOUND);
 
-        // Parse the statement list terminated by the } token.
-        
+        // Parse the statement list terminated by the } token.      
         StatementParser statementParser = new StatementParser(this);
-
-       statementParser.parseList(token, compoundNode, RIGHT_BRACE, MISSING_RIGHT_BRACE );
+        statementParser.parseList(token, compoundNode, RIGHT_BRACE, MISSING_RIGHT_BRACE );
 
         return compoundNode;
     }

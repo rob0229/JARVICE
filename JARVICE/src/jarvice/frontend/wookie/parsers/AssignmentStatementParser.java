@@ -73,9 +73,16 @@ public class AssignmentStatementParser extends StatementParser {
 	 */
 	public ICodeNode parse(Token token) throws Exception {
 		// Create the ASSIGN node.
-		ICodeNode assignNode = ICodeFactory.createICodeNode(ASSIGN);
+		ICodeNode assignNode = null;
+		
+		if(token.getType() == RETURN){
+			 assignNode = ICodeFactory.createICodeNode(_RETURN);
+		}else{
+			 assignNode = ICodeFactory.createICodeNode(ASSIGN);			
+		}
 		
 		TokenType tokenType = token.getType();
+		
 		
         VariableParser variableParser = new VariableParser(this);
       

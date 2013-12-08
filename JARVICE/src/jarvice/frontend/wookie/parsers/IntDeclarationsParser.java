@@ -30,14 +30,12 @@ public class IntDeclarationsParser extends DeclarationsParser
      * @param parent the parent parser.
      */
     public IntDeclarationsParser(WookieParserTD parent)
-    {
-    
+    {    
         super(parent);
     }
 
     protected void setDefinition(Definition definition)
     {
-
     	this.definition = definition;
     }
     
@@ -49,12 +47,11 @@ public class IntDeclarationsParser extends DeclarationsParser
 	       Token third = nextToken();
 	       
 	        if(third.getType() == LEFT_PAREN){
-	        	
+
 	        	 DeclaredRoutineParser routineParser = new DeclaredRoutineParser(this);
-		         routineParser.parse(dataType, null);
-	        	
-	        	
-	        }else{
+		         routineParser.parse(dataType, null);	        	
+	        }
+	        else{
 		        SymTabEntry id = parseIdentifier(name); 
 		       if(dataType.getType() == INT){
 		    	   id.setTypeSpec(integerType);
@@ -62,8 +59,7 @@ public class IntDeclarationsParser extends DeclarationsParser
 		       else if(dataType.getType() == CHAR){
 		    	   id.setTypeSpec(charType);
 		       }
-		     
-		       
+		     		       
 		       //currentToken should be a semiColon here
 		       final EnumSet<WookieTokenType> INT_FOLLOW_SET = EnumSet.of(SEMICOLON);
 		       token = synchronize(INT_FOLLOW_SET);
@@ -87,9 +83,6 @@ public class IntDeclarationsParser extends DeclarationsParser
                 else {
                     errorHandler.flag(token, IDENTIFIER_REDEFINED, this);
                 }
-
-                //token = nextToken();   // consume the identifier token
-
             }
             else {
                 errorHandler.flag(token, MISSING_IDENTIFIER, this);

@@ -28,23 +28,12 @@ import static jarvice.frontend.wookie.WookieErrorCode.MISSING_SEMICOLON;
 import static jarvice.frontend.wookie.WookieErrorCode.UNEXPECTED_TOKEN;
 import static jarvice.intermediate.symtabimpl.DefinitionImpl.UNDEFINED;
 import static jarvice.intermediate.symtabimpl.SymTabImpl.*;
-/**
- * <h1>StatementParser</h1>
- * 
- * 
- * </p>
- */
+
 public class StatementParser extends WookieParserTD {
-	/**
-	 * Constructor.
-	 * 
-	 * @param parent
-	 *            the parent parser.
-	 */
+	
 	public StatementParser(WookieParserTD parent) {
 		super(parent);
 	}
-
 	// Synchronization set for starting a statement.
 	protected static final EnumSet<WookieTokenType> STMT_START_SET = EnumSet
 			.of(LEFT_BRACE, WookieTokenType.IF, WHILE, IDENTIFIER, INT, CHAR);
@@ -53,42 +42,21 @@ public class StatementParser extends WookieParserTD {
 	protected static final EnumSet<WookieTokenType> STMT_FOLLOW_SET = EnumSet
 			.of(SEMICOLON, RIGHT_BRACE, ELSE);
 
-	/**
-	 * Parse a statement. To be overridden by the specialized statement parser
-	 * subclasses.
-	 * 
-	 * @param token
-	 *            the initial token.
-	 * @return the root node of the generated parse tree.
-	 * @throws Exception
-	 *             if an error occurred.
-	 */
 	public ICodeNode parse(Token token) throws Exception {
 		ICodeNode statementNode = null;
-		switch ((WookieTokenType) token.getType()) {
-
-		// //Added by Rob
-		// An assignment statement in c starts with the data type if the
-		// variable has not been declared.
 		
-		case RETURN:{	
-			
-			SymTab symTab = symTabStack.getLocalSymTab();
-			boolean isFunc = symTab.getIsFunc();
-			
-			
-
+		switch ((WookieTokenType) token.getType()) {	
+		case RETURN:{				
+			SymTab symTab = symTabStack.getLocalSymTab();		
 			AssignmentStatementParser assignmentParser = new AssignmentStatementParser(this);
-            ICodeNode icodenode = assignmentParser.parseReturn(token);
-            setLineNumber(icodenode, token);
-            statementNode = ICodeFactory.createICodeNode(COMPOUND);
-            statementNode.addChild(icodenode);           
-            ICodeNode returnNode = ICodeFactory.createICodeNode(ICodeNodeTypeImpl.FUNCTION );
-            setLineNumber(returnNode, token);
-            statementNode.addChild(returnNode);
-			
-			
-			break;
+	        ICodeNode icodenode = assignmentParser.parseReturn(token);
+	        setLineNumber(icodenode, token);
+	        statementNode = ICodeFactory.createICodeNode(COMPOUND);
+	        statementNode.addChild(icodenode);           
+	        ICodeNode returnNode = ICodeFactory.createICodeNode(ICodeNodeTypeImpl.FUNCTION );
+	        setLineNumber(returnNode, token);
+	        statementNode.addChild(returnNode);			
+			break;			
 		}
 		
 		case LEFT_BRACE: {
@@ -96,26 +64,22 @@ public class StatementParser extends WookieParserTD {
 			statementNode = compoundParser.parse(token);
 			break;
 		}
-		//look for int and parse declaration
+	
 		case INT: {
-	            IntDeclarationsParser intDeclarationsParser =						//*
-	                new IntDeclarationsParser(this);								//*
-	            intDeclarationsParser.setDefinition(VARIABLE);
-	            intDeclarationsParser.parse(token);
-	      
-	            
-	           break;
-	        }
-		//look for a CHAR and parse this declaration
+	        IntDeclarationsParser intDeclarationsParser = new IntDeclarationsParser(this);								
+	        intDeclarationsParser.setDefinition(VARIABLE);
+	        intDeclarationsParser.parse(token);            
+	        break;
+	    }
+	
 		case CHAR: {
-            IntDeclarationsParser intDeclarationsParser =						//*
-                new IntDeclarationsParser(this);								//*
+            IntDeclarationsParser intDeclarationsParser = new IntDeclarationsParser(this);								
             intDeclarationsParser.setDefinition(VARIABLE);
             intDeclarationsParser.parse(token);
-           break;
+            break;
         }
-		// An assignment statement begins with a variable's identifier.
-		 case IDENTIFIER: {
+
+		case IDENTIFIER: {
              String name = token.getText().toLowerCase();
              SymTabEntry id = symTabStack.lookup(name);
              Definition idDefn = id != null ? id.getDefinition()
@@ -156,6 +120,7 @@ public class StatementParser extends WookieParserTD {
 
              break;
          }
+		
 		case WHILE: {
 			WhileStatementParser whileParser = new WhileStatementParser(this);
 			statementNode = whileParser.parse(token);
@@ -165,52 +130,26 @@ public class StatementParser extends WookieParserTD {
 		case IF: {
 			IfStatementParser ifParser = new IfStatementParser(this);
 			statementNode = ifParser.parse(token);
-			token = currentToken();
-			
+			//token = currentToken();			
 			break;
 		}
-		
-		
 		
 		default: {
 			statementNode = ICodeFactory.createICodeNode(NO_OP);
 			break;
 		}
 		}
-		// Set the current line number as an attribute.
-		setLineNumber(statementNode, token);
-	
+
+		setLineNumber(statementNode, token);	
 		return statementNode;
 	}
 
-	/**
-	 * Set the current line number as a statement node attribute.
-	 * 
-	 * @param node
-	 *            ICodeNode
-	 * @param token
-	 *            Token
-	 */
 	protected void setLineNumber(ICodeNode node, Token token) {
 		if (node != null) {
 			node.setAttribute(LINE, token.getLineNumber());
 		}
 	}
 
-	/**
-	 * Parse a statement list.
-	 * 
-	 * @param token
-	 *            the current token.
-	 * @param parentNode
-	 *            the parent node of the statement list.
-	 * @param terminator
-	 *            the token type of the node that terminates the list.
-	 * @param errorCode
-	 *            the error code if the terminator token is missing.
-	 * @throws Exception
-	 *             if an error occurred.
-	 */
 	protected void parseList(Token token, ICodeNode parentNode,
 			WookieTokenType terminator, WookieErrorCode errorCode)
 			throws Exception {
@@ -225,47 +164,35 @@ public class StatementParser extends WookieParserTD {
 		// or the end of the source file.
 		while (!(token instanceof EofToken) && (token.getType() != terminator)) {
 			
-			boolean oldToken = false;
+		
 			// Parse a statement. The parent node adopts the statement node.
 			if((token.getType() == WookieTokenType.IF ) || (token.getType() == WHILE)){
-				oldToken = true;
+			
 			}
 			
 		
-			ICodeNode statementNode = parse(token);
-		
+			ICodeNode statementNode = parse(token);		
 			parentNode.addChild(statementNode);
-
 			token = currentToken();
-
 			TokenType tokenType = token.getType();
-			if(oldToken && tokenType != SEMICOLON){
-				//do nothing but do not look for the semicolon
-				oldToken = false;
-			}
-			// Look for the semicolon between statements.
-			else if (tokenType == SEMICOLON) {
-				token = nextToken(); // consume the ;
-				
+			
+			if (tokenType == SEMICOLON) {
+				token = nextToken(); // consume the ;				
 			}
 
 			// If at the start of the next statement, then missing a semicolon.
 			else if (STMT_START_SET.contains(tokenType)) {
 				errorHandler.flag(token, MISSING_SEMICOLON, this);
 			}
-
 			// Synchronize at the start of the next statement
 			// or at the terminator.
 			token = synchronize(terminatorSet);
 		}
-
 		// Look for the terminator token.
 		if (token.getType() == terminator) {			
 			token = nextToken(); // consume the terminator token	
 		}
-
-		else {
-			
+		else {			
 			errorHandler.flag(token, errorCode, this);
 		}
 	}
