@@ -39,7 +39,7 @@ public class WookieParserTD extends Parser {
 			 
 		 long startTime = System.currentTimeMillis();
 	        Predefined.initialize(symTabStack);
-	        SymTabEntry routineId = symTabStack.enterLocal("c code");
+	        SymTabEntry routineId = symTabStack.enterLocal("Han Solo");
 	        routineId.setDefinition(DefinitionImpl.PROGRAM);
 
             // create intermediate code for calling main()
