@@ -43,7 +43,7 @@ public class TypeDefinitionsParser extends DeclarationsParser
 
     // Synchronization set for the = token.
     private static final EnumSet<WookieTokenType> EQUALS_SET =
-        ConstantDefinitionsParser.CONSTANT_START_SET.clone();
+    		EnumSet.of(IDENTIFIER, INTEGER, REAL, PLUS, MINUS, STRING, SEMICOLON);
     static {
         EQUALS_SET.add(EQUALS);
         EQUALS_SET.add(SEMICOLON);
@@ -104,7 +104,7 @@ public class TypeDefinitionsParser extends DeclarationsParser
                 new TypeSpecificationParser(this);
             TypeSpec type = typeSpecificationParser.parse(token);
 
-            // Set identifier to be a type and set its type specificationt.
+            // Set identifier to be a type and set its type specification.
             if (typeId != null) {
                 typeId.setDefinition(TYPE);
             }

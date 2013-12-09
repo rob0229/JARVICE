@@ -76,4 +76,9 @@ public interface SymTabEntry
      * @return the attribute value.
      */
     public Object getAttribute(SymTabKey key);
+    
+    public boolean getmainDeclared();
+    public void setmainDeclared(boolean value);
+    
+    
 }

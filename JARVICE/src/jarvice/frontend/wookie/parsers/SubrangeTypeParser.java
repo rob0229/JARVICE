@@ -30,32 +30,32 @@ public class SubrangeTypeParser extends TypeSpecificationParser
     {
         super(parent);
     }
-
+    /*
     /**
      * Parse a Pascal subrange type specification.
      * @param token the current token.
      * @return the subrange type specification.
      * @throws Exception if an error occurred.
-     */
-    public TypeSpec parse(Token token)
-        throws Exception
-    {
-        TypeSpec subrangeType = TypeFactory.createType(SUBRANGE);
+     
+   // public TypeSpec parse(Token token)
+   //     throws Exception
+   // {
+    //    TypeSpec subrangeType = TypeFactory.createType(SUBRANGE);
         Object minValue = null;
         Object maxValue = null;
 
         // Parse the minimum constant.
         Token constantToken = token;
-        ConstantDefinitionsParser constantParser =
-            new ConstantDefinitionsParser(this);
-        minValue = constantParser.parseConstant(token);
+       //ConstantDefinitionsParser constantParser =
+        //    new ConstantDefinitionsParser(this);
+      //  minValue = constantParser.parseConstant(token);
 
         // Set the minimum constant's type.
-        TypeSpec minType = constantToken.getType() == IDENTIFIER
-                               ? constantParser.getConstantType(constantToken)
-                               : constantParser.getConstantType(minValue);
-
-        minValue = checkValueType(constantToken, minValue, minType);
+        //TypeSpec minType = Token.getType() == IDENTIFIER
+        //                     ? declarationsParser.getType(constantToken)
+         //                     : constantParser.getConstantType(minValue);
+//
+       // minValue = checkValueType(constantToken, minValue, minType);
 
         token = currentToken();
         Boolean sawDotDot = false;
@@ -111,8 +111,9 @@ public class SubrangeTypeParser extends TypeSpecificationParser
         subrangeType.setAttribute(SUBRANGE_MAX_VALUE, maxValue);
 
         return subrangeType;
+       
     }
-
+ */
     /**
      * Check a value of a type specification.
      * @param token the current token.

@@ -3,7 +3,6 @@ package jarvice.frontend.wookie.parsers;
 import jarvice.frontend.*;
 import jarvice.frontend.wookie.*;
 import jarvice.intermediate.*;
-
 import static jarvice.frontend.wookie.WookieTokenType.*;
 import static jarvice.frontend.wookie.WookieErrorCode.*;
 import static jarvice.intermediate.symtabimpl.SymTabKeyImpl.*;
@@ -39,22 +38,23 @@ public class BlockParser extends WookieParserTD
     public ICodeNode parse(Token token, SymTabEntry routineId)
         throws Exception
     {
-        DeclarationsParser declarationsParser = new DeclarationsParser(this);
+
+        //DeclarationsParser declarationsParser = new DeclarationsParser(this);
         StatementParser statementParser = new StatementParser(this);
 
-        // Parse any declarations.
-        declarationsParser.parse(token);
+        // Parse any declarations.   
+        //declarationsParser.parse(token, routineId);
 
         token = synchronize(StatementParser.STMT_START_SET);
         TokenType tokenType = token.getType();
         ICodeNode rootNode = null;
 
-        // Look for the BEGIN token to parse a compound statement.
+        // Look for the { token to parse a compound statement.
         if (tokenType == LEFT_BRACE) {
             rootNode = statementParser.parse(token);
         }
 
-        // Missing BEGIN: Attempt to parse anyway if possible.
+        // Missing Left_Brace: Attempt to parse anyway if possible.
         else {
             errorHandler.flag(token, MISSING_LEFT_BRACE, this);
 

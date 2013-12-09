@@ -1,14 +1,15 @@
 package jarvice.frontend.wookie.parsers;
 
-import java.util.EnumSet;
 
+
+import java.util.EnumSet;
 
 import jarvice.frontend.*;
 import jarvice.frontend.wookie.*;
 import jarvice.intermediate.*;
 import jarvice.intermediate.icodeimpl.*;
 import jarvice.intermediate.symtabimpl.*;
-
+import jarvice.intermediate.typeimpl.TypeChecker;
 import static jarvice.frontend.wookie.WookieTokenType.*;
 import static jarvice.frontend.wookie.WookieErrorCode.*;
 import static jarvice.intermediate.icodeimpl.ICodeNodeTypeImpl.*;
@@ -55,12 +56,24 @@ public class IfStatementParser extends StatementParser
             // Parse the expression.
             // The IF node adopts the expression subtree as its first child.
             ExpressionParser expressionParser = new ExpressionParser(this);
-            ifNode.addChild(expressionParser.parse(token));
 
+            ICodeNode exprNode = expressionParser.parse(token);
+            ifNode.addChild(exprNode);
+            token = currentToken();
+
+            // Type check: The expression type must be boolean.
+            TypeSpec exprType = exprNode != null ? exprNode.getTypeSpec()
+                                                 : Predefined.undefinedType;
+            if (!TypeChecker.isBoolean(exprType)) {
+          
+                errorHandler.flag(token, INCOMPATIBLE_TYPES, this);
+            }
+            
+            
             // Synchronize at the LEFT_BRACE.
             token = synchronize(LEFT_BRACE_SET);
             if (token.getType() == LEFT_BRACE) {
-                token = nextToken();  // consume the Left_Brace
+               // token = nextToken();  // consume the Left_Brace
             }
             else {
                 errorHandler.flag(token, MISSING_LEFT_BRACE, this);
@@ -71,7 +84,7 @@ public class IfStatementParser extends StatementParser
             StatementParser statementParser = new StatementParser(this);
             ifNode.addChild(statementParser.parse(token));
             token = currentToken();
-
+            
             // Look for an ELSE.
             if (token.getType() == ELSE) {
                 token = nextToken();  // consume the {

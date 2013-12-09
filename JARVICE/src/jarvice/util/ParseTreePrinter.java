@@ -1,15 +1,20 @@
 package jarvice.util;
 
 
+
+
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 import java.io.PrintStream;
 
+
 import jarvice.intermediate.*;
 import jarvice.intermediate.icodeimpl.*;
 
+import static jarvice.intermediate.symtabimpl.SymTabKeyImpl.*;
+import static jarvice.intermediate.symtabimpl.DefinitionImpl.*;
 /**
  * <h1>ParseTreePrinter</h1>
  *
@@ -49,14 +54,40 @@ public class ParseTreePrinter
 
     /**
      * Print the intermediate code as a parse tree.
-     * @param iCode the intermediate code.
+     * @param symTabStack the symbol table stack.
      */
-    public void print(ICode iCode)
+    public void print(SymTabStack symTabStack)
     {
-        ps.println("\n===== INTERMEDIATE CODE =====\n");
+        ps.println("\n===== INTERMEDIATE CODE =====");
 
-        printNode((ICodeNodeImpl) iCode.getRoot());
-        printLine();
+        SymTabEntry programId = symTabStack.getProgramId();
+        printRoutine(programId);
+    }
+
+    /**
+     * Print the parse tree for a routine.
+     * @param routineId the routine identifier's symbol table entry.
+     */
+    private void printRoutine(SymTabEntry routineId)
+    {
+        Definition definition = routineId.getDefinition();
+        System.out.println("\n*** " + definition.toString() +
+                           " " + routineId.getName() + " ***\n");
+
+        // Print the intermediate code in the routine's symbol table entry.
+        ICode iCode = (ICode) routineId.getAttribute(ROUTINE_ICODE);
+        if (iCode.getRoot() != null) {
+            printNode((ICodeNodeImpl) iCode.getRoot());
+        }
+
+        // Print any procedures and functions defined in the routine.
+        ArrayList<SymTabEntry> routineIds =
+            (ArrayList<SymTabEntry>) routineId.getAttribute(ROUTINE_ROUTINES);
+        if (routineIds != null) {
+            for (SymTabEntry rtnId : routineIds) {
+                printRoutine(rtnId);
+            }
+        }
     }
 
     /**
@@ -156,7 +187,31 @@ public class ParseTreePrinter
      */
     private void printTypeSpec(ICodeNodeImpl node)
     {
+        TypeSpec typeSpec = node.getTypeSpec();
+
+        if (typeSpec != null) {
+            String saveMargin = indentation;
+            indentation += indent;
+
+            String typeName;
+            SymTabEntry typeId = typeSpec.getIdentifier();
+
+            // Named type: Print the type identifier's name.
+            if (typeId != null) {
+                typeName = typeId.getName();
+            }
+
+            // Unnamed type: Print an artificial type identifier name.
+            else {
+                int code = typeSpec.hashCode() + typeSpec.getForm().hashCode();
+                typeName = "$anon_" + Integer.toHexString(code);
+            }
+
+            printAttribute("TYPE_ID", typeName);
+            indentation = saveMargin;
+        }
     }
+
 
     /**
      * Append text to the output line.

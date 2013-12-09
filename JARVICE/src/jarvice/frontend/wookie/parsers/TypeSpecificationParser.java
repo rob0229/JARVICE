@@ -7,7 +7,6 @@ import jarvice.frontend.*;
 import jarvice.frontend.wookie.*;
 import jarvice.intermediate.*;
 import jarvice.intermediate.symtabimpl.*;
-
 import static jarvice.frontend.wookie.WookieTokenType.*;
 import static jarvice.frontend.wookie.WookieErrorCode.*;
 import static jarvice.intermediate.symtabimpl.SymTabKeyImpl.*;
@@ -39,7 +38,7 @@ class TypeSpecificationParser extends WookieParserTD
     static {
         TYPE_START_SET.add(WookieTokenType.ARRAY);
         TYPE_START_SET.add(WookieTokenType.RECORD);
-        TYPE_START_SET.add(SEMICOLON);
+        TYPE_START_SET.add(INT);
     }
 
     /**
@@ -51,6 +50,8 @@ class TypeSpecificationParser extends WookieParserTD
     public TypeSpec parse(Token token)
         throws Exception
     {
+    	
+    	
         // Synchronize at the start of a type specification.
         token = synchronize(TYPE_START_SET);
 
@@ -60,15 +61,17 @@ class TypeSpecificationParser extends WookieParserTD
                 ArrayTypeParser arrayTypeParser = new ArrayTypeParser(this);
                 return arrayTypeParser.parse(token);
             }
-
+/*
             case RECORD: {
                 RecordTypeParser recordTypeParser = new RecordTypeParser(this);
                 return recordTypeParser.parse(token);
             }
-
+*/
             default: {
+            
                 SimpleTypeParser simpleTypeParser = new SimpleTypeParser(this);
                 return simpleTypeParser.parse(token);
+                
             }
         }
     }

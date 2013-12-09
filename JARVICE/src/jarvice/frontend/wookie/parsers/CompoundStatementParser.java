@@ -3,7 +3,6 @@ package jarvice.frontend.wookie.parsers;
 import jarvice.frontend.*;
 import jarvice.frontend.wookie.*;
 import jarvice.intermediate.*;
-
 import static jarvice.frontend.wookie.WookieTokenType.*;
 import static jarvice.frontend.wookie.WookieErrorCode.*;
 import static jarvice.intermediate.icodeimpl.ICodeNodeTypeImpl.*;
@@ -41,7 +40,7 @@ public class CompoundStatementParser extends StatementParser
         // Create the COMPOUND node.
         ICodeNode compoundNode = ICodeFactory.createICodeNode(COMPOUND);
 
-        // Parse the statement list terminated by the END token.
+        // Parse the statement list terminated by the } token.      
         StatementParser statementParser = new StatementParser(this);
         statementParser.parseList(token, compoundNode, RIGHT_BRACE, MISSING_RIGHT_BRACE );
 

@@ -36,8 +36,8 @@ public class ConstantDefinitionsParser extends DeclarationsParser
     }
 
     // Synchronization set for a constant identifier.
-    private static final EnumSet<WookieTokenType> IDENTIFIER_SET =
-        DeclarationsParser.TYPE_START_SET.clone();
+    private static final EnumSet<WookieTokenType> IDENTIFIER_SET =EnumSet.of(IDENTIFIER, INTEGER, REAL, PLUS, MINUS, STRING, SEMICOLON);
+       
     static {
         IDENTIFIER_SET.add(IDENTIFIER);
     }
@@ -56,7 +56,7 @@ public class ConstantDefinitionsParser extends DeclarationsParser
 
     // Synchronization set for the start of the next definition or declaration.
     private static final EnumSet<WookieTokenType> NEXT_START_SET =
-        DeclarationsParser.TYPE_START_SET.clone();
+    		EnumSet.of(IDENTIFIER, INTEGER, REAL, PLUS, MINUS, STRING, SEMICOLON);
     static {
         NEXT_START_SET.add(SEMICOLON);
         NEXT_START_SET.add(IDENTIFIER);
@@ -70,7 +70,7 @@ public class ConstantDefinitionsParser extends DeclarationsParser
     public void parse(Token token)
         throws Exception
     {
-        token = synchronize(IDENTIFIER_SET);
+       token = synchronize(IDENTIFIER_SET);
 
         // Loop to parse a sequence of constant definitions
         // separated by semicolons.

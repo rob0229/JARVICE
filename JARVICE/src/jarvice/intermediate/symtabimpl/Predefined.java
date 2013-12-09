@@ -3,12 +3,17 @@ package jarvice.intermediate.symtabimpl;
 import java.util.ArrayList;
 
 
+
 import jarvice.intermediate.*;
 import jarvice.intermediate.symtabimpl.*;
-
+import jarvice.intermediate.typeimpl.RoutineCode;
 import static jarvice.intermediate.symtabimpl.SymTabKeyImpl.*;
 import static jarvice.intermediate.typeimpl.TypeFormImpl.*;
 import static jarvice.intermediate.typeimpl.TypeKeyImpl.*;
+import static jarvice.intermediate.symtabimpl.DefinitionImpl.*;
+
+import static jarvice.intermediate.symtabimpl.RoutineCodeImpl.*;
+
 
 /**
  * <h1>Predefined</h1>
@@ -27,14 +32,39 @@ public class Predefined
     public static TypeSpec booleanType;
     public static TypeSpec charType;
     public static TypeSpec undefinedType;
+    public static TypeSpec returnType;
 
     // Predefined identifiers.
     public static SymTabEntry integerId;
     public static SymTabEntry realId;
     public static SymTabEntry booleanId;
     public static SymTabEntry charId;
+    public static SymTabEntry returnId;
+    
     public static SymTabEntry falseId;
     public static SymTabEntry trueId;
+    public static SymTabEntry readId;
+    public static SymTabEntry readlnId;
+    public static SymTabEntry writeId;
+    public static SymTabEntry writelnId;
+    public static SymTabEntry absId;
+    public static SymTabEntry arctanId;
+    public static SymTabEntry chrId;
+    public static SymTabEntry cosId;
+    public static SymTabEntry eofId;
+    public static SymTabEntry eolnId;
+    public static SymTabEntry expId;
+    public static SymTabEntry lnId;
+    public static SymTabEntry oddId;
+    public static SymTabEntry ordId;
+    public static SymTabEntry predId;
+    public static SymTabEntry roundId;
+    public static SymTabEntry sinId;
+    public static SymTabEntry sqrId;
+    public static SymTabEntry sqrtId;
+    public static SymTabEntry succId;
+    public static SymTabEntry truncId;
+
 
     /**
      * Initialize a symbol table stack with predefined identifiers.
@@ -44,6 +74,7 @@ public class Predefined
     {
         initializeTypes(symTabStack);
         initializeConstants(symTabStack);
+        initializeStandardRoutines(symTabStack);
     }
 
     /**
@@ -79,6 +110,14 @@ public class Predefined
         charType.setIdentifier(charId);
         charId.setDefinition(DefinitionImpl.TYPE);
         charId.setTypeSpec(charType);
+        
+        //return type 
+        returnId = symTabStack.enterLocal("return");
+        returnType = TypeFactory.createType(SCALAR);
+        returnType.setIdentifier(returnId);
+        returnId.setDefinition(DefinitionImpl.TYPE);
+        returnId.setTypeSpec(returnType);
+        
 
         // Undefined type.
         undefinedType = TypeFactory.createType(SCALAR);
@@ -107,5 +146,52 @@ public class Predefined
         constants.add(falseId);
         constants.add(trueId);
         booleanType.setAttribute(ENUMERATION_CONSTANTS, constants);
+    }
+    
+    /**
+     * Initialize the standard procedures and functions.
+     * @param symTabStack the symbol table stack to initialize.
+     */
+    private static void initializeStandardRoutines(SymTabStack symTabStack)
+    {
+        readId    = enterStandard(symTabStack, PROCEDURE, "read",    READ);
+        readlnId  = enterStandard(symTabStack, PROCEDURE, "readln",  READLN);
+        writeId   = enterStandard(symTabStack, PROCEDURE, "write",   WRITE);
+        writelnId = enterStandard(symTabStack, PROCEDURE, "writeln", WRITELN);
+
+        absId    = enterStandard(symTabStack, FUNCTION, "abs",    ABS);
+        arctanId = enterStandard(symTabStack, FUNCTION, "arctan", ARCTAN);
+        chrId    = enterStandard(symTabStack, FUNCTION, "chr",    CHR);
+        cosId    = enterStandard(symTabStack, FUNCTION, "cos",    COS);
+        eofId    = enterStandard(symTabStack, FUNCTION, "eof",    EOF);
+        eolnId   = enterStandard(symTabStack, FUNCTION, "eoln",   EOLN);
+        expId    = enterStandard(symTabStack, FUNCTION, "exp",    EXP);
+        lnId     = enterStandard(symTabStack, FUNCTION, "ln",     LN);
+        oddId    = enterStandard(symTabStack, FUNCTION, "odd",    ODD);
+        ordId    = enterStandard(symTabStack, FUNCTION, "ord",    ORD);
+        predId   = enterStandard(symTabStack, FUNCTION, "pred",   PRED);
+        roundId  = enterStandard(symTabStack, FUNCTION, "round",  ROUND);
+        sinId    = enterStandard(symTabStack, FUNCTION, "sin",    SIN);
+        sqrId    = enterStandard(symTabStack, FUNCTION, "sqr",    SQR);
+        sqrtId   = enterStandard(symTabStack, FUNCTION, "sqrt",   SQRT);
+        succId   = enterStandard(symTabStack, FUNCTION, "succ",   SUCC);
+        truncId  = enterStandard(symTabStack, FUNCTION, "trunc",  TRUNC);
+    }
+
+    /**
+     * Enter a standard procedure or function into the symbol table stack.
+     * @param symTabStack the symbol table stack to initialize.
+     * @param defn either PROCEDURE or FUNCTION.
+     * @param name the procedure or function name.
+     */
+    private static SymTabEntry enterStandard(SymTabStack symTabStack,
+                                             Definition defn, String name,
+                                             RoutineCode routineCode)
+    {
+        SymTabEntry procId = symTabStack.enterLocal(name);
+        procId.setDefinition(defn);
+        procId.setAttribute(ROUTINE_CODE, routineCode);
+
+        return procId;
     }
 }

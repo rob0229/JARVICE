@@ -21,10 +21,51 @@ public class SymTabImpl
     implements SymTab
 {
     private int nestingLevel;
+    private int slotNumber;         // local variables array slot number
+    private int maxSlotNumber;      // max slot number value
+    private String funcName;
+    private boolean isFunc = false;
 
     public SymTabImpl(int nestingLevel)
     {
         this.nestingLevel = nestingLevel;
+    }
+    
+    /**
+     * Getter.
+     * @return the scope nesting level of this entry.
+     */
+    public String getfuncName()
+    {
+        return funcName;
+    }
+
+    /**
+     * Getter.
+     * @return the scope nesting level of this entry.
+     */
+    public boolean getIsFunc()
+    {
+        return isFunc;
+    }
+    
+    
+    /**
+     * Setter.
+     * @return the scope nesting level of this entry.
+     */
+    public void setfuncName( String name)
+    {
+       funcName = name;
+    }
+
+    /**
+     * Getter.
+     * @return the scope nesting level of this entry.
+     */
+    public void setisFunc(boolean x)
+    {
+        isFunc = x;
     }
 
     /**
@@ -74,5 +115,18 @@ public class SymTabImpl
         }
 
         return list;  // sorted list of entries
+    }
+
+    //Borrowed this code from "Team Redundancy Team"
+    public int nextSlotNumber()
+    {
+        maxSlotNumber = ++slotNumber;
+        return slotNumber;
+    }
+
+    
+    public int maxSlotNumber()
+    {
+        return maxSlotNumber;
     }
 }

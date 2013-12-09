@@ -1,10 +1,9 @@
 package jarvice.backend;
 
-
-
-
 import jarvice.backend.compiler.CodeGenerator;
 import jarvice.backend.interpreter.Executor;
+import jarvice.intermediate.TypeSpec;
+import jarvice.intermediate.symtabimpl.Predefined;
 
 /**
  * <h1>BackendFactory</h1>
@@ -34,6 +33,32 @@ public class BackendFactory
         else {
             throw new Exception("Backend factory: Invalid operation '" +
                                 operation + "'");
+        }
+    }
+
+    /**
+     * Return the default value for a data type.
+     * @param type the data type.
+     * @return the type descriptor.
+     */
+    public static Object defaultValue(TypeSpec type)
+    {
+        type = type.baseType();
+
+        if (type == Predefined.integerType) {
+            return new Integer(0);
+        }
+        else if (type == Predefined.realType) {
+            return new Float(0.0f);
+        }
+        else if (type == Predefined.booleanType) {
+            return new Boolean(false);
+        }
+        else if (type == Predefined.charType) {
+            return new Character('#');
+        }
+        else /* string */ {
+            return new String("#");
         }
     }
 }
