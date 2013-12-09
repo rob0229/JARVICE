@@ -30,34 +30,37 @@ public class VariableParser extends StatementParser {
 	public VariableParser(WookieParserTD parent) {
 		super(parent);
 	}
+	public boolean isReturn = false;
 
 	 private static final EnumSet<WookieTokenType> SUBSCRIPT_FIELD_START_SET =
 	 EnumSet.of(LEFT_BRACKET, DOT);
 
-	public ICodeNode parse(Token token) throws Exception {
-		// Look up the identifier in the symbol table stack.
-		String name = token.getText().toLowerCase();
-		SymTabEntry variableId = symTabStack.lookup(name);
-	
-		// If not found, flag the error and enter the identifier
-		// as an undefined identifier with an undefined type.
-		if(token.getType() == WookieTokenType.RETURN){
-			
-			variableId = symTabStack.enterLocal(name);
-			variableId.setDefinition(DefinitionImpl.RETURN);
-			variableId.setTypeSpec(Predefined.returnType);
-		}
-			
-		else if (variableId == null) {
-			
-			errorHandler.flag(token, IDENTIFIER_UNDEFINED, this);
-			variableId = symTabStack.enterLocal(name);
-			variableId.setDefinition(UNDEFINED);
-			variableId.setTypeSpec(Predefined.undefinedType);
+	 public ICodeNode parse(Token token) throws Exception {
+		 	// Look up the identifier in the symbol table stack.
+		 	String name = token.getText().toLowerCase();
+		 	SymTabEntry variableId = null;
+		 	 
+		 	// If not found, flag the error and enter the identifier
+		 	// as an undefined identifier with an undefined type.
+		 	if(token.getType() == WookieTokenType.RETURN && isReturn){
+		 	 SymTab symTab = symTabStack.getLocalSymTab();
+		 	 name = ((SymTabImpl)symTab).getfuncName();
+		 	  
+		 	 /**/
+		 	}
+		 	 
+		 	 variableId = symTabStack.lookup(name);
+		 	  
+		 	if(variableId == null){
+		 	 errorHandler.flag(token, IDENTIFIER_UNDEFINED, this);
+		 	 variableId = symTabStack.enterLocal(name);
+		 	 variableId.setDefinition(UNDEFINED);
+		 	 variableId.setTypeSpec(Predefined.undefinedType);
+		 	}
+		 	return parse(token, variableId);
 		}
 
-		return parse(token, variableId);
-	}
+
 
 	public ICodeNode parseFunctionNameTarget(Token token) throws Exception {
 		isFunctionTarget = true;
@@ -71,7 +74,7 @@ public class VariableParser extends StatementParser {
 		Definition defnCode = variableId.getDefinition();
 
 		if (!((defnCode == VARIABLE) || (defnCode == DefinitionImpl.RETURN) ||(defnCode == VALUE_PARM)
-				|| (defnCode == VAR_PARM) || (isFunctionTarget && (defnCode == FUNCTION)))) {
+				|| (defnCode == VAR_PARM) || (isReturn && (defnCode == FUNCTION)))) {
 			errorHandler.flag(token, INVALID_IDENTIFIER_USAGE, this);
 		}
 
@@ -187,4 +190,12 @@ public class VariableParser extends StatementParser {
 		fieldNode.setTypeSpec(variableType);
 		return fieldNode;
 	}
+
+public ICodeNode parseReturn(Token token) throws Exception {
+ 	isReturn = true;
+ 	return parse(token);
+ }
+
 }
+
+

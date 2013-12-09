@@ -19,35 +19,13 @@ import static jarvice.intermediate.icodeimpl.ICodeNodeTypeImpl.*;
 import static jarvice.intermediate.icodeimpl.ICodeKeyImpl.*;
 import static jarvice.intermediate.symtabimpl.SymTabEntryImpl.*;
 
-
-
-/**
- * <h1>AssignmentStatementParser</h1>
- * 
- * <p>
- * Parse a Pascal assignment statement.
- * </p>
- * 
- * <p>
- * Copyright (c) 2009 by Ronald Mak
- * </p>
- * <p>
- * For instructional purposes only. No warranties.
- * </p>
- */
 public class AssignmentStatementParser extends StatementParser {
 	
 	// Set to true to parse a function name
     // as the target of an assignment.
     private boolean isFunctionTarget = false;
 	public boolean isReturn = false;
-	
-	/**
-	 * Constructor.
-	 * 
-	 * @param parent
-	 *            the parent parser.
-	 */
+
 	public AssignmentStatementParser(WookieParserTD parent) {
 		super(parent);
 	}
@@ -65,37 +43,22 @@ public class AssignmentStatementParser extends StatementParser {
     
 	public ICodeNode parse(Token token) throws Exception {
 		// Create the ASSIGN node.
-		ICodeNode assignNode = null;
-		
-		if(token.getType() == RETURN){
-			 assignNode = ICodeFactory.createICodeNode(_RETURN);
-		}else{
-			 assignNode = ICodeFactory.createICodeNode(ASSIGN);			
-		}
-		
-		TokenType tokenType = token.getType();
-		
+					
+		ICodeNode assignNode = ICodeFactory.createICodeNode(ASSIGN);							
+		TokenType tokenType = token.getType();		
 		SymTabEntry tokenId = null;
 		String TokenName = token.getText();
 		
-		
-		
-        VariableParser variableParser = new VariableParser(this);
-      
-        ICodeNode targetNode = isFunctionTarget
-                               ? variableParser.parseFunctionNameTarget(token)
+        VariableParser variableParser = new VariableParser(this);     
+        ICodeNode targetNode = isReturn
+                               ? variableParser.parseReturn(token)
                                : variableParser.parse(token);
                                
-
         TypeSpec targetType = targetNode != null ? targetNode.getTypeSpec()
-                                                 : Predefined.undefinedType;
-		
-		
-		token=currentToken();
-		
+                                                 : Predefined.undefinedType;			
+		token=currentToken();		
 		// The ASSIGN node adopts the variable node as its first child.
-		assignNode.addChild(targetNode);
-		
+		assignNode.addChild(targetNode);		
 		if(tokenType != RETURN){
 			// Synchronize on the = token.
 	        token = synchronize(EQUALS_SET);
@@ -109,12 +72,9 @@ public class AssignmentStatementParser extends StatementParser {
 		}
 		// Parse the expression. The ASSIGN node adopts the expression's
 		// node as its second child.
-		ExpressionParser expressionParser = new ExpressionParser(this);
-		
-		ICodeNode exprNode = expressionParser.parse(token);
-		
-		token = currentToken();
-		
+		ExpressionParser expressionParser = new ExpressionParser(this);		
+		ICodeNode exprNode = expressionParser.parse(token);		
+		token = currentToken();		
 		assignNode.addChild(exprNode);
 		 // Type check: Assignment compatible?
         TypeSpec exprType = exprNode != null ? exprNode.getTypeSpec()

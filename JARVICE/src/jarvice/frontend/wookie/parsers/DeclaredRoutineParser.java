@@ -87,13 +87,11 @@ public class DeclaredRoutineParser extends DeclarationsParser {
 		routineId.setAttribute(ROUTINE_ICODE, iCode);
 		routineId.setAttribute(ROUTINE_ROUTINES, new ArrayList<SymTabEntry>());
 		
+		SymTab symTab = symTabStack.push();
 		
+		routineId.setAttribute(ROUTINE_SYMTAB, symTab);
 		
-		routineId.setAttribute(ROUTINE_SYMTAB, symTabStack.push());
-		
-		//String name = token.getText();
-		//((SymTabImpl)symTabStack.push()).setfuncName(name);
-		//((SymTabImpl)symTabStack.push()).setisFunc(true);
+		((SymTabImpl)symTab).setfuncName(routineId.getName());
 		
 		parseFormalParameters(token, routineId);
 		token = currentToken();
@@ -133,8 +131,7 @@ public class DeclaredRoutineParser extends DeclarationsParser {
 			routineId = symTabStack.lookupLocal(routineName);
 
 			// Not already defined locally: Enter into the local symbol table.
-			if (routineId == null) {
-				
+			if (routineId == null) {				
 				routineId = symTabStack.enterLocal(routineName);
 				routineId.appendLineNumber(token.getLineNumber());
 			}
@@ -150,7 +147,6 @@ public class DeclaredRoutineParser extends DeclarationsParser {
 		}
 		else 
 		{
-
 			errorHandler.flag(token, MISSING_IDENTIFIER, this);
 		}
 
@@ -163,39 +159,6 @@ public class DeclaredRoutineParser extends DeclarationsParser {
 	}
 
 	
-	private void parseHeader(Token token, SymTabEntry routineId)
-			throws Exception {
-
-		// Parse the routine's formal parameters.
-
-		// If this is a function, parse and set its return type.
-		if (routineId.getDefinition() == DefinitionImpl.FUNCTION) {
-			VariableDeclarationsParser variableDeclarationsParser = new VariableDeclarationsParser(
-					this);
-			variableDeclarationsParser.setDefinition(DefinitionImpl.FUNCTION);
-			TypeSpec type = variableDeclarationsParser.parseTypeSpec(token);
-
-			token = currentToken();
-
-			// The return type cannot be an array or record.
-			if (type != null) {
-				TypeForm form = type.getForm();
-				if ((form == TypeFormImpl.ARRAY)
-						|| (form == TypeFormImpl.RECORD)) {
-					errorHandler.flag(token, INVALID_TYPE, this);
-				}
-			}
-
-			// Missing return type.
-			else {
-				type = Predefined.undefinedType;
-			}
-
-			routineId.setTypeSpec(type);
-			token = currentToken();
-		}
-	}
-
 	// Synchronization set for a formal parameter sublist.
 	private static final EnumSet<WookieTokenType> PARAMETER_SET = EnumSet.of(INT, CHAR, RIGHT_PAREN);
 			

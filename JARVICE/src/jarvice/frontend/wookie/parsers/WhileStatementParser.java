@@ -66,16 +66,17 @@ public class WhileStatementParser extends StatementParser {
 	        // Create LOOP, and TEST nodes 
 	        ICodeNode loopNode = ICodeFactory.createICodeNode(LOOP);
 	        ICodeNode testNode = ICodeFactory.createICodeNode(TEST);
-	       
+	        ICodeNode notNode = ICodeFactory.createICodeNode(ICodeNodeTypeImpl.NOT);
 	        // The LOOP node adopts the TEST node as its first child.	        
 	        loopNode.addChild(testNode);
-	    
+	        testNode.addChild(notNode);
 	        // Parse the expression.
 	        // The testNode node adopts the expression subtree as its only child.
 	        ExpressionParser expressionParser = new ExpressionParser(this);
 	        ICodeNode exprNode = expressionParser.parse(token);	
 	        // The TEST node adopts the exprNode node as its only child.
-	        testNode.addChild(exprNode);
+	       notNode.addChild(exprNode);
+	        	        
 	        TypeSpec exprType = exprNode != null ? exprNode.getTypeSpec()
                     : Predefined.undefinedType;
 	        		if (!TypeChecker.isBoolean(exprType)) {

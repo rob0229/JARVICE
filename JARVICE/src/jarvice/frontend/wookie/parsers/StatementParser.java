@@ -53,7 +53,7 @@ public class StatementParser extends WookieParserTD {
 	        setLineNumber(icodenode, token);
 	        statementNode = ICodeFactory.createICodeNode(COMPOUND);
 	        statementNode.addChild(icodenode);           
-	        ICodeNode returnNode = ICodeFactory.createICodeNode(ICodeNodeTypeImpl.FUNCTION );
+	        ICodeNode returnNode = ICodeFactory.createICodeNode(ICodeNodeTypeImpl.NO_OP );
 	        setLineNumber(returnNode, token);
 	        statementNode.addChild(returnNode);			
 			break;			
