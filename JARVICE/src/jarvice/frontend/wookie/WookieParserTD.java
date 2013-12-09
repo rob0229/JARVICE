@@ -18,7 +18,7 @@ import static jarvice.frontend.wookie.WookieErrorCode.*;
 import static jarvice.message.MessageType.PARSER_SUMMARY;
 import static jarvice.frontend.wookie.WookieErrorCode.IO_ERROR;
 import static jarvice.intermediate.icodeimpl.ICodeNodeTypeImpl.CALL;
-import static jarvice.intermediate.icodeimpl.ICodeKeyImpl.ID;
+import static jarvice.intermediate.icodeimpl.ICodeKeyImpl.*;
 
 public class WookieParserTD extends Parser {
 	protected static WookieErrorHandler errorHandler = new WookieErrorHandler();
@@ -41,7 +41,7 @@ public class WookieParserTD extends Parser {
 			 
 		 long startTime = System.currentTimeMillis();
 	        Predefined.initialize(symTabStack);
-	        SymTabEntry routineId = symTabStack.enterLocal("Han Solo");
+	        SymTabEntry routineId = symTabStack.enterLocal("HanSolo");
 	        routineId.setDefinition(DefinitionImpl.PROGRAM);
 
             // create intermediate code for calling main()
@@ -59,9 +59,6 @@ public class WookieParserTD extends Parser {
             
             // parse routines
 	        
-	        
-	        
-	        
 	        try {	        	
 	            Token token = nextToken();		
 	            DeclaredRoutineParser routineParser = new DeclaredRoutineParser(this);
@@ -75,12 +72,11 @@ public class WookieParserTD extends Parser {
 	          ICodeNode callNode = ICodeFactory.createICodeNode(CALL);
               SymTabEntry pfId = symTabStack.lookupLocal("main");
               callNode.setAttribute(ID, pfId);
+              callNode.setAttribute(LINE, token.getLineNumber());
               // force main as void
              // callNode.setTypeSpec(symTabStack.lookup("void").getTypeSpec());
               iCode.setRoot(callNode);
-	          
-	          
-	          
+          
 	            // Send the parser summary message.
 	            float elapsedTime = (System.currentTimeMillis() - startTime)/1000f;
 	            sendMessage(new Message(PARSER_SUMMARY, new Number[] {token.getLineNumber(), getErrorCount(), elapsedTime}));
@@ -90,11 +86,6 @@ public class WookieParserTD extends Parser {
 	        }		
 	}
 
-	/**
-	 * Return the number of syntax errors found by the parser.
-	 * 
-	 * @return the error count.
-	 */
 	public int getErrorCount() {
 		return errorHandler.getErrorCount();
 	}

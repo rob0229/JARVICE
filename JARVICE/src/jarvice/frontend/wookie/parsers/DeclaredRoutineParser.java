@@ -170,16 +170,7 @@ public class DeclaredRoutineParser extends DeclarationsParser {
 	// Synchronization set for the closing right parenthesis.
 	private static final EnumSet<WookieTokenType> RIGHT_PAREN_SET = EnumSet.of(RIGHT_PAREN);
 
-	/**
-	 * Parse a routine's formal parameter list.
-	 * 
-	 * @param token
-	 *            the current token.
-	 * @param routineId
-	 *            the symbol table entry of the declared routine's name.
-	 * @throws Exception
-	 *             if an error occurred.
-	 */
+	
 	protected void parseFormalParameters(Token token, SymTabEntry routineId)
 			throws Exception {
 		// Parse the formal parameters if there is an opening left parenthesis.
@@ -227,17 +218,7 @@ public class DeclaredRoutineParser extends DeclarationsParser {
 		COMMA_SET.addAll(DeclarationsParser.DECLARATION_START_SET);
 	}
 
-	/**
-	 * Parse a sublist of formal parameter declarations.
-	 * 
-	 * @param token
-	 *            the current token.
-	 * @param routineId
-	 *            the symbol table entry of the declared routine's name.
-	 * @return the sublist of symbol table entries for the parm identifiers.
-	 * @throws Exception
-	 *             if an error occurred.
-	 */
+
 	private ArrayList<SymTabEntry> parseParmSublist(Token token,
 			SymTabEntry routineId) throws Exception {
 	
@@ -246,23 +227,18 @@ public class DeclaredRoutineParser extends DeclarationsParser {
 		
 		Definition parmDefn = null;
 		TokenType tokenType = token.getType();
-
-		parmDefn = VALUE_PARM;
-		
+		parmDefn = VALUE_PARM;		
 		SymTabEntry sublist = null;
-		
-		
-		
+				
 		if(tokenType == INT){
 			IntDeclarationsParser intDeclarationsParser = new IntDeclarationsParser(this);
 			intDeclarationsParser.setDefinition(parmDefn);
 			token = nextToken();
 			sublist = intDeclarationsParser.parseIdentifier(token);
 			sublist.setTypeSpec(integerType);
-			//set typeForm value here?
+
 		}
-		else if (tokenType == CHAR){
-			
+		else if (tokenType == CHAR){			
 			IntDeclarationsParser intDeclarationsParser = new IntDeclarationsParser(this);
 			intDeclarationsParser.setDefinition(parmDefn);
 			token = nextToken();
@@ -276,7 +252,6 @@ public class DeclaredRoutineParser extends DeclarationsParser {
         }
         
 		tokenType = token.getType();
-
 			token = synchronize(PARAMETER_SET);
 			ArrayList<SymTabEntry> SC = new ArrayList<SymTabEntry>();
 			SC.add(sublist);

@@ -18,7 +18,7 @@ public enum SymTabKeyImpl implements SymTabKey
 
     // Procedure or function.
     ROUTINE_CODE, ROUTINE_SYMTAB, ROUTINE_ICODE,
-    ROUTINE_PARMS, ROUTINE_ROUTINES,
+    ROUTINE_PARMS, ROUTINE_ROUTINES, SLOT, WRAP_SLOT,
 
     // Variable or record field value.
     DATA_VALUE

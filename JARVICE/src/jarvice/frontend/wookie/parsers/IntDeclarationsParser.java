@@ -77,8 +77,11 @@ public class IntDeclarationsParser extends DeclarationsParser
                 // Enter a new identifier into the symbol table.
                 if (id == null) {
                     id = symTabStack.enterLocal(name);
+                    
                     id.setDefinition(definition);
                     id.appendLineNumber(token.getLineNumber());
+                    int slot = id.getSymTab().nextSlotNumber();
+                    id.setAttribute(SLOT,  slot);
                 }
                 else {
                     errorHandler.flag(token, IDENTIFIER_REDEFINED, this);

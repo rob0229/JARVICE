@@ -50,9 +50,11 @@ public class StatementParser extends WookieParserTD {
 			SymTab symTab = symTabStack.getLocalSymTab();		
 			AssignmentStatementParser assignmentParser = new AssignmentStatementParser(this);
 	        ICodeNode icodenode = assignmentParser.parseReturn(token);
+	        
 	        setLineNumber(icodenode, token);
 	        statementNode = ICodeFactory.createICodeNode(COMPOUND);
-	        statementNode.addChild(icodenode);           
+	        statementNode.addChild(icodenode); 
+	        setLineNumber(statementNode, token);
 	        ICodeNode returnNode = ICodeFactory.createICodeNode(ICodeNodeTypeImpl.NO_OP );
 	        setLineNumber(returnNode, token);
 	        statementNode.addChild(returnNode);			
