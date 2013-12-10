@@ -47,6 +47,7 @@ public class CallParser extends StatementParser {
 	protected ICodeNode parseActualParameters(Token token, SymTabEntry pfId,
 			boolean isDeclared, boolean isReadReadln, boolean isWriteWriteln)
 			throws Exception {
+		System.out.println(token.getText());
 		ExpressionParser expressionParser = new ExpressionParser(this);
 		ICodeNode parmsNode = ICodeFactory.createICodeNode(PARAMETERS);
 		ArrayList<SymTabEntry> formalParms = null;
@@ -54,8 +55,7 @@ public class CallParser extends StatementParser {
 		int parmIndex = -1;
 
 		if (isDeclared) {
-			formalParms = (ArrayList<SymTabEntry>) pfId
-					.getAttribute(ROUTINE_PARMS);
+			formalParms = (ArrayList<SymTabEntry>) pfId.getAttribute(ROUTINE_PARMS);
 			parmCount = formalParms != null ? formalParms.size() : 0;
 		}
 
@@ -72,13 +72,15 @@ public class CallParser extends StatementParser {
 		// Loop to parse each actual parameter.
 		while (token.getType() != RIGHT_PAREN) {
 			ICodeNode actualNode = expressionParser.parse(token);
-
+			// System.out.println(actualNode.getAttribute(CONSTANT_VALUE));
 			// Declared procedure or function: Check the number of actual
 			// parameters, and check each actual parameter against the
 			// corresponding formal parameter.
+		
 			if (isDeclared) {
 				if (++parmIndex < parmCount) {
 					SymTabEntry formalId = formalParms.get(parmIndex);
+
 					checkActualParameter(token, formalId, actualNode);
 				} else if (parmIndex == parmCount) {
 					errorHandler.flag(token, WRONG_NUMBER_OF_PARMS, this);
@@ -127,6 +129,7 @@ public class CallParser extends StatementParser {
 
 			parmsNode.addChild(actualNode);
 			token = synchronize(COMMA_SET);
+
 			TokenType tokenType = token.getType();
 
 			// Look for the comma.
@@ -149,10 +152,10 @@ public class CallParser extends StatementParser {
 		return parmsNode;
 	}
 
-	
 	private void checkActualParameter(Token token, SymTabEntry formalId,
 			ICodeNode actualNode) {
 		Definition formalDefn = formalId.getDefinition();
+
 		TypeSpec formalType = formalId.getTypeSpec();
 		TypeSpec actualType = actualNode.getTypeSpec();
 

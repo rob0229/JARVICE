@@ -87,6 +87,11 @@ public class StatementGenerator extends CodeGenerator
                 callGenerator.generate(node);
                 break;
             }
+           /* case _RETURN: {
+                ReturnGenerator returnGenerator = new ReturnGenerator(this);
+                returnGenerator.generate(node);
+                break;
+            }*/
         }
 
         // Verify that the stack height after each statement is 0.

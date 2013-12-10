@@ -50,7 +50,7 @@ public class VariableParser extends StatementParser {
 		 	}
 		 	 
 		 	 variableId = symTabStack.lookup(name);
-		 	  
+		 	 
 		 	if(variableId == null){
 		 	 errorHandler.flag(token, IDENTIFIER_UNDEFINED, this);
 		 	 variableId = symTabStack.enterLocal(name);
@@ -72,14 +72,14 @@ public class VariableParser extends StatementParser {
 
 		// Check how the variable is defined.
 		Definition defnCode = variableId.getDefinition();
-
+			
 		if (!((defnCode == VARIABLE) || (defnCode == DefinitionImpl.RETURN) ||(defnCode == VALUE_PARM)
 				|| (defnCode == VAR_PARM) || (isReturn && (defnCode == FUNCTION)))) {
 			errorHandler.flag(token, INVALID_IDENTIFIER_USAGE, this);
 		}
 
 		variableId.appendLineNumber(token.getLineNumber());
-
+		
 		ICodeNode variableNode = ICodeFactory
 				.createICodeNode(ICodeNodeTypeImpl.VARIABLE);
 		variableNode.setAttribute(ID, variableId);

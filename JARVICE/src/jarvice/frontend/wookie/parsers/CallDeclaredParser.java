@@ -20,14 +20,13 @@ public class CallDeclaredParser extends CallParser
     public ICodeNode parse(Token token)
         throws Exception
     {
-        // Create the CALL node.
+    	// Create the CALL node.
         ICodeNode callNode = ICodeFactory.createICodeNode(CALL);
         SymTabEntry pfId = symTabStack.lookup(token.getText().toLowerCase());
         callNode.setAttribute(ID, pfId);
         callNode.setTypeSpec(pfId.getTypeSpec());
         token = nextToken();  // consume procedure or function identifier
-        ICodeNode parmsNode = parseActualParameters(token, pfId,
-                                                    true, false, false);
+        ICodeNode parmsNode = parseActualParameters(token, pfId, true, false, false);
         callNode.addChild(parmsNode);
         return callNode;
     }

@@ -44,7 +44,7 @@ public class WookieParserTD extends Parser {
 	        SymTabEntry routineId = symTabStack.enterLocal("HanSolo");
 	        routineId.setDefinition(DefinitionImpl.PROGRAM);
 
-            // create intermediate code for calling main()
+        
             ICode iCode = ICodeFactory.createICode();
             routineId.setAttribute(ROUTINE_ICODE, iCode);
             routineId.setAttribute(ROUTINE_ROUTINES, new ArrayList<SymTabEntry>());
@@ -71,12 +71,13 @@ public class WookieParserTD extends Parser {
 	          
 	          ICodeNode callNode = ICodeFactory.createICodeNode(CALL);
               SymTabEntry pfId = symTabStack.lookupLocal("main");
+              
               callNode.setAttribute(ID, pfId);
-              callNode.setAttribute(LINE, token.getLineNumber());
-              // force main as void
-             // callNode.setTypeSpec(symTabStack.lookup("void").getTypeSpec());
+              callNode.setAttribute(LINE, pfId.getLineNumbers().get(0).intValue());
+             
               iCode.setRoot(callNode);
-          
+      		symTabStack.pop();
+    		
 	            // Send the parser summary message.
 	            float elapsedTime = (System.currentTimeMillis() - startTime)/1000f;
 	            sendMessage(new Message(PARSER_SUMMARY, new Number[] {token.getLineNumber(), getErrorCount(), elapsedTime}));

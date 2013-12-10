@@ -3,6 +3,8 @@ package jarvice.frontend.wookie.parsers;
 import java.util.ArrayList;
 import java.util.EnumSet;
 
+import jarvice.intermediate.symtabimpl.SymTabImpl;
+
 import jarvice.frontend.*;
 import jarvice.frontend.wookie.*;
 import jarvice.intermediate.*;
@@ -18,7 +20,7 @@ import static jarvice.intermediate.symtabimpl.RoutineCodeImpl.*;
 
 
 
-public class DeclaredRoutineParser extends DeclarationsParser {
+public class DeclaredRoutineParser extends WookieParserTD {
 	
 	public DeclaredRoutineParser(WookieParserTD parent) {
 		super(parent);
@@ -79,9 +81,6 @@ public class DeclaredRoutineParser extends DeclarationsParser {
 		
 		routineId.setDefinition(routineDefn);
 		token = currentToken();	
-			
-		    
-		
 		// Create new intermediate code for the routine.
 		ICode iCode = ICodeFactory.createICode();
 		routineId.setAttribute(ROUTINE_ICODE, iCode);
@@ -92,7 +91,7 @@ public class DeclaredRoutineParser extends DeclarationsParser {
 		routineId.setAttribute(ROUTINE_SYMTAB, symTab);
 		
 		((SymTabImpl)symTab).setfuncName(routineId.getName());
-		
+		((SymTabImpl)symTab).setisFunc(true);
 		parseFormalParameters(token, routineId);
 		token = currentToken();
 		
@@ -107,9 +106,10 @@ public class DeclaredRoutineParser extends DeclarationsParser {
 		if (token.getType() == LEFT_BRACE){
 
 			routineId.setAttribute(ROUTINE_CODE, DECLARED);
-			BlockParser blockParser = new BlockParser(this);
+			StatementParser statementParser = new StatementParser(this);
+
 			
-			ICodeNode rootNode = blockParser.parse(token, routineId);
+			ICodeNode rootNode = statementParser.parse(token);
 			iCode.setRoot(rootNode);
 		}
 		ArrayList<SymTabEntry> subroutines = (ArrayList<SymTabEntry>) parentId.getAttribute(ROUTINE_ROUTINES);
@@ -117,7 +117,7 @@ public class DeclaredRoutineParser extends DeclarationsParser {
 		// Pop the routine's symbol table off the stack.
 		
 		symTabStack.pop();
-
+ 
 		return routineId;
 	}
 
@@ -207,54 +207,42 @@ public class DeclaredRoutineParser extends DeclarationsParser {
 	// Synchronization set to follow a formal parameter identifier.
 	private static final EnumSet<WookieTokenType> PARAMETER_FOLLOW_SET = EnumSet
 			.of(COLON, RIGHT_PAREN, SEMICOLON);
-	static {
-		PARAMETER_FOLLOW_SET.addAll(DeclarationsParser.DECLARATION_START_SET);
-	}
-
+	
 	// Synchronization set for the , token.
 	private static final EnumSet<WookieTokenType> COMMA_SET = EnumSet.of(COMMA,
 			COLON, IDENTIFIER, RIGHT_PAREN, SEMICOLON);
-	static {
-		COMMA_SET.addAll(DeclarationsParser.DECLARATION_START_SET);
-	}
 
 
 	private ArrayList<SymTabEntry> parseParmSublist(Token token,
 			SymTabEntry routineId) throws Exception {
-	
-		//name = main, definition == function
-		
-		
 		Definition parmDefn = null;
 		TokenType tokenType = token.getType();
 		parmDefn = VALUE_PARM;		
 		SymTabEntry sublist = null;
+		ArrayList<SymTabEntry> SC = new ArrayList<SymTabEntry>();
+		IntDeclarationsParser intDeclarationsParser = new IntDeclarationsParser(this);
+		do{
+			intDeclarationsParser.setDefinition(parmDefn);
+			token = nextToken();
+			sublist = intDeclarationsParser.parseIdentifier(token);
+			if(tokenType == INT){
+				sublist.setTypeSpec(integerType);
+			}
+			else if (tokenType == CHAR){			
+				sublist.setTypeSpec(charType);
+			}
+			token = nextToken();
+			token = currentToken();
+		    if (token.getType() == COMMA){
+		    	token = nextToken();
+		    }
+		    
+			tokenType = token.getType();
+				token = synchronize(PARAMETER_SET);
 				
-		if(tokenType == INT){
-			IntDeclarationsParser intDeclarationsParser = new IntDeclarationsParser(this);
-			intDeclarationsParser.setDefinition(parmDefn);
-			token = nextToken();
-			sublist = intDeclarationsParser.parseIdentifier(token);
-			sublist.setTypeSpec(integerType);
-
-		}
-		else if (tokenType == CHAR){			
-			IntDeclarationsParser intDeclarationsParser = new IntDeclarationsParser(this);
-			intDeclarationsParser.setDefinition(parmDefn);
-			token = nextToken();
-			sublist = intDeclarationsParser.parseIdentifier(token);
-			sublist.setTypeSpec(charType);
-		}
-		token = nextToken();
+				SC.add(sublist);
+		}while(tokenType != RIGHT_PAREN);
 		token = currentToken();
-        if (token.getType() == COMMA){
-        	token = nextToken();
-        }
-        
-		tokenType = token.getType();
-			token = synchronize(PARAMETER_SET);
-			ArrayList<SymTabEntry> SC = new ArrayList<SymTabEntry>();
-			SC.add(sublist);
 		return SC;
 	}
 }

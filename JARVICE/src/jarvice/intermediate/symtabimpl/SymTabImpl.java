@@ -29,6 +29,8 @@ public class SymTabImpl
     public SymTabImpl(int nestingLevel)
     {
         this.nestingLevel = nestingLevel;
+        this.slotNumber = -1;
+        this.maxSlotNumber = 0;
     }
     
     /**

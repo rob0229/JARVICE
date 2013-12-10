@@ -18,7 +18,7 @@ import static jarvice.intermediate.typeimpl.TypeKeyImpl.*;
 /**
  * </p>
  */
-public class IntDeclarationsParser extends DeclarationsParser
+public class IntDeclarationsParser extends WookieParserTD
 {
 	
 	 private Definition definition;  // how to define the identifier
