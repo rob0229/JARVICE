@@ -6,8 +6,6 @@ Rob Close
 
 Matt Thorne
 
-Jeremy Muckel
-
 
 ========= TO GET 70% ==========<br />
 Data Types: int, bool<br />
